@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
 public class ActiveLiquidIndicator : MonoBehaviour
 {
@@ -9,15 +10,16 @@ public class ActiveLiquidIndicator : MonoBehaviour
     void Start()
     {
         indicator.enabled = false;
+
+        SessionState.activeLiquidStream.Subscribe(liquid => UpdateIndicatorColor(liquid.color));
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(SessionState.activeLiquid != null)
+        if(SessionState.ActiveLiquid != null)
         {
             indicator.enabled = true;
-            indicator.color = SessionState.activeLiquid.color;
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             indicator.transform.position = mousePosition;
         }
@@ -25,5 +27,10 @@ public class ActiveLiquidIndicator : MonoBehaviour
         {
             indicator.enabled = false;
         }
+    }
+
+    void UpdateIndicatorColor(Color newColor)
+    {
+        indicator.color = newColor;
     }
 }

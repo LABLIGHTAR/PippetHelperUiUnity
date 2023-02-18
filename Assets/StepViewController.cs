@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UniRx;
 
 public class StepViewController : MonoBehaviour
 {
@@ -11,65 +12,57 @@ public class StepViewController : MonoBehaviour
     public Button newStepButton;
     public Transform stepDisplay;
 
-    private int currentStep = 1;
-    private int numberOfSteps = 1;
     private TextMeshProUGUI stepDisplayText;
     // Start is called before the first frame update
     void Start()
     {
         stepDisplayText = stepDisplay.GetComponent<TextMeshProUGUI>();
-        Debug.Log("Number of steps: " + SessionState.steps.Count);
-        stepDisplayText.text = "Step " + currentStep + "/" + SessionState.steps.Count;
-        previousButton.enabled = false;
 
         //add button events
         previousButton.onClick.AddListener(delegate
         {
-            SessionState.step = SessionState.step - 1;
-            Debug.Log(SessionState.steps[SessionState.step].wells["A1"].liquids[0].name);
+            SessionState.SetStep(SessionState.Step - 1);
         });
 
         nextButton.onClick.AddListener(delegate
         {
-            if (SessionState.step + 1 < SessionState.steps.Count)
+            if (SessionState.Step + 1 < SessionState.Steps.Count)
             {
-                SessionState.step = SessionState.step + 1;
-                Debug.Log(SessionState.steps[SessionState.step].wells["A1"].liquids[0].name);
+                SessionState.SetStep(SessionState.Step + 1);
             }
         });
 
         newStepButton.onClick.AddListener(delegate
         {
             SessionState.AddNewStep();
-            SessionState.step = SessionState.step + 1;
+            SessionState.SetStep(SessionState.Step + 1);
         });
+
+        //subscribe to datastream
+        SessionState.stepStream.Subscribe(_ => UpdateVisualState());
+
+        UpdateVisualState();
     }
 
-    // Update is called once per frame
-    void Update()
+    void UpdateVisualState()
     {
-        if (currentStep != SessionState.step + 1 || numberOfSteps != SessionState.steps.Count)
-        {
-            currentStep = SessionState.step + 1;
-            numberOfSteps = SessionState.steps.Count;
-            stepDisplayText.text = "Step " + currentStep + "/" + SessionState.steps.Count;
+        stepDisplayText.text = "Step " + (SessionState.Step + 1) + "/" + SessionState.Steps.Count;
 
-            if (SessionState.step == 0)
-            {
-                previousButton.enabled = false;
-            }
-            else
-            {
-                previousButton.enabled = true;
-            }
-            if(SessionState.step == SessionState.steps.Count)
-            {
-                nextButton.enabled = false;
-            }
-            else
-            {
-                nextButton.enabled = true;
-            }
+        if (SessionState.Step == 0)
+        {
+            previousButton.enabled = false;
+        }
+        else
+        {
+            previousButton.enabled = true;
+        }
+        if (SessionState.Step == SessionState.Steps.Count)
+        {
+            nextButton.enabled = false;
+        }
+        else
+        {
+            nextButton.enabled = true;
         }
     }
 }

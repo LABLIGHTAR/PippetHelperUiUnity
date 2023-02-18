@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using TMPro;
+using UniRx;
 
 public class SessionState : MonoBehaviour
 {
@@ -16,6 +17,15 @@ public class SessionState : MonoBehaviour
         SetStep(0);
         steps.Add(new WellPlate());
         availableLiquids = new List<Liquid>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            var selectedObject = GetMouseSelection();
+        }
     }
 
     //class definitions
@@ -53,57 +63,215 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    //state variables
-    public static List<WellPlate> steps;
-    public static int step;
-    public static List<Liquid> availableLiquids;
-    public static Liquid activeLiquid;
-
-    // Start is called before the first frame update
-    void Start()
+    public class Colors
     {
+        public enum ColorNames
+        {
+            Lime,
+            Green,
+            Aqua,
+            Blue,
+            Navy,
+            Purple,
+            Pink,
+            Red,
+            Orange,
+            Yellow
+        }
 
+        private static Hashtable colorValues = new Hashtable{
+             {  ColorNames.Lime,    new Color32( 166 , 254 , 0, 1 ) },
+             {  ColorNames.Green,   new Color32( 0 , 254 , 111, 1 ) },
+             {  ColorNames.Aqua,    new Color32( 0 , 201 , 254, 1 ) },
+             {  ColorNames.Blue,    new Color32( 0 , 122 , 254, 1 ) },
+             {  ColorNames.Navy,    new Color32( 60 , 0 , 254, 1 ) },
+             {  ColorNames.Purple,  new Color32( 143 , 0 , 254, 1 ) },
+             {  ColorNames.Pink,    new Color32( 232 , 0 , 254, 1 ) },
+             {  ColorNames.Red,     new Color32( 254 , 9 , 0, 1 ) },
+             {  ColorNames.Orange,  new Color32( 254 , 161 , 0, 1 ) },
+             {  ColorNames.Yellow,  new Color32( 254 , 224 , 0, 1 ) },
+        };
+
+        public static Color32 ColorValue(ColorNames color)
+        {
+            return (Color32)colorValues[color];
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    //state variables
+    private static List<WellPlate> steps;
+    private static int step;
+    private static List<Liquid> availableLiquids;
+    private static Liquid activeLiquid;
+    private static bool formActive;
+    private static List<string> usedColors;
+
+    //data streams
+    public static Subject<int> stepStream = new Subject<int>();
+    public static Subject<Liquid> activeLiquidStream = new Subject<Liquid>();
+    public static Subject<Liquid> newLiquidStream = new Subject<Liquid>();
+    public static Subject<GameObject> clickStream = new Subject<GameObject>();
+
+    //setters
+    public static List<WellPlate> Steps
     {
-        if(Input.GetMouseButtonDown(0))
+        set
         {
-            var selectedObject = GetMouseSelection();
-            if (selectedObject != null)
+            if(steps != value)
             {
-                if(selectedObject.GetComponent<LiquidSwatchViewController>())
-                {
-                    //set the active liquid to the selected liquid
-                    activeLiquid = availableLiquids.Where(x => x.abreviation.Equals(selectedObject.GetComponent<LiquidSwatchViewController>().abreviation.GetComponent<TMP_Text>().text)).FirstOrDefault();
-                    Debug.Log("Active Liquid: " + activeLiquid.name);
-                }
-                else if(selectedObject.GetComponent<WellViewController>())
-                {
-                    var selectedObjectController = selectedObject.GetComponent<WellViewController>();
-                    Debug.Log(selectedObjectController.name);
-                    //check if well is in current wellplate dictionary
-                    var currentStep = steps[step];
-                    if (currentStep.wells.ContainsKey(selectedObjectController.name) & activeLiquid != null)
-                    {
-                        //add the active liquid to the selected well
-                        if (currentStep.wells[selectedObjectController.name].liquids.Count < 3)
-                            currentStep.wells[selectedObjectController.name].liquids.Add(activeLiquid);
-                    }
-                    else
-                    {
-                        //if this well is not in the dictionary add it
-                        currentStep.wells.Add(selectedObjectController.name, new Well());
-                        if(activeLiquid != null)
-                        {
-                            //add the active liquid to the selected well
-                            if (currentStep.wells[selectedObjectController.name].liquids.Count < 3)
-                                currentStep.wells[selectedObjectController.name].liquids.Add(activeLiquid);
-                        }
-                    }
-                }
+                steps = value;
             }
+        }
+        get
+        {
+            return steps;
+        }
+    }
+
+    public static int Step
+    {
+        set
+        {
+            if(step != value)
+            {
+                step = value;
+            }
+            stepStream.OnNext(step);
+        }
+        get
+        {
+            return step;
+        }
+    }
+
+    public static List<Liquid> AvailableLiquids
+    {
+        set
+        {
+            if(availableLiquids != value)
+            {
+                availableLiquids = value;
+            }
+        }
+        get
+        {
+            return availableLiquids;
+        }
+    }
+
+    public static Liquid ActiveLiquid
+    {
+        set
+        {
+            if(activeLiquid != value)
+            {
+                activeLiquid = value;
+            }
+            activeLiquidStream.OnNext(activeLiquid);
+        }
+        get
+        {
+            return activeLiquid;
+        }
+    }
+
+    public static bool FormActive
+    {
+        set
+        {
+            if(formActive != value)
+            {
+                formActive = value;
+            }
+        }
+        get
+        {
+            return formActive;
+        }
+    }
+
+    public static List<string> UsedColors
+    {
+        set
+        {
+            if(usedColors != value)
+            {
+                usedColors = value;
+            }
+        }
+        get
+        {
+            return usedColors;
+        }
+    }
+
+    public static void SetStep(int value)
+    {
+        if(value < 0 || value > Steps.Count)
+        {
+            return;
+        }
+        else
+        {
+            Step = value;
+        }
+    }
+
+
+    public static void AddNewStep()
+    {
+        Steps.Add(new WellPlate());
+    }
+
+    //adds new liquid to the available liquids list
+    public static void AddNewLiquid(string name, string abreviation, Color color)
+    {
+        Liquid newLiquid = new Liquid(name, abreviation, color);
+        if (AvailableLiquids.Exists(x => x.name == name || x.abreviation == abreviation || x.color == color))
+        {
+            Debug.LogWarning("Liquid already exists");
+            return;
+        }
+        else
+        {
+            AvailableLiquids.Add(newLiquid);
+            newLiquidStream.OnNext(newLiquid);
+        }
+    }
+
+    public static void SetActiveLiquid(Liquid selected)
+    {
+        if (!AvailableLiquids.Contains(selected))
+        {
+            Debug.LogWarning("Selected liquid is not available");
+            return;
+        }
+        else
+        {
+            ActiveLiquid = selected;
+        }
+    }
+
+    public static void AddActiveLiquidToWell(string wellName)
+    {
+        if(Steps[Step].wells.ContainsKey(wellName))
+        {
+            if(!Steps[Step].wells[wellName].liquids.Contains(ActiveLiquid))
+            {
+                //if the well exists and does not already have the active liquid add it
+                Steps[Step].wells[wellName].liquids.Add(ActiveLiquid);
+            }
+            else
+            {
+                Debug.LogWarning("Well already contains the active liquid");
+            }
+        }
+        else
+        {
+            //if the well does not exist create it
+            Steps[Step].wells.Add(wellName, new Well());
+            //add the active liquid to the new well
+            Steps[Step].wells[wellName].liquids.Add(ActiveLiquid);
         }
     }
 
@@ -115,28 +283,9 @@ public class SessionState : MonoBehaviour
         if (hitData)
         {
             var selectedObject = hitData.transform.gameObject;
-            Debug.Log(selectedObject.name);
+            clickStream.OnNext(selectedObject);
             return selectedObject;
         }
         return null;
-    }
-
-    //adds new liquid to the available liquids list
-    public static void AddNewLiquid(string name, string abreviation, Color color)
-    {
-        availableLiquids.Add(new Liquid(name, abreviation, color));
-    }
-
-    public static void SetStep(int value)
-    {
-        if(value < steps.Count)
-        {
-            step = value;
-        }
-    }
-
-    public static void AddNewStep()
-    {
-        steps.Add(new WellPlate());
     }
 }
