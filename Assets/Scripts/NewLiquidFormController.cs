@@ -12,6 +12,7 @@ public class NewLiquidFormController : MonoBehaviour
     public Transform abreviation;
     public Transform abreviationError;
     public Transform colorDropdown;
+    public TMP_Dropdown dropdown;
     public Button submitButton;
     public Button closeButton;
 
@@ -20,7 +21,6 @@ public class NewLiquidFormController : MonoBehaviour
     private TextMeshProUGUI abreviationText;
     private TextMeshProUGUI abreviationErrorText;
     private TextMeshProUGUI colorText;
-    private Dropdown dropdown;
     private Color newColor;
 
     //colors
@@ -28,14 +28,20 @@ public class NewLiquidFormController : MonoBehaviour
     {
         "Lime",
         "Green",
+        "Olive",
+        "Brown",
         "Aqua",
         "Blue",
         "Navy",
+        "Slate",
         "Purple",
+        "Plum",
         "Pink",
+        "Salmon",
         "Red",
         "Orange",
-        "Yellow"
+        "Yellow",
+        "Khaki",
     };
 
     // Start is called before the first frame update
@@ -46,10 +52,10 @@ public class NewLiquidFormController : MonoBehaviour
         nameErrorText = nameError.GetComponent<TextMeshProUGUI>();
         abreviationText = abreviation.GetComponent<TextMeshProUGUI>();
         abreviationErrorText = abreviationError.GetComponent<TextMeshProUGUI>();
-        colorText = colorDropdown.GetComponent<TextMeshProUGUI>();
+        colorText = colorDropdown.Find("Label").GetComponent<TextMeshProUGUI>();
 
-        //Get dropdown
-        dropdown = colorDropdown.GetComponent<Dropdown>();
+        //Set Dropdown Colors
+        dropdown.AddOptions(dropdownOptions);
 
         //Add button events
         submitButton.onClick.AddListener(delegate {
@@ -68,6 +74,7 @@ public class NewLiquidFormController : MonoBehaviour
 
     void AddNewLiquid()
     {
+        //check input
         if(SessionState.AvailableLiquids.Exists(x => x.name == nameText.text))
         {
             nameError.gameObject.SetActive(true);
@@ -89,17 +96,18 @@ public class NewLiquidFormController : MonoBehaviour
             abreviationError.gameObject.SetActive(false);
         }
 
-        SessionState.AddNewLiquid(nameText.text, abreviationText.text, SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true)));
-        nameText.text = "";
-        abreviationText.text = "";
-
+        //add new liquid to session state
+        SessionState.AddNewLiquid(nameText.text, abreviationText.text, colorText.text, SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true)));
+        
+        //log the used color in the session state
         SessionState.UsedColors.Add(colorText.text);
 
+        //update color dropdown options
         dropdown.ClearOptions();
-
-        List<string> availableColors = (List<string>)dropdownOptions.Except(SessionState.UsedColors);
+        List<string> availableColors = dropdownOptions.Except(SessionState.UsedColors).ToList();
         dropdown.AddOptions(availableColors);
 
+        //disable form
         this.gameObject.SetActive(false);
         SessionState.FormActive = false;
     }

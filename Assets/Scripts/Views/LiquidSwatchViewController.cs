@@ -34,7 +34,7 @@ public class LiquidSwatchViewController : MonoBehaviour
 
     public bool SetAbreviation(string textInput)
     {
-        if(textInput != null & textInput.Length <= 3)
+        if(textInput != null & textInput.Length <= 4)
         {
             abreviation.GetComponent<TMP_Text>().text = textInput;
             return true;
