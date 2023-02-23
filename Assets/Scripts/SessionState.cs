@@ -26,6 +26,18 @@ public class SessionState : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             var selectedObject = GetMouseSelection();
+            if(selectedObject != null )
+            {
+                leftClickStream.OnNext(selectedObject);
+            }
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            var selectedObject = GetMouseSelection();
+            if (selectedObject != null)
+            {
+                rightClickStream.OnNext(selectedObject);
+            }
         }
     }
 
@@ -113,6 +125,22 @@ public class SessionState : MonoBehaviour
         }
     }
 
+    public class Tool
+    {
+        public string name;
+        public float volume;
+        public int numChannels;
+        public string orientation;
+
+        public Tool(string name, float volume, int numChannels, string orientation)
+        {
+            this.name = name;
+            this.volume = volume;
+            this.numChannels = numChannels;
+            this.orientation = orientation;
+        }
+    }
+
     //state variables
     private static List<WellPlate> steps;
     private static int step;
@@ -120,12 +148,14 @@ public class SessionState : MonoBehaviour
     private static Liquid activeLiquid;
     private static bool formActive;
     private static List<string> usedColors;
+    private static Tool activeTool;
 
     //data streams
     public static Subject<int> stepStream = new Subject<int>();
     public static Subject<Liquid> activeLiquidStream = new Subject<Liquid>();
     public static Subject<Liquid> newLiquidStream = new Subject<Liquid>();
-    public static Subject<GameObject> clickStream = new Subject<GameObject>();
+    public static Subject<GameObject> leftClickStream = new Subject<GameObject>();
+    public static Subject<GameObject> rightClickStream = new Subject<GameObject>();
 
     //setters
     public static List<WellPlate> Steps
@@ -220,6 +250,21 @@ public class SessionState : MonoBehaviour
         }
     }
 
+    public static Tool ActiveTool
+    {
+        set
+        {
+            if (activeTool != value)
+            {
+                activeTool = value;
+            }
+        }
+        get
+        {
+            return activeTool;
+        }
+    }
+
     public static void SetStep(int value)
     {
         if(value < 0 || value > Steps.Count)
@@ -267,7 +312,7 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    public static void AddActiveLiquidToWell(string wellName)
+    public static bool AddActiveLiquidToWell(string wellName)
     {
         if(Steps[Step].wells.ContainsKey(wellName))
         {
@@ -275,10 +320,12 @@ public class SessionState : MonoBehaviour
             {
                 //if the well exists and does not already have the active liquid add it
                 Steps[Step].wells[wellName].liquids.Add(ActiveLiquid);
+                return true;
             }
             else
             {
                 Debug.LogWarning("Well already contains the active liquid");
+                return false;
             }
         }
         else
@@ -287,6 +334,31 @@ public class SessionState : MonoBehaviour
             Steps[Step].wells.Add(wellName, new Well());
             //add the active liquid to the new well
             Steps[Step].wells[wellName].liquids.Add(ActiveLiquid);
+            return true;
+        }
+    }
+
+    public static bool RemoveActiveLiquidFromWell(string wellName)
+    {
+        if (Steps[Step].wells.ContainsKey(wellName))
+        {
+            Debug.Log("active liquid: " + ActiveLiquid.name + " liquids in well: " + Steps[Step].wells[wellName].liquids[0].name);
+            if (Steps[Step].wells[wellName].liquids.Contains(ActiveLiquid))
+            {
+                //if the well exists and already has the active liquid remove it
+                Steps[Step].wells[wellName].liquids.Remove(ActiveLiquid);
+                return true;
+            }
+            else
+            {
+                Debug.LogWarning("Well does not contain the active liquid");
+                return false;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Well is empty");
+            return false;
         }
     }
 
@@ -298,7 +370,6 @@ public class SessionState : MonoBehaviour
         if (hitData)
         {
             var selectedObject = hitData.transform.gameObject;
-            clickStream.OnNext(selectedObject);
             return selectedObject;
         }
         return null;

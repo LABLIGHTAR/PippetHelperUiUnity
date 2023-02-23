@@ -12,7 +12,7 @@ public class LiquidSwatchViewController : MonoBehaviour
 
     void Start()
     {
-        SessionState.clickStream.Subscribe(selectedObject =>
+        SessionState.leftClickStream.Subscribe(selectedObject =>
         {
             if(selectedObject.GetComponent<LiquidSwatchViewController>() && selectedObject.GetComponent<LiquidSwatchViewController>().abreviation == abreviation && !SessionState.FormActive)
             {
