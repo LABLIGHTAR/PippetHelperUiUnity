@@ -30,7 +30,7 @@ public class LiquidDisplayViewController : MonoBehaviour
         SessionState.newLiquidStream.Subscribe(newLiquid =>
         {
             GameObject newLiquidSwatch = Instantiate(LiquidSwatchPrefab) as GameObject;
-            newLiquidSwatch.transform.parent = this.transform;
+            newLiquidSwatch.transform.SetParent(this.transform, false);
             newLiquidSwatch.GetComponent<LiquidSwatchViewController>().SetAbreviation(newLiquid.abreviation);
             newLiquidSwatch.GetComponent<LiquidSwatchViewController>().SetColor(newLiquid.color);
         });

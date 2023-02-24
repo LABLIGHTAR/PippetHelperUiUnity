@@ -9,12 +9,10 @@ using UniRx;
 public class ToolViewController : MonoBehaviour
 {
     public GameObject micropipette;
-    public SpriteRenderer pipetteIndicator;
-    public TMP_InputField pipetteVolumeInput;
+    public Image pipetteIndicator;
     
     public GameObject multichannel;
-    public SpriteRenderer multichannelIndicator;
-    public TMP_InputField multichannelVolumeInput;
+    public Image multichannelIndicator;
     public TextMeshProUGUI multichannelDropdown;
     public TextMeshProUGUI orientationText;
     public TMP_Dropdown orientationDropdown;
@@ -22,23 +20,19 @@ public class ToolViewController : MonoBehaviour
     void Start()
     {
         //subscribe to data streams
-        SessionState.leftClickStream.Subscribe(selectedObject =>
+        UiInteraction.uiClickStream.Subscribe(selectedObject =>
         {
-            if(selectedObject.name == "micropipette")
+            if(selectedObject.name == "PipetteImage")
             {
                 SelectMicropipette();
             }
-            else if(selectedObject.name == "multichannel")
+            else if(selectedObject.name == "MultichannelImage")
             {
                 SelectMultichannel();
             }
         });
 
         SessionState.activeLiquidStream.Subscribe(_ => UpdateVisualState());
-
-        //set up input defaults
-        pipetteVolumeInput.text = "10";
-        multichannelVolumeInput.text = "10";
 
         //set micropipette as default tool
         SelectMicropipette();
@@ -70,13 +64,7 @@ public class ToolViewController : MonoBehaviour
         {
             pipetteIndicator.color = Color.green;
         }
-        
-        if(pipetteVolumeInput != null && pipetteVolumeInput.text.Length > 0)
-        {
-            float volume = float.Parse(pipetteVolumeInput.text, CultureInfo.InvariantCulture.NumberFormat);
-            SessionState.ActiveTool = new SessionState.Tool("micropipette", volume, 1, "Horizontal");
-        }
-
+        SessionState.ActiveTool = new SessionState.Tool("micropipette", 1, "Horizontal");
         //Debug.Log(SessionState.ActiveTool.name + " " + SessionState.ActiveTool.volume + " " + SessionState.ActiveTool.numChannels + " " + SessionState.ActiveTool.orientation);
     }
 
@@ -91,13 +79,8 @@ public class ToolViewController : MonoBehaviour
         {
             multichannelIndicator.color = Color.green;
         }
-
-        if (multichannelVolumeInput != null && multichannelVolumeInput.text.Length > 0)
-        {
-            float volume = float.Parse(multichannelVolumeInput.text, CultureInfo.InvariantCulture.NumberFormat);
-            int channels = int.Parse(multichannelDropdown.text);
-            SessionState.ActiveTool = new SessionState.Tool("multichannel", volume, channels, orientationText.text);
-        }
+        int channels = int.Parse(multichannelDropdown.text);
+        SessionState.ActiveTool = new SessionState.Tool("multichannel", channels, orientationText.text);
         //Debug.Log(SessionState.ActiveTool.name + " " + SessionState.ActiveTool.volume + " " + SessionState.ActiveTool.numChannels + " " + SessionState.ActiveTool.orientation);
     }
 

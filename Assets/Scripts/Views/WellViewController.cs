@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UniRx;
 
-public class WellViewController : MonoBehaviour
+public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
 {
     public string name;
     public List<SpriteRenderer> liquidIndicators;
@@ -16,69 +17,67 @@ public class WellViewController : MonoBehaviour
     void Start()
     {
         SessionState.stepStream.Subscribe(_ => LoadVisualState());
+    }
 
-        SessionState.leftClickStream.Subscribe(selectedObject =>
+    // Pointer events
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!SessionState.FormActive)
         {
-            if(selectedObject.name == name && !SessionState.FormActive && SessionState.ActiveLiquid != null)
+            if (SessionState.ActiveTool.name == "micropipette")
             {
-                if(SessionState.ActiveTool.name == "micropipette")
+                ActivateHighlight(1);
+            }
+            else if (SessionState.ActiveTool.name == "multichannel")
+            {
+                ActivateHighlight(SessionState.ActiveTool.numChannels);
+            }
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (!SessionState.FormActive)
+        {
+            if (SessionState.ActiveTool.name == "micropipette")
+            {
+                DeactivateHighlight(0);
+            }
+            else if (SessionState.ActiveTool.name == "multichannel")
+            {
+                DeactivateHighlight(0);
+            }
+        }
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (!SessionState.FormActive)
+        {
+            if (eventData.button == PointerEventData.InputButton.Left)
+            {
+                if (!SessionState.FormActive && SessionState.ActiveLiquid != null)
                 {
-                    if (SessionState.AddActiveLiquidToWell(name))
+                    if (SessionState.ActiveTool.name == "micropipette")
                     {
-                        UpdateVisualState();
+                        if (SessionState.AddActiveLiquidToWell(name))
+                        {
+                            UpdateVisualState();
+                        }
+                    }
+                    else
+                    {
+                        AddLiquidMultichannel(SessionState.ActiveTool.numChannels);
                     }
                 }
-                else
-                {
-                    AddLiquidMultichannel(SessionState.ActiveTool.numChannels);
-                }
             }
-        });
-
-
-        SessionState.rightClickStream.Subscribe(selectedObject =>
-        {
-            if (selectedObject.name == name && !SessionState.FormActive)
+            else if (eventData.button == PointerEventData.InputButton.Right)
             {
-                if (SessionState.RemoveActiveLiquidFromWell(name))
+                if (!SessionState.FormActive & SessionState.RemoveActiveLiquidFromWell(name))
                 {
                     UpdateVisualState();
                 }
             }
-        });
-    }
-
-    void AddLiquidMultichannel(int numChannels)
-    {
-        if (SessionState.ActiveTool.orientation == "Horizontal")
-        {
-            if ((Int32.Parse(name.Substring(1)) - 1) + numChannels > 12)
-            {
-                return;
-            }
-        }
-        else if (SessionState.ActiveTool.orientation == "Vertical")
-        {
-            if (((int)name[0] % 32) - 1 + numChannels > 8)
-            {
-                return;
-            }
-        }
-
-        if (SessionState.AddActiveLiquidToWell(name))
-        {
-            UpdateVisualState();
-        }
-
-        numChannels--;
-
-        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Horizontal" && NextInRow != null)
-        {
-            NextInRow.AddLiquidMultichannel(numChannels);
-        }
-        else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Vertical" && NextInCol != null)
-        {
-            NextInCol.AddLiquidMultichannel(numChannels);
         }
     }
 
@@ -136,6 +135,40 @@ public class WellViewController : MonoBehaviour
                     sr.gameObject.SetActive(false);
                 }
             }
+        }
+    }
+
+    void AddLiquidMultichannel(int numChannels)
+    {
+        if (SessionState.ActiveTool.orientation == "Horizontal")
+        {
+            if ((Int32.Parse(name.Substring(1)) - 1) + numChannels > 12)
+            {
+                return;
+            }
+        }
+        else if (SessionState.ActiveTool.orientation == "Vertical")
+        {
+            if (((int)name[0] % 32) - 1 + numChannels > 8)
+            {
+                return;
+            }
+        }
+
+        if (SessionState.AddActiveLiquidToWell(name))
+        {
+            UpdateVisualState();
+        }
+
+        numChannels--;
+
+        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Horizontal" && NextInRow != null)
+        {
+            NextInRow.AddLiquidMultichannel(numChannels);
+        }
+        else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Vertical" && NextInCol != null)
+        {
+            NextInCol.AddLiquidMultichannel(numChannels);
         }
     }
 
@@ -206,30 +239,6 @@ public class WellViewController : MonoBehaviour
         else if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Vertical" && NextInCol != null)
         {
             NextInCol.DeactivateHighlight(numChannels);
-        }
-    }
-
-    void OnMouseEnter()
-    {
-        if(SessionState.ActiveTool.name == "micropipette")
-        {
-            ActivateHighlight(1);
-        }
-        else if(SessionState.ActiveTool.name == "multichannel")
-        {
-            ActivateHighlight(SessionState.ActiveTool.numChannels);
-        }
-    }
-
-    void OnMouseExit()
-    {
-        if (SessionState.ActiveTool.name == "micropipette")
-        {
-            DeactivateHighlight(0);
-        }
-        else if (SessionState.ActiveTool.name == "multichannel")
-        {
-            DeactivateHighlight(0);
         }
     }
 }

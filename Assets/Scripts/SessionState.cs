@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using TMPro;
 using UniRx;
 
@@ -20,27 +21,6 @@ public class SessionState : MonoBehaviour
         usedColors = new List<string>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            var selectedObject = GetMouseSelection();
-            if(selectedObject != null )
-            {
-                leftClickStream.OnNext(selectedObject);
-            }
-        }
-        if (Input.GetMouseButtonDown(1))
-        {
-            var selectedObject = GetMouseSelection();
-            if (selectedObject != null)
-            {
-                rightClickStream.OnNext(selectedObject);
-            }
-        }
-    }
-
     //class definitions
     public class Liquid
     {
@@ -48,13 +28,15 @@ public class SessionState : MonoBehaviour
         public string abreviation;
         public string colorName;
         public Color color;
+        public float volume;
 
-        public Liquid(string name, string abreviation, string colorName, Color color)
+        public Liquid(string name, string abreviation, string colorName, Color color, float volume)
         {
             this.name = name;
             this.abreviation = abreviation;
             this.colorName = colorName;
             this.color = color;
+            this.volume = volume;
         }
     }
 
@@ -128,14 +110,12 @@ public class SessionState : MonoBehaviour
     public class Tool
     {
         public string name;
-        public float volume;
         public int numChannels;
         public string orientation;
 
-        public Tool(string name, float volume, int numChannels, string orientation)
+        public Tool(string name, int numChannels, string orientation)
         {
             this.name = name;
-            this.volume = volume;
             this.numChannels = numChannels;
             this.orientation = orientation;
         }
@@ -154,8 +134,6 @@ public class SessionState : MonoBehaviour
     public static Subject<int> stepStream = new Subject<int>();
     public static Subject<Liquid> activeLiquidStream = new Subject<Liquid>();
     public static Subject<Liquid> newLiquidStream = new Subject<Liquid>();
-    public static Subject<GameObject> leftClickStream = new Subject<GameObject>();
-    public static Subject<GameObject> rightClickStream = new Subject<GameObject>();
 
     //setters
     public static List<WellPlate> Steps
@@ -284,9 +262,9 @@ public class SessionState : MonoBehaviour
     }
 
     //adds new liquid to the available liquids list
-    public static void AddNewLiquid(string name, string abreviation, string colorName, Color color)
+    public static void AddNewLiquid(string name, string abreviation, string colorName, Color color, float volume)
     {
-        Liquid newLiquid = new Liquid(name, abreviation, colorName, color);
+        Liquid newLiquid = new Liquid(name, abreviation, colorName, color, volume);
         if (AvailableLiquids.Exists(x => x.name == name || x.abreviation == abreviation || x.colorName == colorName || x.color == color))
         {
             Debug.LogWarning("Liquid already exists");
@@ -360,18 +338,5 @@ public class SessionState : MonoBehaviour
             Debug.LogWarning("Well is empty");
             return false;
         }
-    }
-
-    //returns selected object or null if no object is selected
-    GameObject GetMouseSelection()
-    {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D hitData = Physics2D.Raycast(new Vector2(mousePosition.x, mousePosition.y), Vector2.zero, 0);
-        if (hitData)
-        {
-            var selectedObject = hitData.transform.gameObject;
-            return selectedObject;
-        }
-        return null;
     }
 }

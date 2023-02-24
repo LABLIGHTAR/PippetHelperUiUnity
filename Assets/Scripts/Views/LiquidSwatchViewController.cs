@@ -2,29 +2,22 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 using UniRx;
 
-public class LiquidSwatchViewController : MonoBehaviour
+public class LiquidSwatchViewController : MonoBehaviour, IPointerDownHandler
 {
-    public Transform abreviation;
-    public SpriteRenderer swatch;
+    public TextMeshProUGUI abreviation;
+    public Image swatch;
 
-    void Start()
+    public void OnPointerDown(PointerEventData eventData)
     {
-        SessionState.leftClickStream.Subscribe(selectedObject =>
+        if(eventData.button == PointerEventData.InputButton.Left & !SessionState.FormActive)
         {
-            if(selectedObject.GetComponent<LiquidSwatchViewController>() && selectedObject.GetComponent<LiquidSwatchViewController>().abreviation == abreviation && !SessionState.FormActive)
-            {
-                SessionState.SetActiveLiquid(SessionState.AvailableLiquids.Where(x => x.abreviation.Equals(abreviation.GetComponent<TMP_Text>().text)).FirstOrDefault());
-            }
-        });
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+            SessionState.SetActiveLiquid(SessionState.AvailableLiquids.Where(x => x.abreviation.Equals(abreviation.GetComponent<TMP_Text>().text)).FirstOrDefault());
+        }
     }
 
     public void SetColor(Color newColor)

@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,20 +8,22 @@ using TMPro;
 
 public class NewLiquidFormController : MonoBehaviour
 {
-    public Transform name;
     public Transform nameError;
-    public Transform abreviation;
     public Transform abreviationError;
-    public Transform colorDropdown;
+    public Transform volumeError;
+
     public TMP_Dropdown dropdown;
     public Button submitButton;
     public Button closeButton;
 
-    private TextMeshProUGUI nameText;
-    private TextMeshProUGUI nameErrorText;
-    private TextMeshProUGUI abreviationText;
-    private TextMeshProUGUI abreviationErrorText;
-    private TextMeshProUGUI colorText;
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI nameErrorText;
+    public TextMeshProUGUI abreviationText;
+    public TextMeshProUGUI abreviationErrorText;
+    public TextMeshProUGUI colorText;
+    public TextMeshProUGUI volumeText;
+    public TextMeshProUGUI volumeErrorText;
+
     private Color newColor;
 
     //colors
@@ -47,23 +50,11 @@ public class NewLiquidFormController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Get text components
-        nameText = name.GetComponent<TextMeshProUGUI>();
-        nameErrorText = nameError.GetComponent<TextMeshProUGUI>();
-        abreviationText = abreviation.GetComponent<TextMeshProUGUI>();
-        abreviationErrorText = abreviationError.GetComponent<TextMeshProUGUI>();
-        colorText = colorDropdown.Find("Label").GetComponent<TextMeshProUGUI>();
-
         //Set Dropdown Colors
         dropdown.AddOptions(dropdownOptions);
 
         //Add button events
-        submitButton.onClick.AddListener(delegate {
-            if(nameText.text.Length > 1 & abreviationText.text.Length > 1 & colorText.text.Length > 1)
-            {
-                AddNewLiquid();
-            }
-        });
+        submitButton.onClick.AddListener(AddNewLiquid);
 
         closeButton.onClick.AddListener(delegate
         {
@@ -78,7 +69,13 @@ public class NewLiquidFormController : MonoBehaviour
         if(SessionState.AvailableLiquids.Exists(x => x.name == nameText.text))
         {
             nameError.gameObject.SetActive(true);
-            nameErrorText.text = "Liquid with this name already exists";
+            nameErrorText.text = "Liquid with this name already exists*";
+            return;
+        }
+        if(!(nameText.text.Length > 1))
+        {
+            nameError.gameObject.SetActive(true);
+            nameErrorText.text = "Name cannot be empty*";
             return;
         }
         else
@@ -88,7 +85,23 @@ public class NewLiquidFormController : MonoBehaviour
         if(SessionState.AvailableLiquids.Exists(x => x.abreviation == abreviationText.text))
         {
             abreviationError.gameObject.SetActive(true);
-            abreviationErrorText.text = "Liquid with this abreviation already exists";
+            abreviationErrorText.text = "Liquid with this abreviation already exists*";
+            return;
+        }
+        if(!(abreviationText.text.Length > 1))
+        {
+            abreviationError.gameObject.SetActive(true);
+            abreviationErrorText.text = "Abreviation cannot be empty*";
+            return;
+        }
+        else
+        {
+            abreviationError.gameObject.SetActive(false);
+        }
+        if(!(volumeText.text.Length > 1))
+        {
+            volumeError.gameObject.SetActive(true);
+            volumeErrorText.text = "Volume cannot be empty*";
             return;
         }
         else
@@ -96,8 +109,10 @@ public class NewLiquidFormController : MonoBehaviour
             abreviationError.gameObject.SetActive(false);
         }
 
+        var color = SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true));
+        var volume = float.Parse(volumeText.text.Substring(0, volumeText.text.Length - 1), CultureInfo.InvariantCulture.NumberFormat);
         //add new liquid to session state
-        SessionState.AddNewLiquid(nameText.text, abreviationText.text, colorText.text, SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true)));
+        SessionState.AddNewLiquid(nameText.text, abreviationText.text, colorText.text, color , volume);
         
         //log the used color in the session state
         SessionState.UsedColors.Add(colorText.text);
