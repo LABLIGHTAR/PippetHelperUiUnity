@@ -1,1 +1,17 @@
 plate:horizontal
+A1:A12,#00FE6F,Green,Test2,10,μL
+B2:B12,#A6FE00,Lime,Test1,10,μL
+C3:C12,#556B2F,Olive,Test3,10,μL
+D4:C12,#8B4513,Brown,Test4,10,μL
+E5:C12,#A6FE00,Lime,Test1,10,μL
+F6:C12,#00FE6F,Green,Test2,10,μL
+G7:C12,#556B2F,Olive,Test3,10,μL
+H8:C12,#8B4513,Brown,Test4,10,μL
+plate:horizontal
+A1:C12,#A6FE00,Lime,Test1,10,μL
+B2:C12,#00FE6F,Green,Test2,10,μL
+C3:C12,#00FE6F,Green,Test2,10,μL
+D4:C12,#00FE6F,Green,Test2,10,μL
+F1:C12,#00FE6F,Green,Test2,10,μL
+G2:C12,#00FE6F,Green,Test2,10,μL
+H3:C12,#00FE6F,Green,Test2,10,μL

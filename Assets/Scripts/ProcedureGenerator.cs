@@ -25,12 +25,45 @@ public class ProcedureGenerator : MonoBehaviour
         foreach (SessionState.WellPlate step in SessionState.Steps)
         {
             sw.WriteLine("plate:horizontal", char.ConvertFromUtf32(160), char.ConvertFromUtf32(160), char.ConvertFromUtf32(160));
+            //iterate through each well
             foreach (var well in step.wells)
             {
+                //iterate through each liquid in the well
                 foreach (var liquid in well.Value.liquids)
                 {
-                    Debug.Log(well.Key + " " + liquid.color + " " + liquid.colorName + liquid.name);
-                    sw.WriteLine(well.Key + delimiter + Color32ToHex(liquid.color).ToString() + delimiter + liquid.colorName + delimiter + liquid.name.Remove(liquid.name.Length - 1, 1) + delimiter +  "10" + delimiter + "μL");
+                    string groupStart = null;
+                    string groupEnd = null;
+                    bool isGrouped = false;
+                    int groupId = -1;
+
+                    //check if this liquid is a part of a group
+                    foreach (var group in well.Value.groups)
+                    {
+                        if(group.liquid == liquid)
+                        {
+                            isGrouped = true;
+                            groupId = group.groupId;
+                            if(group.isStart)
+                            {
+                                groupStart = well.Key;
+                            }
+                        }
+                    }
+                    if (isGrouped)
+                    {
+                        if (groupStart != null)
+                        {
+                            groupEnd = FindGroupEnd(groupId);
+
+                            Debug.Log(groupStart + ":" + groupEnd + " " + liquid.color + " " + liquid.colorName + liquid.name);
+                            sw.WriteLine(groupStart + ":" + groupEnd + delimiter + Color32ToHex(liquid.color).ToString() + delimiter + liquid.colorName + delimiter + liquid.name.Remove(liquid.name.Length - 1, 1) + delimiter + "10" + delimiter + "μL");
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log(well.Key + " " + liquid.color + " " + liquid.colorName + liquid.name);
+                        sw.WriteLine(well.Key + delimiter + Color32ToHex(liquid.color).ToString() + delimiter + liquid.colorName + delimiter + liquid.name.Remove(liquid.name.Length - 1, 1) + delimiter + "10" + delimiter + "μL");
+                    }
                 }
             }
         }
@@ -38,6 +71,24 @@ public class ProcedureGenerator : MonoBehaviour
         sw.Close();
 
         Debug.Log("CSV file written to: " + filePath);
+    }
+
+    string FindGroupEnd(int Id)
+    {
+        foreach (SessionState.WellPlate step in SessionState.Steps)
+        {
+            foreach (var well in step.wells)
+            {
+                foreach (var group in well.Value.groups)
+                {
+                    if(group.groupId == Id && group.isEnd)
+                    {
+                        return well.Key;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public static string Color32ToHex(Color32 color)

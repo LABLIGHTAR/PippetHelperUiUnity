@@ -17,6 +17,14 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     void Start()
     {
         SessionState.stepStream.Subscribe(_ => LoadVisualState());
+
+        SessionState.liquidRemovedStream.Subscribe(well =>
+        {
+            if (well == name)
+            {
+                UpdateVisualState();
+            }
+        });
     }
 
     // Pointer events
@@ -60,7 +68,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                 {
                     if (SessionState.ActiveTool.name == "micropipette")
                     {
-                        if (SessionState.AddActiveLiquidToWell(name))
+                        if (SessionState.AddActiveLiquidToWell(name, false, false, false))
                         {
                             UpdateVisualState();
                         }
@@ -138,8 +146,14 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
     }
 
+    /// <summary>
+    /// Recursivly adds liquid to all wells in multichannel if possible
+    /// Only ever called on multichannel clicks
+    /// </summary>
+    /// <param name="numChannels"></param>
     void AddLiquidMultichannel(int numChannels)
     {
+        //if number of channels is greater than the number of wells in the given orientation return
         if (SessionState.ActiveTool.orientation == "Horizontal")
         {
             if ((Int32.Parse(name.Substring(1)) - 1) + numChannels > 12)
@@ -155,13 +169,19 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
         }
 
-        if (SessionState.AddActiveLiquidToWell(name))
+        //determine if this is the first or last well in the group
+        bool isStart = (numChannels == SessionState.ActiveTool.numChannels);
+        bool isEnd = (numChannels == 1);
+
+        //add liquid to clicked well
+        if (SessionState.AddActiveLiquidToWell(name, true, isStart, isEnd));
         {
             UpdateVisualState();
         }
 
         numChannels--;
 
+        //if there are more channels to add call this method on the next well in the orientation
         if (numChannels > 0 && SessionState.ActiveTool.orientation == "Horizontal" && NextInRow != null)
         {
             NextInRow.AddLiquidMultichannel(numChannels);
@@ -172,9 +192,15 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
     }
 
+    /// <summary>
+    /// activates well highlights for active tool
+    /// </summary>
+    /// <param name="numChannels"></param>
+    /// <returns></returns>
     bool ActivateHighlight(int numChannels)
     {
-        if(SessionState.ActiveTool.orientation == "Horizontal")
+        //if number of channels is greater than the number of wells in the given orientation return
+        if (SessionState.ActiveTool.orientation == "Horizontal")
         {
             if ((Int32.Parse(name.Substring(1)) - 1) + numChannels > 12)
             {
@@ -191,9 +217,11 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         numChannels--;
 
-        if(numChannels > 0 && SessionState.ActiveTool.orientation == "Horizontal" && NextInRow != null)
+        //if there are more channels to add call this method on the next well in the orientation
+        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Horizontal" && NextInRow != null)
         {
-            if(!NextInRow.ActivateHighlight(numChannels))
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInRow.ActivateHighlight(numChannels))
             {
                 DeactivateHighlight(SessionState.ActiveTool.numChannels);
                 return false;
@@ -201,7 +229,8 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
         else if(numChannels > 0 && SessionState.ActiveTool.orientation == "Vertical" && NextInCol != null)
         {
-            if(!NextInCol.ActivateHighlight(numChannels))
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInCol.ActivateHighlight(numChannels))
             {
                 DeactivateHighlight(SessionState.ActiveTool.numChannels);
                 return false;
@@ -210,18 +239,22 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         if (this.liquidCount < 3 && SessionState.ActiveLiquid != null)
         {
+            //if this well already contains the active deactivate all highlights
             if (SessionState.Steps[SessionState.Step].wells.ContainsKey(name) && SessionState.Steps[SessionState.Step].wells[name].liquids.Contains(SessionState.ActiveLiquid))
             {
                 DeactivateHighlight(SessionState.ActiveTool.numChannels);
                 return false;
             }
+            //if we make it through all the above checks activate this wells highlight
             this.liquidIndicators[liquidCount].gameObject.SetActive(true);
             this.liquidIndicators[liquidCount].color = SessionState.ActiveLiquid.color;
             return true;
         }
+        //if this well is full or we have no active well deactivate all highlights
         DeactivateHighlight(SessionState.ActiveTool.numChannels);
         return false;
     }
+
 
     void DeactivateHighlight(int numChannels)
     {
@@ -232,6 +265,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         numChannels++;
 
+        //if we have more channels to deactivate make recursive calls
         if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Horizontal" && NextInRow != null)
         {
             NextInRow.DeactivateHighlight(numChannels);

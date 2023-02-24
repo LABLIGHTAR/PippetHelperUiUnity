@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using UniRx;
+using static SessionState.Well;
 
 public class SessionState : MonoBehaviour
 {
@@ -42,11 +43,29 @@ public class SessionState : MonoBehaviour
 
     public class Well
     {
+        public struct LiquidGroup
+        {
+            public int groupId;
+            public bool isStart;
+            public bool isEnd;
+            public Liquid liquid;
+
+            public LiquidGroup(int groupId, bool isStart, bool isEnd, Liquid liquid)
+            {
+                this.groupId = groupId;
+                this.isStart = isStart;
+                this.isEnd = isEnd;
+                this.liquid = liquid;
+            }
+        }
+
         public List<Liquid> liquids;
+        public List<LiquidGroup> groups;
 
         public Well()
         {
             liquids = new List<Liquid>();
+            groups = new List<LiquidGroup>();
         }
     }
 
@@ -129,18 +148,20 @@ public class SessionState : MonoBehaviour
     private static bool formActive;
     private static List<string> usedColors;
     private static Tool activeTool;
+    private static int groupId;
 
     //data streams
     public static Subject<int> stepStream = new Subject<int>();
     public static Subject<Liquid> activeLiquidStream = new Subject<Liquid>();
     public static Subject<Liquid> newLiquidStream = new Subject<Liquid>();
+    public static Subject<string> liquidRemovedStream = new Subject<string>();
 
     //setters
     public static List<WellPlate> Steps
     {
         set
         {
-            if(steps != value)
+            if (steps != value)
             {
                 steps = value;
             }
@@ -155,7 +176,7 @@ public class SessionState : MonoBehaviour
     {
         set
         {
-            if(step != value)
+            if (step != value)
             {
                 step = value;
             }
@@ -171,7 +192,7 @@ public class SessionState : MonoBehaviour
     {
         set
         {
-            if(availableLiquids != value)
+            if (availableLiquids != value)
             {
                 availableLiquids = value;
             }
@@ -186,7 +207,7 @@ public class SessionState : MonoBehaviour
     {
         set
         {
-            if(activeLiquid != value)
+            if (activeLiquid != value)
             {
                 activeLiquid = value;
             }
@@ -202,7 +223,7 @@ public class SessionState : MonoBehaviour
     {
         set
         {
-            if(formActive != value)
+            if (formActive != value)
             {
                 formActive = value;
             }
@@ -217,7 +238,7 @@ public class SessionState : MonoBehaviour
     {
         set
         {
-            if(usedColors != value)
+            if (usedColors != value)
             {
                 usedColors = value;
             }
@@ -243,6 +264,21 @@ public class SessionState : MonoBehaviour
         }
     }
 
+    public static int GroupId
+    {
+        set
+        {
+            if(groupId != value)
+            {
+                groupId = value;
+            }
+        }
+        get 
+        { 
+            return groupId; 
+        }
+    }
+
     public static void SetStep(int value)
     {
         if(value < 0 || value > Steps.Count)
@@ -255,7 +291,6 @@ public class SessionState : MonoBehaviour
         }
     }
 
-
     public static void AddNewStep()
     {
         Steps.Add(new WellPlate());
@@ -265,6 +300,8 @@ public class SessionState : MonoBehaviour
     public static void AddNewLiquid(string name, string abreviation, string colorName, Color color, float volume)
     {
         Liquid newLiquid = new Liquid(name, abreviation, colorName, color, volume);
+        
+        //return if the liquid already exists
         if (AvailableLiquids.Exists(x => x.name == name || x.abreviation == abreviation || x.colorName == colorName || x.color == color))
         {
             Debug.LogWarning("Liquid already exists");
@@ -290,7 +327,7 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    public static bool AddActiveLiquidToWell(string wellName)
+    public static bool AddActiveLiquidToWell(string wellName, bool inGroup, bool isStart, bool isEnd)
     {
         if(Steps[Step].wells.ContainsKey(wellName))
         {
@@ -298,6 +335,16 @@ public class SessionState : MonoBehaviour
             {
                 //if the well exists and does not already have the active liquid add it
                 Steps[Step].wells[wellName].liquids.Add(ActiveLiquid);
+                //if this liquid is grouped add it to the group list
+                if(inGroup)
+                {
+                    Steps[Step].wells[wellName].groups.Add(new LiquidGroup(GroupId, isStart, isEnd, ActiveLiquid));
+                    //if this is the last well in the group increment the group id for the next group
+                    if(isEnd)
+                    {
+                        GroupId++; 
+                    }
+                }
                 return true;
             }
             else
@@ -312,6 +359,11 @@ public class SessionState : MonoBehaviour
             Steps[Step].wells.Add(wellName, new Well());
             //add the active liquid to the new well
             Steps[Step].wells[wellName].liquids.Add(ActiveLiquid);
+            //if this liquid is grouped add it to the group list
+            if (inGroup)
+            {
+                Steps[Step].wells[wellName].groups.Add(new LiquidGroup(GroupId, isStart, isEnd, ActiveLiquid));
+            }
             return true;
         }
     }
@@ -325,6 +377,22 @@ public class SessionState : MonoBehaviour
             {
                 //if the well exists and already has the active liquid remove it
                 Steps[Step].wells[wellName].liquids.Remove(ActiveLiquid);
+
+                //if the liquid being removed is part of a group remove the group everywhere
+                if(Steps[Step].wells[wellName].groups != null)
+                {
+                    foreach(LiquidGroup group in Steps[Step].wells[wellName].groups)
+                    {
+                        if(group.liquid == ActiveLiquid)
+                        {
+                            int IdForRemoval = group.groupId;
+                            //go through each well and remove all liquids in this group
+                            RemoveAllLiquidsInGroup(IdForRemoval);
+                            //break since the active liquid cannot be in a well mroe than once
+                            break;
+                        }
+                    }
+                }
                 return true;
             }
             else
@@ -337,6 +405,31 @@ public class SessionState : MonoBehaviour
         {
             Debug.LogWarning("Well is empty");
             return false;
+        }
+    }
+
+    static void RemoveAllLiquidsInGroup(int removalID)
+    {
+        List<LiquidGroup> groupsToRemove = new List<LiquidGroup>();
+        //iterate through all wells
+        foreach (var well in Steps[Step].wells)
+        {
+            //iterate through each well group
+            foreach(LiquidGroup group in well.Value.groups)
+            {
+                if(group.groupId == removalID)
+                {
+                    //add the group to a list for removal (cannot modify list in foreach loop)
+                    groupsToRemove.Add(group);
+                    //remove the active liquid
+                    well.Value.liquids.Remove(ActiveLiquid);
+                    //notify well
+                    liquidRemovedStream.OnNext(well.Key);
+                }
+            }
+            //remove groups
+            well.Value.groups.RemoveAll(item => groupsToRemove.Contains(item));
+            groupsToRemove.Clear();
         }
     }
 }
