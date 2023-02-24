@@ -172,6 +172,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         //determine if this is the first or last well in the group
         bool isStart = (numChannels == SessionState.ActiveTool.numChannels);
         bool isEnd = (numChannels == 1);
+        Debug.Log(isEnd);
 
         //add liquid to clicked well
         if (SessionState.AddActiveLiquidToWell(name, true, isStart, isEnd));

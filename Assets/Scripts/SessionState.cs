@@ -363,6 +363,11 @@ public class SessionState : MonoBehaviour
             if (inGroup)
             {
                 Steps[Step].wells[wellName].groups.Add(new LiquidGroup(GroupId, isStart, isEnd, ActiveLiquid));
+                //if this is the last well in the group increment the group id for the next group
+                if (isEnd)
+                {
+                    GroupId++;
+                }
             }
             return true;
         }

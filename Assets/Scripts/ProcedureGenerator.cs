@@ -24,7 +24,7 @@ public class ProcedureGenerator : MonoBehaviour
 
         foreach (SessionState.WellPlate step in SessionState.Steps)
         {
-            sw.WriteLine("plate:horizontal", char.ConvertFromUtf32(160), char.ConvertFromUtf32(160), char.ConvertFromUtf32(160));
+            sw.WriteLine("plate:horizontal" + delimiter);
             //iterate through each well
             foreach (var well in step.wells)
             {
@@ -39,6 +39,7 @@ public class ProcedureGenerator : MonoBehaviour
                     //check if this liquid is a part of a group
                     foreach (var group in well.Value.groups)
                     {
+                        Debug.Log(group.groupId);
                         if(group.liquid == liquid)
                         {
                             isGrouped = true;
@@ -55,14 +56,14 @@ public class ProcedureGenerator : MonoBehaviour
                         {
                             groupEnd = FindGroupEnd(groupId);
 
-                            Debug.Log(groupStart + ":" + groupEnd + " " + liquid.color + " " + liquid.colorName + liquid.name);
-                            sw.WriteLine(groupStart + ":" + groupEnd + delimiter + Color32ToHex(liquid.color).ToString() + delimiter + liquid.colorName + delimiter + liquid.name.Remove(liquid.name.Length - 1, 1) + delimiter + "10" + delimiter + "μL");
+                            //Debug.Log(groupStart + ":" + groupEnd + " " + liquid.color + " " + liquid.colorName + liquid.name);
+                            sw.WriteLine(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(liquid.color).ToString() + delimiter + liquid.colorName + delimiter + liquid.name.Remove(liquid.name.Length - 1, 1) + delimiter + liquid.volume + delimiter + "μL");
                         }
                     }
                     else
                     {
-                        Debug.Log(well.Key + " " + liquid.color + " " + liquid.colorName + liquid.name);
-                        sw.WriteLine(well.Key + delimiter + Color32ToHex(liquid.color).ToString() + delimiter + liquid.colorName + delimiter + liquid.name.Remove(liquid.name.Length - 1, 1) + delimiter + "10" + delimiter + "μL");
+                        //Debug.Log(well.Key + " " + liquid.color + " " + liquid.colorName + liquid.name);
+                        sw.WriteLine(delimiter + well.Key + delimiter + Color32ToHex(liquid.color).ToString() + delimiter + liquid.colorName + delimiter + liquid.name.Remove(liquid.name.Length - 1, 1) + delimiter + liquid.volume + delimiter + "μL");
                     }
                 }
             }
