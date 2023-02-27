@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using SFB;
 
 public class ProcedureGenerator : MonoBehaviour
 {
@@ -20,6 +21,13 @@ public class ProcedureGenerator : MonoBehaviour
     
     void GenerateProcedure()
     {
+        var extensionList = new[] {
+                new ExtensionFilter("Comma Seperated Variables", "csv"),
+            };
+
+        filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", extensionList);
+        Debug.Log(filePath);
+
         StreamWriter sw = new StreamWriter(filePath);
 
         foreach (SessionState.WellPlate step in SessionState.Steps)
