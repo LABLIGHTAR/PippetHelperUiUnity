@@ -4,10 +4,13 @@ using System.Globalization;
 using System;
 using System.IO;
 using UnityEngine;
+using UniRx;
 using SFB;
 
 public class ProcedureLoader : MonoBehaviour
 {
+    public static Subject<bool> procedureStream = new Subject<bool>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -17,7 +20,6 @@ public class ProcedureLoader : MonoBehaviour
 
         var fileName = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, true)[0];
 
-        Debug.Log(fileName);
         if(fileName != null)
         {
             LoadProcedure(fileName);
@@ -34,12 +36,13 @@ public class ProcedureLoader : MonoBehaviour
 
         bool firstStep = true;
 
+        int numWells = 0;
+
         //read the file until the end of file is reached
-        while((currentLine = sr.ReadLine()) != null)
+        while ((currentLine = sr.ReadLine()) != null)
         {
-            if(currentLine.Contains("plate:horizontal"))
+            if(currentLine.Contains("plate:horizontal") || currentLine.Contains("plate:vertical"))
             {
-                Debug.Log("new step");
                 if(!firstStep)
                 {
                     SessionState.AddNewStep();
@@ -73,35 +76,73 @@ public class ProcedureLoader : MonoBehaviour
                 if(wellId.Contains(':'))
                 {
                     int numChannels;
-
-                    Debug.Log("Group");
+                    string activeWellId;
                     string[] wellGroup = wellId.Split(':');
-                    Debug.Log(wellGroup[0]);
-                    Debug.Log(wellGroup[1]);
+
+                    activeWellId = wellGroup[0];
 
                     if (wellGroup[0][0] == wellGroup[1][0])
                     {
-                        Debug.Log("Horizontal");
                         numChannels = GetNumberChannels(wellGroup, true);
+                        
+                        while(numChannels > 0)
+                        {
+                            if (activeWellId == wellGroup[0])
+                            {
+                                SessionState.AddActiveLiquidToWell(activeWellId, true, true, false);
+                                numWells++;
+                            }
+                            else if(activeWellId == wellGroup[1])
+                            {
+                                SessionState.AddActiveLiquidToWell(activeWellId, true, false, true);
+                                numWells++;
+                            }
+                            else
+                            {
+                                SessionState.AddActiveLiquidToWell(activeWellId, true, false, false);
+                                numWells++;
+                            }
+                            numChannels--;
+                            activeWellId = GetNextWellHorizontal(activeWellId);
+                        }
                     }
                     else
                     {
-                        Debug.Log("Vertical");
                         numChannels = GetNumberChannels(wellGroup, false);
+                        while (numChannels > 0)
+                        {
+                            if (activeWellId == wellGroup[0])
+                            {
+                                SessionState.AddActiveLiquidToWell(activeWellId, true, true, false);
+                                numWells++;
+                            }
+                            else if (activeWellId == wellGroup[1])
+                            {
+                                SessionState.AddActiveLiquidToWell(activeWellId, true, false, true);
+                                numWells++;
+                            }
+                            else
+                            {
+                                SessionState.AddActiveLiquidToWell(activeWellId, true, false, false);
+                                numWells++;
+                            }
+                            numChannels--;
+                            activeWellId = GetNextWellVertical(activeWellId);
+                        };
                     }
-                    Debug.Log("Number of channels: " + numChannels);
                 }
                 //else its a single well
                 else
                 {
-                    Debug.Log(wellId);
-                    Debug.Log(SessionState.AddActiveLiquidToWell(wellId, false, false, false));
+                    SessionState.AddActiveLiquidToWell(wellId, false, false, false);
+                    numWells++;
                 }
             }
         }
+        Debug.Log(numWells);
         SessionState.SetStep(0);
-        SessionState.SetStep(SessionState.Step + 1);
-        SessionState.SetStep(SessionState.Step - 1);
+        SessionState.SetStep(1);
+        SessionState.SetStep(0);
     }
 
     int GetNumberChannels(string[] wellGroup, bool isHorizontal)
@@ -138,5 +179,33 @@ public class ProcedureLoader : MonoBehaviour
         }
 
         return endWellNumber - (startWellNumber - 1);
+    }
+
+    string GetNextWellHorizontal(string currentWell)
+    {
+        int startWellNumber;
+
+        if (currentWell.Length == 2)
+        {
+            startWellNumber = Int32.Parse(currentWell[1].ToString());
+        }
+        else
+        {
+            char[] chars = { currentWell[1], currentWell[2] };
+            startWellNumber = Int32.Parse(new string(chars));
+        }
+        
+        startWellNumber++;
+
+        return new string(currentWell[0] + startWellNumber.ToString());
+    }
+
+    string GetNextWellVertical(string currentWell)
+    {
+        string columnId = currentWell.Substring(1);
+
+        char nextRowId = (char)(((int)currentWell[0]) + 1);
+
+        return new string(nextRowId.ToString() + columnId);
     }
 }

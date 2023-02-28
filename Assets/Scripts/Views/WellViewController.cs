@@ -17,6 +17,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     void Start()
     {
         SessionState.stepStream.Subscribe(_ => LoadVisualState());
+        ProcedureLoader.procedureStream.Subscribe(_ => LoadVisualState());
 
         SessionState.liquidRemovedStream.Subscribe(well =>
         {
