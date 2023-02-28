@@ -16,8 +16,9 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(name);
         SessionState.stepStream.Subscribe(_ => LoadVisualState());
-        ProcedureLoader.procedureStream.Subscribe(_ => LoadVisualState());
+        ProcedureLoader.procedureStream.Subscribe(_ => UpdateVisualState());
 
         SessionState.liquidRemovedStream.Subscribe(well =>
         {
@@ -27,6 +28,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
         });
     }
+
 
     // Pointer events
     public void OnPointerEnter(PointerEventData eventData)

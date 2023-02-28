@@ -345,6 +345,7 @@ public class SessionState : MonoBehaviour
                         GroupId++; 
                     }
                 }
+                Debug.Log("liquid: " + ActiveLiquid.name + " + at " + wellName);
                 return true;
             }
             else
@@ -369,6 +370,7 @@ public class SessionState : MonoBehaviour
                     GroupId++;
                 }
             }
+            Debug.Log("new liquid: " + ActiveLiquid.name + " + at " + wellName);
             return true;
         }
     }

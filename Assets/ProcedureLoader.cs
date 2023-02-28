@@ -22,12 +22,14 @@ public class ProcedureLoader : MonoBehaviour
 
         if(fileName != null)
         {
-            LoadProcedure(fileName);
+            StartCoroutine(LoadProcedure(fileName));
         }
     }
 
-    void LoadProcedure(string fileName)
+    IEnumerator LoadProcedure(string fileName)
     {
+        yield return new WaitForEndOfFrame();
+
         StreamReader sr = new StreamReader(fileName);
 
         string currentLine;
@@ -35,8 +37,6 @@ public class ProcedureLoader : MonoBehaviour
         string[] lineCells;
 
         bool firstStep = true;
-
-        int numWells = 0;
 
         //read the file until the end of file is reached
         while ((currentLine = sr.ReadLine()) != null)
@@ -90,17 +90,17 @@ public class ProcedureLoader : MonoBehaviour
                             if (activeWellId == wellGroup[0])
                             {
                                 SessionState.AddActiveLiquidToWell(activeWellId, true, true, false);
-                                numWells++;
+                                
                             }
                             else if(activeWellId == wellGroup[1])
                             {
                                 SessionState.AddActiveLiquidToWell(activeWellId, true, false, true);
-                                numWells++;
+                                
                             }
                             else
                             {
                                 SessionState.AddActiveLiquidToWell(activeWellId, true, false, false);
-                                numWells++;
+                                
                             }
                             numChannels--;
                             activeWellId = GetNextWellHorizontal(activeWellId);
@@ -114,17 +114,17 @@ public class ProcedureLoader : MonoBehaviour
                             if (activeWellId == wellGroup[0])
                             {
                                 SessionState.AddActiveLiquidToWell(activeWellId, true, true, false);
-                                numWells++;
+                                
                             }
                             else if (activeWellId == wellGroup[1])
                             {
                                 SessionState.AddActiveLiquidToWell(activeWellId, true, false, true);
-                                numWells++;
+                                
                             }
                             else
                             {
                                 SessionState.AddActiveLiquidToWell(activeWellId, true, false, false);
-                                numWells++;
+                                
                             }
                             numChannels--;
                             activeWellId = GetNextWellVertical(activeWellId);
@@ -135,14 +135,11 @@ public class ProcedureLoader : MonoBehaviour
                 else
                 {
                     SessionState.AddActiveLiquidToWell(wellId, false, false, false);
-                    numWells++;
                 }
             }
         }
-        Debug.Log(numWells);
         SessionState.SetStep(0);
-        SessionState.SetStep(1);
-        SessionState.SetStep(0);
+        procedureStream.OnNext(true);
     }
 
     int GetNumberChannels(string[] wellGroup, bool isHorizontal)
