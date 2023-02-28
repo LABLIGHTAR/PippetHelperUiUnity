@@ -11,6 +11,7 @@ public class ProcedureGenerator : MonoBehaviour
 
     private string filePath;
     private string delimiter = ",";
+
     // Start is called before the first frame update
     void Start()
     {

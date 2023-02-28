@@ -25,7 +25,14 @@ public class SettingsPanelViewController : MonoBehaviour
 
     public void Fullscreen(bool isFullscreen)
     {
-        Screen.fullScreen = isFullscreen;
+        if(isFullscreen)
+        {
+            Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+        }
+        else
+        {
+            Screen.fullScreenMode = FullScreenMode.Windowed;
+        }
     }
 
     public void QuitApp()
