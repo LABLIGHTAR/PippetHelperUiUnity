@@ -8,18 +8,18 @@ using UniRx;
 public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
 {
     public string name;
-    public List<SpriteRenderer> liquidIndicators;
+    public List<SpriteRenderer> SampleIndicators;
     public WellViewController NextInRow;
     public WellViewController NextInCol;
 
-    private int liquidCount;
+    private int SampleCount;
     // Start is called before the first frame update
     void Start()
     {
         SessionState.stepStream.Subscribe(_ => LoadVisualState());
         ProcedureLoader.procedureStream.Subscribe(_ => UpdateVisualState());
 
-        SessionState.liquidRemovedStream.Subscribe(well =>
+        SessionState.SampleRemovedStream.Subscribe(well =>
         {
             if (well == name)
             {
@@ -41,6 +41,10 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             else if (SessionState.ActiveTool.name == "multichannel")
             {
                 ActivateHighlight(SessionState.ActiveTool.numChannels);
+            }
+            if (SessionState.Steps[SessionState.Step].wells.ContainsKey(name))
+            {
+                SessionState.SetFocusedWell(name);
             }
         }
     }
@@ -66,27 +70,31 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             if (eventData.button == PointerEventData.InputButton.Left)
             {
-                if (!SessionState.FormActive && SessionState.ActiveLiquid != null)
+                if (!SessionState.FormActive && SessionState.ActiveSample != null)
                 {
                     if (SessionState.ActiveTool.name == "micropipette")
                     {
-                        if (SessionState.AddActiveLiquidToWell(name, false, false, false))
+                        if (SessionState.AddActiveSampleToWell(name, false, false, false))
                         {
                             UpdateVisualState();
                         }
                     }
                     else
                     {
-                        AddLiquidMultichannel(SessionState.ActiveTool.numChannels);
+                        AddSampleMultichannel(SessionState.ActiveTool.numChannels);
                     }
                 }
             }
             else if (eventData.button == PointerEventData.InputButton.Right)
             {
-                if (!SessionState.FormActive & SessionState.RemoveActiveLiquidFromWell(name))
+                if (!SessionState.FormActive & SessionState.RemoveActiveSampleFromWell(name))
                 {
                     UpdateVisualState();
                 }
+            }
+            if (SessionState.Steps[SessionState.Step].wells.ContainsKey(name))
+            {
+                SessionState.SetFocusedWell(name);
             }
         }
     }
@@ -97,23 +105,23 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (SessionState.Steps != null & SessionState.Steps[SessionState.Step] != null)
         {
             var currentStep = SessionState.Steps[SessionState.Step];
-            //check if this well has liquids in it, if it does render them
+            //check if this well has Samples in it, if it does render them
             if (currentStep.wells.ContainsKey(name))
             {
-                if (currentStep.wells[name].liquids.Count != liquidCount)
+                if (currentStep.wells[name].Samples.Count != SampleCount)
                 {
-                    liquidCount = currentStep.wells[name].liquids.Count;
+                    SampleCount = currentStep.wells[name].Samples.Count;
 
                     for (int i = 0; i < 3; i++)
                     {
-                        if (i + 1 <= liquidCount)
+                        if (i + 1 <= SampleCount)
                         {
-                            liquidIndicators[i].gameObject.SetActive(true);
-                            liquidIndicators[i].color = currentStep.wells[name].liquids[i].color;
+                            SampleIndicators[i].gameObject.SetActive(true);
+                            SampleIndicators[i].color = currentStep.wells[name].Samples[i].color;
                         }
                         else
                         {
-                            liquidIndicators[i].gameObject.SetActive(false);
+                            SampleIndicators[i].gameObject.SetActive(false);
                         }
                     }
                 }
@@ -126,21 +134,21 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (SessionState.Steps != null & SessionState.Steps[SessionState.Step] != null)
         {
-            liquidCount = 0;
+            SampleCount = 0;
             var currentStep = SessionState.Steps[SessionState.Step];
-            //check if this well has liquids in it, if it does render them
+            //check if this well has Samples in it, if it does render them
             if (currentStep.wells.ContainsKey(name))
             {
-                liquidCount = currentStep.wells[name].liquids.Count;
-                for (int i = 0; i < liquidCount; i++)
+                SampleCount = currentStep.wells[name].Samples.Count;
+                for (int i = 0; i < SampleCount; i++)
                 {
-                    liquidIndicators[i].gameObject.SetActive(true);
-                    liquidIndicators[i].color = currentStep.wells[name].liquids[i].color;
+                    SampleIndicators[i].gameObject.SetActive(true);
+                    SampleIndicators[i].color = currentStep.wells[name].Samples[i].color;
                 }
             }
             else
             {
-                foreach (SpriteRenderer sr in liquidIndicators)
+                foreach (SpriteRenderer sr in SampleIndicators)
                 {
                     sr.gameObject.SetActive(false);
                 }
@@ -149,11 +157,11 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
 
     /// <summary>
-    /// Recursivly adds liquid to all wells in multichannel if possible
+    /// Recursivly adds Sample to all wells in multichannel if possible
     /// Only ever called on multichannel clicks
     /// </summary>
     /// <param name="numChannels"></param>
-    void AddLiquidMultichannel(int numChannels)
+    void AddSampleMultichannel(int numChannels)
     {
         //if number of channels is greater than the number of wells in the given orientation return
         if (SessionState.ActiveTool.orientation == "Row")
@@ -175,8 +183,8 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         bool isStart = (numChannels == SessionState.ActiveTool.numChannels);
         bool isEnd = (numChannels == 1);
 
-        //add liquid to clicked well
-        if (SessionState.AddActiveLiquidToWell(name, true, isStart, isEnd));
+        //add Sample to clicked well
+        if (SessionState.AddActiveSampleToWell(name, true, isStart, isEnd));
         {
             UpdateVisualState();
         }
@@ -186,11 +194,11 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         //if there are more channels to add call this method on the next well in the orientation
         if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null)
         {
-            NextInRow.AddLiquidMultichannel(numChannels);
+            NextInRow.AddSampleMultichannel(numChannels);
         }
         else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null)
         {
-            NextInCol.AddLiquidMultichannel(numChannels);
+            NextInCol.AddSampleMultichannel(numChannels);
         }
     }
 
@@ -239,17 +247,17 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
         }
 
-        if (this.liquidCount < 3 && SessionState.ActiveLiquid != null)
+        if (this.SampleCount < 3 && SessionState.ActiveSample != null)
         {
             //if this well already contains the active deactivate all highlights
-            if (SessionState.Steps[SessionState.Step].wells.ContainsKey(name) && SessionState.Steps[SessionState.Step].wells[name].liquids.Contains(SessionState.ActiveLiquid))
+            if (SessionState.Steps[SessionState.Step].wells.ContainsKey(name) && SessionState.Steps[SessionState.Step].wells[name].Samples.Contains(SessionState.ActiveSample))
             {
                 DeactivateHighlight(SessionState.ActiveTool.numChannels);
                 return false;
             }
             //if we make it through all the above checks activate this wells highlight
-            this.liquidIndicators[liquidCount].gameObject.SetActive(true);
-            this.liquidIndicators[liquidCount].color = SessionState.ActiveLiquid.color;
+            this.SampleIndicators[SampleCount].gameObject.SetActive(true);
+            this.SampleIndicators[SampleCount].color = SessionState.ActiveSample.color;
             return true;
         }
         //if this well is full or we have no active well deactivate all highlights
@@ -260,9 +268,9 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     void DeactivateHighlight(int numChannels)
     {
-        if (this.liquidCount < 3 && SessionState.ActiveLiquid != null)
+        if (this.SampleCount < 3 && SessionState.ActiveSample != null)
         {
-            this.liquidIndicators[liquidCount].gameObject.SetActive(false);
+            this.SampleIndicators[SampleCount].gameObject.SetActive(false);
         }
 
         numChannels++;

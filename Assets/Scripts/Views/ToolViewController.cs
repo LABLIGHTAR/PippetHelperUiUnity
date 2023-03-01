@@ -32,7 +32,7 @@ public class ToolViewController : MonoBehaviour
             }
         });
 
-        SessionState.activeLiquidStream.Subscribe(_ => UpdateVisualState());
+        SessionState.activeSampleStream.Subscribe(_ => UpdateVisualState());
 
         //set micropipette as default tool
         SelectMicropipette();
@@ -44,11 +44,11 @@ public class ToolViewController : MonoBehaviour
         {
             if (SessionState.ActiveTool.name == "micropipette")
             {
-                pipetteIndicator.color = SessionState.ActiveLiquid.color;
+                pipetteIndicator.color = SessionState.ActiveSample.color;
             }
             else if (SessionState.ActiveTool.name == "multichannel")
             {
-                multichannelIndicator.color = SessionState.ActiveLiquid.color;
+                multichannelIndicator.color = SessionState.ActiveSample.color;
             }
         }
     }
@@ -56,9 +56,9 @@ public class ToolViewController : MonoBehaviour
     public void SelectMicropipette()
     {
         multichannelIndicator.color = Color.white;
-        if(SessionState.ActiveLiquid != null)
+        if(SessionState.ActiveSample != null)
         {
-            pipetteIndicator.color = SessionState.ActiveLiquid.color;
+            pipetteIndicator.color = SessionState.ActiveSample.color;
         }
         else
         {
@@ -71,9 +71,9 @@ public class ToolViewController : MonoBehaviour
     public void SelectMultichannel()
     {
         pipetteIndicator.color = Color.white;
-        if (SessionState.ActiveLiquid != null)
+        if (SessionState.ActiveSample != null)
         {
-            multichannelIndicator.color = SessionState.ActiveLiquid.color;
+            multichannelIndicator.color = SessionState.ActiveSample.color;
         }
         else
         {

@@ -58,19 +58,19 @@ public class ProcedureLoader : MonoBehaviour
                 lineCells = currentLine.Split(',');
                 
                 //cell 0 will always be blank
-                //cell goes: "","wellID","#Hex","ColorName","LiquidName", "LiquidVolume"
+                //cell goes: "","wellID","#Hex","ColorName","SampleName", "SampleVolume"
                 string wellId = lineCells[1];
                 Color color;
                 ColorUtility.TryParseHtmlString(lineCells[2], out color);
                 string colorName = lineCells[3];
-                string liquidName = lineCells[4];
-                float liquidVolume = float.Parse(lineCells[5], CultureInfo.InvariantCulture.NumberFormat);
+                string SampleName = lineCells[4];
+                float SampleVolume = float.Parse(lineCells[5], CultureInfo.InvariantCulture.NumberFormat);
 
-                //add liquid to sessionState
-                SessionState.Liquid newLiquid = new SessionState.Liquid(liquidName, liquidName, colorName, color, liquidVolume);
-                SessionState.AddNewLiquid(newLiquid.name, newLiquid.abreviation, newLiquid.colorName, newLiquid.color, newLiquid.volume);
-                //set new liquid as active  
-;               SessionState.ActiveLiquid = newLiquid;
+                //add Sample to sessionState
+                SessionState.Sample newSample = new SessionState.Sample(SampleName, SampleName, colorName, color, SampleVolume);
+                SessionState.AddNewSample(newSample.name, newSample.abreviation, newSample.colorName, newSample.color, newSample.volume);
+                //set new Sample as active  
+;               SessionState.ActiveSample = newSample;
 
                 //if the well id has a colon this is a multichannel
                 if(wellId.Contains(':'))
@@ -91,17 +91,17 @@ public class ProcedureLoader : MonoBehaviour
                         {
                             if (activeWellId == wellGroup[0])
                             {
-                                SessionState.AddActiveLiquidToWell(activeWellId, true, true, false);
+                                SessionState.AddActiveSampleToWell(activeWellId, true, true, false);
                                 
                             }
                             else if(activeWellId == wellGroup[1])
                             {
-                                SessionState.AddActiveLiquidToWell(activeWellId, true, false, true);
+                                SessionState.AddActiveSampleToWell(activeWellId, true, false, true);
                                 
                             }
                             else
                             {
-                                SessionState.AddActiveLiquidToWell(activeWellId, true, false, false);
+                                SessionState.AddActiveSampleToWell(activeWellId, true, false, false);
                                 
                             }
                             numChannels--;
@@ -115,17 +115,17 @@ public class ProcedureLoader : MonoBehaviour
                         {
                             if (activeWellId == wellGroup[0])
                             {
-                                SessionState.AddActiveLiquidToWell(activeWellId, true, true, false);
+                                SessionState.AddActiveSampleToWell(activeWellId, true, true, false);
                                 
                             }
                             else if (activeWellId == wellGroup[1])
                             {
-                                SessionState.AddActiveLiquidToWell(activeWellId, true, false, true);
+                                SessionState.AddActiveSampleToWell(activeWellId, true, false, true);
                                 
                             }
                             else
                             {
-                                SessionState.AddActiveLiquidToWell(activeWellId, true, false, false);
+                                SessionState.AddActiveSampleToWell(activeWellId, true, false, false);
                                 
                             }
                             numChannels--;
@@ -136,7 +136,7 @@ public class ProcedureLoader : MonoBehaviour
                 //else its a single well
                 else
                 {
-                    SessionState.AddActiveLiquidToWell(wellId, false, false, false);
+                    SessionState.AddActiveSampleToWell(wellId, false, false, false);
                 }
             }
         }
@@ -148,8 +148,7 @@ public class ProcedureLoader : MonoBehaviour
     {
         int startWellNumber;
         int endWellNumber;
-        int numChannels;
-
+        
         if (isHorizontal)
         {
             if (wellGroup[0].Length == 2)

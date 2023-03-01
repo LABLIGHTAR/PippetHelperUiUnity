@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class NewLiquidFormController : MonoBehaviour
+public class NewSampleFormController : MonoBehaviour
 {
     public Transform nameError;
     public Transform abreviationError;
@@ -23,6 +23,8 @@ public class NewLiquidFormController : MonoBehaviour
     public TextMeshProUGUI colorText;
     public TextMeshProUGUI volumeText;
     public TextMeshProUGUI volumeErrorText;
+    public TextMeshProUGUI volumeLabel;
+    public TextMeshProUGUI volumePlaceholder;
 
     private Color newColor;
 
@@ -54,7 +56,7 @@ public class NewLiquidFormController : MonoBehaviour
         dropdown.AddOptions(dropdownOptions);
 
         //Add button events
-        submitButton.onClick.AddListener(AddNewLiquid);
+        submitButton.onClick.AddListener(AddNewSample);
 
         closeButton.onClick.AddListener(delegate
         {
@@ -63,16 +65,16 @@ public class NewLiquidFormController : MonoBehaviour
         });
     }
 
-    void AddNewLiquid()
+    void AddNewSample()
     {
         //check input
-        if(SessionState.AvailableLiquids.Exists(x => x.name == nameText.text))
+        if (SessionState.AvailableSamples.Exists(x => x.name == nameText.text))
         {
             nameError.gameObject.SetActive(true);
-            nameErrorText.text = "Liquid with this name already exists*";
+            nameErrorText.text = "Sample with this name already exists*";
             return;
         }
-        if(!(nameText.text.Length > 1))
+        if (!(nameText.text.Length > 1))
         {
             nameError.gameObject.SetActive(true);
             nameErrorText.text = "Name cannot be empty*";
@@ -82,23 +84,29 @@ public class NewLiquidFormController : MonoBehaviour
         {
             nameError.gameObject.SetActive(false);
         }
-        if(SessionState.AvailableLiquids.Exists(x => x.abreviation == abreviationText.text))
+        if (SessionState.AvailableSamples.Exists(x => x.abreviation == abreviationText.text))
         {
             abreviationError.gameObject.SetActive(true);
-            abreviationErrorText.text = "Liquid with this abreviation already exists*";
+            abreviationErrorText.text = "Sample with this abreviation already exists*";
             return;
         }
-        if(!(abreviationText.text.Length > 1))
+        if (!(abreviationText.text.Length > 1))
         {
             abreviationError.gameObject.SetActive(true);
             abreviationErrorText.text = "Abreviation cannot be empty*";
+            return;
+        }
+        if (abreviationText.text.Length > 5)
+        {
+            abreviationError.gameObject.SetActive(true);
+            abreviationErrorText.text = "Abreviation cannot be more than 4 characters*";
             return;
         }
         else
         {
             abreviationError.gameObject.SetActive(false);
         }
-        if(!(volumeText.text.Length > 1))
+        if (!(volumeText.text.Length > 1))
         {
             volumeError.gameObject.SetActive(true);
             volumeErrorText.text = "Volume cannot be empty*";
@@ -111,9 +119,9 @@ public class NewLiquidFormController : MonoBehaviour
 
         var color = SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true));
         var volume = float.Parse(volumeText.text.Substring(0, volumeText.text.Length - 1), CultureInfo.InvariantCulture.NumberFormat);
-        //add new liquid to session state
-        SessionState.AddNewLiquid(nameText.text, abreviationText.text, colorText.text, color , volume);
-        
+        //add new Sample to session state
+        SessionState.AddNewSample(nameText.text, abreviationText.text, colorText.text, color, volume);
+
         //log the used color in the session state
         SessionState.UsedColors.Add(colorText.text);
 
@@ -125,5 +133,19 @@ public class NewLiquidFormController : MonoBehaviour
         //disable form
         this.gameObject.SetActive(false);
         SessionState.FormActive = false;
+    }
+
+    public void BoxChecked(bool isSolid)
+    {
+        if(isSolid)
+        {
+            volumeLabel.text = "Solid Weight (μg)";
+            volumePlaceholder.text = "Enter Weight (μg)";
+        }
+        else
+        {
+            volumeLabel.text = "Sample Volume (μL)";
+            volumePlaceholder.text = "Enter Volume (μL)";
+        }
     }
 }

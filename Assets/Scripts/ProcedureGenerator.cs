@@ -37,19 +37,19 @@ public class ProcedureGenerator : MonoBehaviour
             //iterate through each well
             foreach (var well in step.wells)
             {
-                //iterate through each liquid in the well
-                foreach (var liquid in well.Value.liquids)
+                //iterate through each Sample in the well
+                foreach (var Sample in well.Value.Samples)
                 {
                     string groupStart = null;
                     string groupEnd = null;
                     bool isGrouped = false;
                     int groupId = -1;
 
-                    //check if this liquid is a part of a group
+                    //check if this Sample is a part of a group
                     foreach (var group in well.Value.groups)
                     {
                         Debug.Log(group.groupId);
-                        if(group.liquid == liquid)
+                        if(group.Sample == Sample)
                         {
                             isGrouped = true;
                             groupId = group.groupId;
@@ -65,14 +65,14 @@ public class ProcedureGenerator : MonoBehaviour
                         {
                             groupEnd = FindGroupEnd(groupId);
 
-                            //Debug.Log(groupStart + ":" + groupEnd + " " + liquid.color + " " + liquid.colorName + liquid.name);
-                            sw.WriteLine(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(liquid.color).ToString() + delimiter + liquid.colorName + delimiter + liquid.name.Remove(liquid.name.Length - 1, 1) + delimiter + liquid.volume + delimiter + "μL");
+                            //Debug.Log(groupStart + ":" + groupEnd + " " + Sample.color + " " + Sample.colorName + Sample.name);
+                            sw.WriteLine(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(Sample.color).ToString() + delimiter + Sample.colorName + delimiter + Sample.name.Remove(Sample.name.Length - 1, 1) + delimiter + Sample.volume + delimiter + "μL");
                         }
                     }
                     else
                     {
-                        //Debug.Log(well.Key + " " + liquid.color + " " + liquid.colorName + liquid.name);
-                        sw.WriteLine(delimiter + well.Key + delimiter + Color32ToHex(liquid.color).ToString() + delimiter + liquid.colorName + delimiter + liquid.name.Remove(liquid.name.Length - 1, 1) + delimiter + liquid.volume + delimiter + "μL");
+                        //Debug.Log(well.Key + " " + Sample.color + " " + Sample.colorName + Sample.name);
+                        sw.WriteLine(delimiter + well.Key + delimiter + Color32ToHex(Sample.color).ToString() + delimiter + Sample.colorName + delimiter + Sample.name.Remove(Sample.name.Length - 1, 1) + delimiter + Sample.volume + delimiter + "μL");
                     }
                 }
             }

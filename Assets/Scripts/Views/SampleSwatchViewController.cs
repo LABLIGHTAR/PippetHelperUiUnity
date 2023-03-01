@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 using UniRx;
 
-public class LiquidSwatchViewController : MonoBehaviour, IPointerDownHandler
+public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
 {
     public TextMeshProUGUI name;
     public TextMeshProUGUI abreviation;
@@ -18,16 +18,16 @@ public class LiquidSwatchViewController : MonoBehaviour, IPointerDownHandler
     {
         if(eventData.button == PointerEventData.InputButton.Left & !SessionState.FormActive)
         {
-            SessionState.SetActiveLiquid(SessionState.AvailableLiquids.Where(x => x.abreviation.Equals(abreviation.GetComponent<TMP_Text>().text)).FirstOrDefault());
+            SessionState.SetActiveSample(SessionState.AvailableSamples.Where(x => x.abreviation.Equals(abreviation.GetComponent<TMP_Text>().text)).FirstOrDefault());
         }
     }
 
-    public bool InitLiquidItem(string liquidName, string liquidAbrev, string liquidVolume, Color displayColor)
+    public bool InitSampleItem(string SampleName, string SampleAbrev, string SampleVolume, Color displayColor)
     {
         swatch.color = displayColor;
-        name.GetComponent<TMP_Text>().text = liquidName;
-        abreviation.GetComponent<TMP_Text>().text = liquidAbrev;
-        volume.GetComponent<TMP_Text>().text = liquidVolume + "μL";
+        name.GetComponent<TMP_Text>().text = SampleName;
+        abreviation.GetComponent<TMP_Text>().text = SampleAbrev;
+        volume.GetComponent<TMP_Text>().text = SampleVolume + "μL";
 
         return true;
     }

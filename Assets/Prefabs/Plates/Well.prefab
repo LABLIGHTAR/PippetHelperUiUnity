@@ -149,10 +149,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: 
-  liquidIndicators:
+  SampleIndicators:
   - {fileID: 4802207598351840346}
   - {fileID: 6435039009990418017}
   - {fileID: 8118296721206856533}
+  NextInRow: {fileID: 0}
+  NextInCol: {fileID: 0}
 --- !u!1 &5231572897205956832
 GameObject:
   m_ObjectHideFlags: 0

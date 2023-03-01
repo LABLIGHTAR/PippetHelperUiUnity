@@ -10,6 +10,7 @@ public class StepViewController : MonoBehaviour
     public Button previousButton;
     public Button nextButton;
     public Button newStepButton;
+    public Button removeStepButton;
     public Transform stepDisplay;
 
     private TextMeshProUGUI stepDisplayText;
@@ -36,6 +37,20 @@ public class StepViewController : MonoBehaviour
         {
             SessionState.AddNewStep();
             SessionState.SetStep(SessionState.Step + 1);
+        });
+
+        removeStepButton.onClick.AddListener(delegate { 
+            if(SessionState.Steps.Count > 1) {
+                SessionState.RemoveCurrentStep();
+                if(SessionState.Step > 0)
+                {
+                    SessionState.SetStep(SessionState.Step - 1);
+                }
+                else
+                {
+                    SessionState.SetStep(0);
+                }
+            }
         });
 
         //subscribe to datastream

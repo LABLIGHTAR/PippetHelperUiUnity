@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
-public class ActiveLiquidIndicator : MonoBehaviour
+public class ActiveSampleIndicator : MonoBehaviour
 {
     public SpriteRenderer indicator;
     // Start is called before the first frame update
@@ -11,13 +11,13 @@ public class ActiveLiquidIndicator : MonoBehaviour
     {
         indicator.enabled = false;
 
-        SessionState.activeLiquidStream.Subscribe(liquid => UpdateIndicatorColor(liquid.color));
+        SessionState.activeSampleStream.Subscribe(Sample => UpdateIndicatorColor(Sample.color));
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(SessionState.ActiveLiquid != null)
+        if(SessionState.ActiveSample != null)
         {
             indicator.enabled = true;
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);

@@ -18,12 +18,12 @@ public class SessionState : MonoBehaviour
         steps = new List<WellPlate>();
         SetStep(0);
         steps.Add(new WellPlate());
-        availableLiquids = new List<Liquid>();
+        availableSamples = new List<Sample>();
         usedColors = new List<string>();
     }
 
     //class definitions
-    public class Liquid
+    public class Sample
     {
         public string name;
         public string abreviation;
@@ -31,7 +31,7 @@ public class SessionState : MonoBehaviour
         public Color color;
         public float volume;
 
-        public Liquid(string name, string abreviation, string colorName, Color color, float volume)
+        public Sample(string name, string abreviation, string colorName, Color color, float volume)
         {
             this.name = name;
             this.abreviation = abreviation;
@@ -43,29 +43,29 @@ public class SessionState : MonoBehaviour
 
     public class Well
     {
-        public struct LiquidGroup
+        public struct SampleGroup
         {
             public int groupId;
             public bool isStart;
             public bool isEnd;
-            public Liquid liquid;
+            public Sample Sample;
 
-            public LiquidGroup(int groupId, bool isStart, bool isEnd, Liquid liquid)
+            public SampleGroup(int groupId, bool isStart, bool isEnd, Sample Sample)
             {
                 this.groupId = groupId;
                 this.isStart = isStart;
                 this.isEnd = isEnd;
-                this.liquid = liquid;
+                this.Sample = Sample;
             }
         }
 
-        public List<Liquid> liquids;
-        public List<LiquidGroup> groups;
+        public List<Sample> Samples;
+        public List<SampleGroup> groups;
 
         public Well()
         {
-            liquids = new List<Liquid>();
-            groups = new List<LiquidGroup>();
+            Samples = new List<Sample>();
+            groups = new List<SampleGroup>();
         }
     }
 
@@ -143,18 +143,26 @@ public class SessionState : MonoBehaviour
     //state variables
     private static List<WellPlate> steps;
     private static int step;
-    private static List<Liquid> availableLiquids;
-    private static Liquid activeLiquid;
+
+    private static List<Sample> availableSamples;
+    private static Sample activeSample;
+
     private static bool formActive;
+
     private static List<string> usedColors;
+
     private static Tool activeTool;
+
+    private static Well focusedWell;
+
     private static int groupId;
 
     //data streams
     public static Subject<int> stepStream = new Subject<int>();
-    public static Subject<Liquid> activeLiquidStream = new Subject<Liquid>();
-    public static Subject<Liquid> newLiquidStream = new Subject<Liquid>();
-    public static Subject<string> liquidRemovedStream = new Subject<string>();
+    public static Subject<Sample> activeSampleStream = new Subject<Sample>();
+    public static Subject<Sample> newSampleStream = new Subject<Sample>();
+    public static Subject<string> SampleRemovedStream = new Subject<string>();
+    public static Subject<Well> focusedWellStream = new Subject<Well>();
 
     //setters
     public static List<WellPlate> Steps
@@ -188,34 +196,50 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    public static List<Liquid> AvailableLiquids
+    public static List<Sample> AvailableSamples
     {
         set
         {
-            if (availableLiquids != value)
+            if (availableSamples != value)
             {
-                availableLiquids = value;
+                availableSamples = value;
             }
         }
         get
         {
-            return availableLiquids;
+            return availableSamples;
         }
     }
 
-    public static Liquid ActiveLiquid
+    public static Sample ActiveSample
     {
         set
         {
-            if (activeLiquid != value)
+            if (activeSample != value)
             {
-                activeLiquid = value;
+                activeSample = value;
             }
-            activeLiquidStream.OnNext(activeLiquid);
+            activeSampleStream.OnNext(activeSample);
         }
         get
         {
-            return activeLiquid;
+            return activeSample;
+        }
+    }
+
+    public static Well FocusedWell
+    {
+        set
+        {
+            if (focusedWell != value)
+            {
+                focusedWell = value;
+            }
+            focusedWellStream.OnNext(focusedWell);
+        }
+        get
+        {
+            return focusedWell;
         }
     }
 
@@ -296,49 +320,67 @@ public class SessionState : MonoBehaviour
         Steps.Add(new WellPlate());
     }
 
-    //adds new liquid to the available liquids list
-    public static void AddNewLiquid(string name, string abreviation, string colorName, Color color, float volume)
+    public static void RemoveCurrentStep()
     {
-        Liquid newLiquid = new Liquid(name, abreviation, colorName, color, volume);
+        Steps.Remove(Steps[Step]);
+    }
+
+    //adds new Sample to the available Samples list
+    public static void AddNewSample(string name, string abreviation, string colorName, Color color, float volume)
+    {
+        Sample newSample = new Sample(name, abreviation, colorName, color, volume);
         
-        //return if the liquid already exists
-        if (AvailableLiquids.Exists(x => x.name == name || x.abreviation == abreviation || x.colorName == colorName || x.color == color))
+        //return if the Sample already exists
+        if (AvailableSamples.Exists(x => x.name == name || x.abreviation == abreviation || x.colorName == colorName || x.color == color))
         {
-            Debug.LogWarning("Liquid already exists");
+            Debug.LogWarning("Sample already exists");
             return;
         }
         else
         {
-            AvailableLiquids.Add(newLiquid);
-            newLiquidStream.OnNext(newLiquid);
+            AvailableSamples.Add(newSample);
+            newSampleStream.OnNext(newSample);
         }
     }
 
-    public static void SetActiveLiquid(Liquid selected)
+    public static void SetActiveSample(Sample selected)
     {
-        if (!AvailableLiquids.Contains(selected))
+        if (!AvailableSamples.Contains(selected))
         {
-            Debug.LogWarning("Selected liquid is not available");
+            Debug.LogWarning("Selected Sample is not available");
             return;
         }
         else
         {
-            ActiveLiquid = selected;
+            ActiveSample = selected;
         }
     }
 
-    public static bool AddActiveLiquidToWell(string wellName, bool inGroup, bool isStart, bool isEnd)
+    public static void SetFocusedWell(string wellId)
+    {
+        if (!Steps[Step].wells.ContainsKey(wellId))
+        {
+            Debug.LogWarning("Focused well is not available");
+            return;
+        }
+        else
+        {
+            FocusedWell = Steps[Step].wells[wellId];
+        }
+    }
+
+    public static bool AddActiveSampleToWell(string wellName, bool inGroup, bool isStart, bool isEnd)
     {
         if(Steps[Step].wells.ContainsKey(wellName))
         {
-            if(!Steps[Step].wells[wellName].liquids.Contains(ActiveLiquid))
+            if(!Steps[Step].wells[wellName].Samples.Contains(ActiveSample))
             {
-                //if the well exists and does not already have the active liquid add it
-                Steps[Step].wells[wellName].liquids.Add(ActiveLiquid);
-                //if this liquid is grouped add it to the group list
+                //if the well exists and does not already have the active Sample add it
+                Steps[Step].wells[wellName].Samples.Add(ActiveSample);
+                //if this Sample is grouped add it to the group list
                 if(inGroup)
                 {
-                    Steps[Step].wells[wellName].groups.Add(new LiquidGroup(GroupId, isStart, isEnd, ActiveLiquid));
+                    Steps[Step].wells[wellName].groups.Add(new SampleGroup(GroupId, isStart, isEnd, ActiveSample));
                     //if this is the last well in the group increment the group id for the next group
                     if(isEnd)
                     {
@@ -349,7 +391,7 @@ public class SessionState : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("Well already contains the active liquid");
+                Debug.LogWarning("Well already contains the active Sample");
                 return false;
             }
         }
@@ -357,12 +399,12 @@ public class SessionState : MonoBehaviour
         {
             //if the well does not exist create it
             Steps[Step].wells.Add(wellName, new Well());
-            //add the active liquid to the new well
-            Steps[Step].wells[wellName].liquids.Add(ActiveLiquid);
-            //if this liquid is grouped add it to the group list
+            //add the active Sample to the new well
+            Steps[Step].wells[wellName].Samples.Add(ActiveSample);
+            //if this Sample is grouped add it to the group list
             if (inGroup)
             {
-                Steps[Step].wells[wellName].groups.Add(new LiquidGroup(GroupId, isStart, isEnd, ActiveLiquid));
+                Steps[Step].wells[wellName].groups.Add(new SampleGroup(GroupId, isStart, isEnd, ActiveSample));
                 //if this is the last well in the group increment the group id for the next group
                 if (isEnd)
                 {
@@ -373,26 +415,26 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    public static bool RemoveActiveLiquidFromWell(string wellName)
+    public static bool RemoveActiveSampleFromWell(string wellName)
     {
         if (Steps[Step].wells.ContainsKey(wellName))
         {
-            if (Steps[Step].wells[wellName].liquids.Contains(ActiveLiquid))
+            if (Steps[Step].wells[wellName].Samples.Contains(ActiveSample))
             {
-                //if the well exists and already has the active liquid remove it
-                Steps[Step].wells[wellName].liquids.Remove(ActiveLiquid);
+                //if the well exists and already has the active Sample remove it
+                Steps[Step].wells[wellName].Samples.Remove(ActiveSample);
 
-                //if the liquid being removed is part of a group remove the group everywhere
+                //if the Sample being removed is part of a group remove the group everywhere
                 if(Steps[Step].wells[wellName].groups != null)
                 {
-                    foreach(LiquidGroup group in Steps[Step].wells[wellName].groups)
+                    foreach(SampleGroup group in Steps[Step].wells[wellName].groups)
                     {
-                        if(group.liquid == ActiveLiquid)
+                        if(group.Sample == ActiveSample)
                         {
                             int IdForRemoval = group.groupId;
-                            //go through each well and remove all liquids in this group
-                            RemoveAllLiquidsInGroup(IdForRemoval);
-                            //break since the active liquid cannot be in a well mroe than once
+                            //go through each well and remove all Samples in this group
+                            RemoveAllSamplesInGroup(IdForRemoval);
+                            //break since the active Sample cannot be in a well mroe than once
                             break;
                         }
                     }
@@ -401,7 +443,7 @@ public class SessionState : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("Well does not contain the active liquid");
+                Debug.LogWarning("Well does not contain the active Sample");
                 return false;
             }
         }
@@ -412,23 +454,23 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    static void RemoveAllLiquidsInGroup(int removalID)
+    static void RemoveAllSamplesInGroup(int removalID)
     {
-        List<LiquidGroup> groupsToRemove = new List<LiquidGroup>();
+        List<SampleGroup> groupsToRemove = new List<SampleGroup>();
         //iterate through all wells
         foreach (var well in Steps[Step].wells)
         {
             //iterate through each well group
-            foreach(LiquidGroup group in well.Value.groups)
+            foreach(SampleGroup group in well.Value.groups)
             {
                 if(group.groupId == removalID)
                 {
                     //add the group to a list for removal (cannot modify list in foreach loop)
                     groupsToRemove.Add(group);
-                    //remove the active liquid
-                    well.Value.liquids.Remove(ActiveLiquid);
+                    //remove the active Sample
+                    well.Value.Samples.Remove(ActiveSample);
                     //notify well
-                    liquidRemovedStream.OnNext(well.Key);
+                    SampleRemovedStream.OnNext(well.Key);
                 }
             }
             //remove groups
