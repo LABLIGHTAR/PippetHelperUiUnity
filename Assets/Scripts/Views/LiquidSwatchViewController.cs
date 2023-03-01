@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +9,9 @@ using UniRx;
 
 public class LiquidSwatchViewController : MonoBehaviour, IPointerDownHandler
 {
+    public TextMeshProUGUI name;
     public TextMeshProUGUI abreviation;
+    public TextMeshProUGUI volume;
     public Image swatch;
 
     public void OnPointerDown(PointerEventData eventData)
@@ -20,18 +22,13 @@ public class LiquidSwatchViewController : MonoBehaviour, IPointerDownHandler
         }
     }
 
-    public void SetColor(Color newColor)
+    public bool InitLiquidItem(string liquidName, string liquidAbrev, string liquidVolume, Color displayColor)
     {
-        swatch.color = newColor;
-    }
+        swatch.color = displayColor;
+        name.GetComponent<TMP_Text>().text = liquidName;
+        abreviation.GetComponent<TMP_Text>().text = liquidAbrev;
+        volume.GetComponent<TMP_Text>().text = liquidVolume + "μL";
 
-    public bool SetAbreviation(string textInput)
-    {
-        if(textInput != null & textInput.Length <= 4)
-        {
-            abreviation.GetComponent<TMP_Text>().text = textInput;
-            return true;
-        }
-        return false;
+        return true;
     }
 }

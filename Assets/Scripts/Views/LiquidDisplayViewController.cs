@@ -10,6 +10,8 @@ public class LiquidDisplayViewController : MonoBehaviour
     public GameObject newLiquidForm;
     public GameObject LiquidSwatchPrefab;
 
+    public Transform ContentParent;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,9 +32,8 @@ public class LiquidDisplayViewController : MonoBehaviour
         SessionState.newLiquidStream.Subscribe(newLiquid =>
         {
             GameObject newLiquidSwatch = Instantiate(LiquidSwatchPrefab) as GameObject;
-            newLiquidSwatch.transform.SetParent(this.transform, false);
-            newLiquidSwatch.GetComponent<LiquidSwatchViewController>().SetAbreviation(newLiquid.abreviation);
-            newLiquidSwatch.GetComponent<LiquidSwatchViewController>().SetColor(newLiquid.color);
+            newLiquidSwatch.transform.SetParent(ContentParent, false);
+            newLiquidSwatch.GetComponent<LiquidSwatchViewController>().InitLiquidItem(newLiquid.name, newLiquid.abreviation, newLiquid.volume.ToString(), newLiquid.color);
         });
     }
 }

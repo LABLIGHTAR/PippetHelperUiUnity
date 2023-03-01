@@ -16,7 +16,6 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(name);
         SessionState.stepStream.Subscribe(_ => LoadVisualState());
         ProcedureLoader.procedureStream.Subscribe(_ => UpdateVisualState());
 
@@ -157,14 +156,14 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     void AddLiquidMultichannel(int numChannels)
     {
         //if number of channels is greater than the number of wells in the given orientation return
-        if (SessionState.ActiveTool.orientation == "Horizontal")
+        if (SessionState.ActiveTool.orientation == "Row")
         {
             if ((Int32.Parse(name.Substring(1)) - 1) + numChannels > 12)
             {
                 return;
             }
         }
-        else if (SessionState.ActiveTool.orientation == "Vertical")
+        else if (SessionState.ActiveTool.orientation == "Column")
         {
             if (((int)name[0] % 32) - 1 + numChannels > 8)
             {
@@ -185,11 +184,11 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         numChannels--;
 
         //if there are more channels to add call this method on the next well in the orientation
-        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Horizontal" && NextInRow != null)
+        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null)
         {
             NextInRow.AddLiquidMultichannel(numChannels);
         }
-        else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Vertical" && NextInCol != null)
+        else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null)
         {
             NextInCol.AddLiquidMultichannel(numChannels);
         }
@@ -203,14 +202,14 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     bool ActivateHighlight(int numChannels)
     {
         //if number of channels is greater than the number of wells in the given orientation return
-        if (SessionState.ActiveTool.orientation == "Horizontal")
+        if (SessionState.ActiveTool.orientation == "Row")
         {
             if ((Int32.Parse(name.Substring(1)) - 1) + numChannels > 12)
             {
                 return false;
             }
         }
-        else if(SessionState.ActiveTool.orientation == "Vertical")
+        else if(SessionState.ActiveTool.orientation == "Column")
         {
             if (((int)name[0] % 32) - 1 + numChannels > 8)
             {
@@ -221,7 +220,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         numChannels--;
 
         //if there are more channels to add call this method on the next well in the orientation
-        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Horizontal" && NextInRow != null)
+        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null)
         {
             //if we cannot activate the highlight in the next well deactivate all highlights
             if (!NextInRow.ActivateHighlight(numChannels))
@@ -230,7 +229,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                 return false;
             }
         }
-        else if(numChannels > 0 && SessionState.ActiveTool.orientation == "Vertical" && NextInCol != null)
+        else if(numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null)
         {
             //if we cannot activate the highlight in the next well deactivate all highlights
             if (!NextInCol.ActivateHighlight(numChannels))
@@ -269,11 +268,11 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         numChannels++;
 
         //if we have more channels to deactivate make recursive calls
-        if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Horizontal" && NextInRow != null)
+        if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Row" && NextInRow != null)
         {
             NextInRow.DeactivateHighlight(numChannels);
         }
-        else if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Vertical" && NextInCol != null)
+        else if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Column" && NextInCol != null)
         {
             NextInCol.DeactivateHighlight(numChannels);
         }

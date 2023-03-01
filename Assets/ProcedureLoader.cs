@@ -77,6 +77,8 @@ public class ProcedureLoader : MonoBehaviour
                 {
                     int numChannels;
                     string activeWellId;
+                    
+                    //get the first and last well of the groups
                     string[] wellGroup = wellId.Split(':');
 
                     activeWellId = wellGroup[0];

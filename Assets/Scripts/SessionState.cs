@@ -345,7 +345,6 @@ public class SessionState : MonoBehaviour
                         GroupId++; 
                     }
                 }
-                Debug.Log("liquid: " + ActiveLiquid.name + " + at " + wellName);
                 return true;
             }
             else
@@ -370,7 +369,6 @@ public class SessionState : MonoBehaviour
                     GroupId++;
                 }
             }
-            Debug.Log("new liquid: " + ActiveLiquid.name + " + at " + wellName);
             return true;
         }
     }
@@ -379,7 +377,6 @@ public class SessionState : MonoBehaviour
     {
         if (Steps[Step].wells.ContainsKey(wellName))
         {
-            Debug.Log("active liquid: " + ActiveLiquid.name + " liquids in well: " + Steps[Step].wells[wellName].liquids[0].name);
             if (Steps[Step].wells[wellName].liquids.Contains(ActiveLiquid))
             {
                 //if the well exists and already has the active liquid remove it
