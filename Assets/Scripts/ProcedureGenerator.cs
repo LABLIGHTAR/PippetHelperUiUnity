@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
-using UniRx;
-using TMPro;
-using SFB;
+using SFB; //Copyright (c) 2017 Gökhan Gökçe Under MIT License
 
 public class ProcedureGenerator : MonoBehaviour
 {
     public Button generateProcedureButton;
-
-    public TextMeshProUGUI procedureName;
 
     private string filePath;
     private string delimiter = ",";
@@ -22,8 +18,6 @@ public class ProcedureGenerator : MonoBehaviour
         generateProcedureButton.onClick.AddListener(GenerateProcedure);
 
         filePath = Application.dataPath + "/example.csv";
-
-        SessionState.procedureNameStream.Subscribe(name => procedureName.text = name);
     }
     
     void GenerateProcedure()
@@ -34,12 +28,12 @@ public class ProcedureGenerator : MonoBehaviour
 
         if(SessionState.ProcedureName != null)
         {
-            filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", SessionState.ProcedureName, extensionList);
+            filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", SessionState.ProcedureName, extensionList); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
             Debug.Log(filePath);
         }
         else
         {
-            filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", extensionList);
+            filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", extensionList); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
             Debug.Log(filePath);
         }
 

@@ -36,7 +36,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             if (SessionState.ActiveTool.name == "micropipette")
             {
-                ActivateHighlight(1);
+                Debug.Log(ActivateHighlight(1));
             }
             else if (SessionState.ActiveTool.name == "multichannel")
             {

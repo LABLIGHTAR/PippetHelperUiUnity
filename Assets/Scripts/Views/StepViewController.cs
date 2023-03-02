@@ -12,6 +12,7 @@ public class StepViewController : MonoBehaviour
     public Button newStepButton;
     public Button removeStepButton;
     public Transform stepDisplay;
+    public TextMeshProUGUI procedureName;
 
     private TextMeshProUGUI stepDisplayText;
     // Start is called before the first frame update
@@ -55,6 +56,7 @@ public class StepViewController : MonoBehaviour
 
         //subscribe to datastream
         SessionState.stepStream.Subscribe(_ => UpdateVisualState());
+        SessionState.procedureNameStream.Subscribe(name => procedureName.text = name);
 
         UpdateVisualState();
     }

@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using UniRx;
-using static SessionState.Well;
 
 public class SessionState : MonoBehaviour
 {
@@ -399,7 +398,7 @@ public class SessionState : MonoBehaviour
                 //if this Sample is grouped add it to the group list
                 if(inGroup)
                 {
-                    Steps[Step].wells[wellName].groups.Add(new SampleGroup(GroupId, isStart, isEnd, ActiveSample));
+                    Steps[Step].wells[wellName].groups.Add(new Well.SampleGroup(GroupId, isStart, isEnd, ActiveSample));
                     //if this is the last well in the group increment the group id for the next group
                     if(isEnd)
                     {
@@ -423,7 +422,7 @@ public class SessionState : MonoBehaviour
             //if this Sample is grouped add it to the group list
             if (inGroup)
             {
-                Steps[Step].wells[wellName].groups.Add(new SampleGroup(GroupId, isStart, isEnd, ActiveSample));
+                Steps[Step].wells[wellName].groups.Add(new Well.SampleGroup(GroupId, isStart, isEnd, ActiveSample));
                 //if this is the last well in the group increment the group id for the next group
                 if (isEnd)
                 {
@@ -446,7 +445,7 @@ public class SessionState : MonoBehaviour
                 //if the Sample being removed is part of a group remove the group everywhere
                 if(Steps[Step].wells[wellName].groups != null)
                 {
-                    foreach(SampleGroup group in Steps[Step].wells[wellName].groups)
+                    foreach(Well.SampleGroup group in Steps[Step].wells[wellName].groups)
                     {
                         if(group.Sample == ActiveSample)
                         {
@@ -475,12 +474,12 @@ public class SessionState : MonoBehaviour
 
     static void RemoveAllSamplesInGroup(int removalID)
     {
-        List<SampleGroup> groupsToRemove = new List<SampleGroup>();
+        List<Well.SampleGroup> groupsToRemove = new List<Well.SampleGroup>();
         //iterate through all wells
         foreach (var well in Steps[Step].wells)
         {
             //iterate through each well group
-            foreach(SampleGroup group in well.Value.groups)
+            foreach(Well.SampleGroup group in well.Value.groups)
             {
                 if(group.groupId == removalID)
                 {

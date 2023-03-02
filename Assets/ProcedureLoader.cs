@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using UnityEngine;
 using UniRx;
-using SFB;
+using SFB;//Copyright (c) 2017 Gökhan Gökçe Under MIT License
 
 public class ProcedureLoader : MonoBehaviour
 {
@@ -18,9 +18,9 @@ public class ProcedureLoader : MonoBehaviour
                 new ExtensionFilter("Comma Seperated Variables", "csv"),
             };
 
-        var fileName = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, true)[0];
+        var fileName = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, true)[0]; //Copyright (c) 2017 Gökhan Gökçe Under MIT License
 
-        if(fileName != null)
+        if (fileName != null)
         {
             StartCoroutine(LoadProcedure(fileName));
         }
