@@ -10,6 +10,7 @@ public class ProcedureGenerator : MonoBehaviour
     public Button generateProcedureButton;
 
     private string filePath;
+
     private string delimiter = ",";
 
     // Start is called before the first frame update
