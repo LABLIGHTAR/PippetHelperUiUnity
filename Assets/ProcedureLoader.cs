@@ -142,6 +142,11 @@ public class ProcedureLoader : MonoBehaviour
         }
         SessionState.SetStep(0);
         procedureStream.OnNext(true);
+
+        if(fileName != null)
+        {
+            SessionState.ProcedureName = Path.GetFileNameWithoutExtension(fileName);
+        }
     }
 
     int GetNumberChannels(string[] wellGroup, bool isHorizontal)

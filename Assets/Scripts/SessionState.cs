@@ -141,6 +141,8 @@ public class SessionState : MonoBehaviour
     }
 
     //state variables
+    private static string procedureName;
+
     private static List<WellPlate> steps;
     private static int step;
 
@@ -163,8 +165,25 @@ public class SessionState : MonoBehaviour
     public static Subject<Sample> newSampleStream = new Subject<Sample>();
     public static Subject<string> SampleRemovedStream = new Subject<string>();
     public static Subject<Well> focusedWellStream = new Subject<Well>();
+    public static Subject<string> procedureNameStream = new Subject<string>();
 
     //setters
+    public static string ProcedureName
+    {
+        set
+        {
+            if(procedureName != value)
+            {
+                procedureName = value;
+                procedureNameStream.OnNext(value);
+            }
+        }
+        get
+        {
+            return procedureName;
+        }
+    }
+
     public static List<WellPlate> Steps
     {
         set

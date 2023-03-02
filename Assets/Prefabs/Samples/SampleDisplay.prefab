@@ -930,7 +930,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -654, y: 0}
+  m_AnchoredPosition: {x: -632, y: 8}
   m_SizeDelta: {x: 350, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8569809004093508262
@@ -945,7 +945,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 698300df293e68b4297fa7f954780a86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  addNewLiquidButton: {fileID: 0}
-  newLiquidForm: {fileID: 0}
-  LiquidSwatchPrefab: {fileID: 5708990616841685110, guid: 552c3cd06a740714dae61b829e79b7d6, type: 3}
+  addNewSampleButton: {fileID: 0}
+  newSampleForm: {fileID: 0}
+  SampleSwatchPrefab: {fileID: 0}
   ContentParent: {fileID: 106239830094725473}

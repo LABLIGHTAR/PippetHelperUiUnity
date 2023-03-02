@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using UniRx;
+using TMPro;
 using SFB;
 
 public class ProcedureGenerator : MonoBehaviour
 {
     public Button generateProcedureButton;
+
+    public TextMeshProUGUI procedureName;
 
     private string filePath;
     private string delimiter = ",";
@@ -18,6 +22,8 @@ public class ProcedureGenerator : MonoBehaviour
         generateProcedureButton.onClick.AddListener(GenerateProcedure);
 
         filePath = Application.dataPath + "/example.csv";
+
+        SessionState.procedureNameStream.Subscribe(name => procedureName.text = name);
     }
     
     void GenerateProcedure()
@@ -26,8 +32,16 @@ public class ProcedureGenerator : MonoBehaviour
                 new ExtensionFilter("Comma Seperated Variables", "csv"),
             };
 
-        filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", extensionList);
-        Debug.Log(filePath);
+        if(SessionState.ProcedureName != null)
+        {
+            filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", SessionState.ProcedureName, extensionList);
+            Debug.Log(filePath);
+        }
+        else
+        {
+            filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", extensionList);
+            Debug.Log(filePath);
+        }
 
         StreamWriter sw = new StreamWriter(filePath);
 
