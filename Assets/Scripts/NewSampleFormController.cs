@@ -65,6 +65,15 @@ public class NewSampleFormController : MonoBehaviour
         });
     }
 
+    void OnEnable()
+    {
+        Debug.Log("updating dropdown");
+        //update color dropdown options
+        dropdown.ClearOptions();
+        List<string> availableColors = dropdownOptions.Except(SessionState.UsedColors).ToList();
+        dropdown.AddOptions(availableColors);
+    }
+
     void AddNewSample()
     {
         //check input
@@ -121,9 +130,6 @@ public class NewSampleFormController : MonoBehaviour
         var volume = float.Parse(volumeText.text.Substring(0, volumeText.text.Length - 1), CultureInfo.InvariantCulture.NumberFormat);
         //add new Sample to session state
         SessionState.AddNewSample(nameText.text, abreviationText.text, colorText.text, color, volume);
-
-        //log the used color in the session state
-        SessionState.UsedColors.Add(colorText.text);
 
         //update color dropdown options
         dropdown.ClearOptions();

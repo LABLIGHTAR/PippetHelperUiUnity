@@ -356,6 +356,7 @@ public class SessionState : MonoBehaviour
         }
         else
         {
+            UsedColors.Add(colorName);
             AvailableSamples.Add(newSample);
             newSampleStream.OnNext(newSample);
         }
