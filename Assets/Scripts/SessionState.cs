@@ -463,6 +463,7 @@ public class SessionState : MonoBehaviour
             else
             {
                 Debug.LogWarning("Well does not contain the active Sample");
+                Debug.Log("Active Sample: " + ActiveSample.name + " Liquid in well " + Steps[Step].wells[wellName].Samples[0].name);
                 return false;
             }
         }

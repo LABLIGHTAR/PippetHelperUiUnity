@@ -64,7 +64,6 @@ public class NewSampleFormController : MonoBehaviour
 
     void OnEnable()
     {
-        Debug.Log("updating dropdown");
         //update color dropdown options
         dropdown.ClearOptions();
         List<string> availableColors = dropdownOptions.Except(SessionState.UsedColors).ToList();

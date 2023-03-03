@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UniRx;
 using SFB;//Copyright (c) 2017 Gökhan Gökçe Under MIT License
@@ -74,7 +75,7 @@ public class ProcedureLoader : MonoBehaviour
                 SessionState.Sample newSample = new SessionState.Sample(SampleName, SampleName, colorName, color, SampleVolume);
                 SessionState.AddNewSample(newSample.name, newSample.abreviation, newSample.colorName, newSample.color, newSample.volume);
                 //set new Sample as active  
-;               SessionState.ActiveSample = newSample;
+;               SessionState.ActiveSample = SessionState.AvailableSamples.Where(sample => sample.name == SampleName).FirstOrDefault();
 
                 //if the well id has a colon this is a multichannel
                 if(wellId.Contains(':'))

@@ -184,7 +184,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         bool isEnd = (numChannels == 1);
 
         //add Sample to clicked well
-        if (SessionState.AddActiveSampleToWell(name, true, isStart, isEnd));
+        if (SessionState.AddActiveSampleToWell(name, true, isStart, isEnd))
         {
             UpdateVisualState();
         }
