@@ -11,31 +11,34 @@ public class TutorialController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentPanel = 0;
-        panels[currentPanel].gameObject.SetActive(true);
-        SessionState.FormActive = true;
-
-        foreach(TutorialPanelController panel in panels)
+        if((PlayerPrefs.GetInt("Tutorial") != 0))
         {
-            panel.nextButton.onClick.AddListener(delegate
+            currentPanel = 0;
+            panels[currentPanel].gameObject.SetActive(true);
+            SessionState.FormActive = true;
+
+            foreach (TutorialPanelController panel in panels)
             {
-                if (currentPanel < panels.Count - 1)
+                panel.nextButton.onClick.AddListener(delegate
                 {
-                    panels[currentPanel].gameObject.SetActive(false);
-                    currentPanel++;
-                    panels[currentPanel].gameObject.SetActive(true);
-                }
-                else
-                {
+                    if (currentPanel < panels.Count - 1)
+                    {
+                        panels[currentPanel].gameObject.SetActive(false);
+                        currentPanel++;
+                        panels[currentPanel].gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        this.gameObject.SetActive(false);
+                        SessionState.FormActive = false;
+                    }
+                });
+
+                panel.skipButton.onClick.AddListener(delegate {
                     this.gameObject.SetActive(false);
                     SessionState.FormActive = false;
-                }
-            });
-
-            panel.skipButton.onClick.AddListener(delegate { 
-                this.gameObject.SetActive(false); 
-                SessionState.FormActive = false;
-            });
+                });
+            }
         }
     }
 }
