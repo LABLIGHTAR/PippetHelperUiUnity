@@ -52,9 +52,6 @@ public class NewSampleFormController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Set Dropdown Colors
-        dropdown.AddOptions(dropdownOptions);
-
         //Add button events
         submitButton.onClick.AddListener(AddNewSample);
 

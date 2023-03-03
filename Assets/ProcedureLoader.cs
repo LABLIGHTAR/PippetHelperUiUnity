@@ -24,6 +24,10 @@ public class ProcedureLoader : MonoBehaviour
         {
             StartCoroutine(LoadProcedure(fileName));
         }
+        else
+        {
+            Application.Quit();
+        }
     }
 
     IEnumerator LoadProcedure(string fileName)

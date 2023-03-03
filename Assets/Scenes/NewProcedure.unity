@@ -2679,6 +2679,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 48
       objectReference: {fileID: 0}
+    - target: {fileID: 1180346487805501489, guid: e8af992f1c1f37340ac0cef1a64ebb5c, type: 3}
+      propertyPath: m_text
+      value: Protocol Title
+      objectReference: {fileID: 0}
     - target: {fileID: 2103193708244110352, guid: e8af992f1c1f37340ac0cef1a64ebb5c, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2782,6 +2786,14 @@ PrefabInstance:
     - target: {fileID: 3176093609497659294, guid: e8af992f1c1f37340ac0cef1a64ebb5c, type: 3}
       propertyPath: m_Color.a
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3190033684870168063, guid: e8af992f1c1f37340ac0cef1a64ebb5c, type: 3}
+      propertyPath: m_text
+      value: Create Protocol
+      objectReference: {fileID: 0}
+    - target: {fileID: 8936201360732562095, guid: e8af992f1c1f37340ac0cef1a64ebb5c, type: 3}
+      propertyPath: m_text
+      value: Enter protocol title...
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e8af992f1c1f37340ac0cef1a64ebb5c, type: 3}

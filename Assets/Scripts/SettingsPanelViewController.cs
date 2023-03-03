@@ -6,9 +6,14 @@ using UnityEngine.UI;
 public class SettingsPanelViewController : MonoBehaviour
 {
     public GameObject settingsPanel;
+    public GameObject savePanel;
+    public Button yesButton;
+    public Button noButton;
     public Button closeButton;
     public Toggle fullscreenToggle;
     public Toggle tutorialToggle;
+
+    public ProcedureGenerator generator;
 
     void Start()
     {
@@ -17,6 +22,13 @@ public class SettingsPanelViewController : MonoBehaviour
             settingsPanel.SetActive(false);
             SessionState.FormActive = false;
         });
+
+        yesButton.onClick.AddListener(delegate
+        {
+            generator.GenerateProcedure();
+        });
+
+        noButton.onClick.AddListener(delegate { Application.Quit(); });
 
         //init player prefs
         if (!PlayerPrefs.HasKey("Fullscreen")) PlayerPrefs.SetInt("FullScreen", 1);
@@ -58,8 +70,8 @@ public class SettingsPanelViewController : MonoBehaviour
         }
     }
 
-    public void QuitApp()
+    public void ActivateSavePanel()
     {
-        Application.Quit();
+        savePanel.SetActive(true);
     }
 }

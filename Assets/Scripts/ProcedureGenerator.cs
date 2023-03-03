@@ -21,7 +21,7 @@ public class ProcedureGenerator : MonoBehaviour
         filePath = Application.dataPath + "/example.csv";
     }
     
-    void GenerateProcedure()
+    public void GenerateProcedure()
     {
         var extensionList = new[] {
                 new ExtensionFilter("Comma Seperated Variables", "csv"),
