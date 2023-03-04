@@ -26,9 +26,15 @@ public class SettingsPanelViewController : MonoBehaviour
         yesButton.onClick.AddListener(delegate
         {
             generator.GenerateProcedure();
+            savePanel.SetActive(false);
+            Application.Quit();
         });
 
-        noButton.onClick.AddListener(delegate { Application.Quit(); });
+        noButton.onClick.AddListener(delegate 
+        {
+            savePanel.SetActive(false);
+            Application.Quit(); 
+        });
 
         //init player prefs
         if (!PlayerPrefs.HasKey("Fullscreen")) PlayerPrefs.SetInt("FullScreen", 1);
