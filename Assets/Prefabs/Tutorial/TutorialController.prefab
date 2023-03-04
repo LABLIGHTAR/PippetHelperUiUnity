@@ -181,10 +181,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: If a well is not empty it can be focused by hovering the cursor over
-        the well. A focused well will have its information listed below in the bottom
-        right corner. This will list information about all of the substances inside
-        the focused well.
+      value: 'Wells that are not empty can be "focused" by hovering the cursor over
+        them. Information about substances inside the focused well appears at the
+        bottom right of the screen.
+
+'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -317,10 +318,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Above is the step display, this display indicated the current step as
-        well as the total number of steps. To add a new step press the button labeled
-        "+ New Step". To delete the current step press the button labeled "Delete
-        Step".
+      value: 'At the top of the screen, a display indicates the current step as well
+        as the total number of steps in the protocol. To add a new step press the
+        button "+ New Step". To delete the current step press the button labeled
+        "Delete Step".
+
+'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -581,9 +584,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Substances in PipLight are representative of both liquids and solids
-        to be loaded into a 96-well plate. To create a new substance press the button
-        labeled "+ New Substance".
+      value: 'Piplight calls the different things (reagents, buffers, samples, cell
+        suspensions, bacterial colonies to be loaded into wells) "substances". To
+        define particular substance, press the button labeled "+ New Substance".
+
+'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -620,7 +625,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1140517474554353102, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -4.531
+      value: 0.000005722
       objectReference: {fileID: 0}
     - target: {fileID: 3735882242034018338, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_Pivot.x
@@ -716,10 +721,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Once a substance is added it will appear in the "Substance List". To
-        use a substance in this list simply click on its entry to set it as the active
-        substance. Then click on the well that you would like to load the substance
-        into.
+      value: 'Once a substance is added, it will appear as an entry in the "Substance
+        List". Click on the entry to set it as the active substance. You will then
+        specify a tool and use that to click on each well you would like to add the
+        substance to. '
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -852,9 +857,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: 'When using a Tool its icon will be the same color as the selected substance.
-        There are two actions that can be completed with a tool: to add the selected
-        substance to the well plate left-click, to remove the active substance right-click.'
+      value: 'When using a tool, its icon will be the same color as the selected
+        substance. When generating a protocol, the tool can have two actions. To
+        add the selected substance to a plate well, left-click, to correct a mistake
+        or to remove a substance, right-click.
+
+'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -987,10 +995,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Below there are two tools, a micropipette and a multichannel pipette.
-        To select a tool press on its icon. To the right of the multichannel pipette
-        there are options to change the number of channels as well as the orientaiton
-        of the tool.
+      value: 'This Alpha version recognizes two tools, a single channel micropipet
+        and a multichannel pipet. To select a tool, click on its icon. For the multichannel
+        pipet, specify the number of channels and how you will orient the tool. '
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -1023,7 +1030,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 783509033112317129, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Settings
+      value: Settings and Saving
       objectReference: {fileID: 0}
     - target: {fileID: 1140517474554353102, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_SizeDelta.y
@@ -1127,10 +1134,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: The cog icon in the top left corner will open the settings menu. In
-        this menu there is a box to toggle fullscreen mode on/off, a button to generate
-        the protocol when you are finished editing a button to disable this tutorial
-        and a button to quit this application.
+      value: The gear icon at the top left opens the Settings menu. In this menu
+        is a box to toggle full screen on and off, a button to disable this tutorial,
+        and a button to quit the protocol editor. To the right of the gear icon is
+        the save icon, press this at any time to save your progress.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -1160,6 +1167,14 @@ PrefabInstance:
     - target: {fileID: 783509033112317129, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
       value: Welcome to PipLight
+      objectReference: {fileID: 0}
+    - target: {fileID: 1140517474554353102, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.00000047684
+      objectReference: {fileID: 0}
+    - target: {fileID: 3337952959187161590, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3735882242034018338, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_Pivot.x
@@ -1255,10 +1270,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: PipLight is a protocol editor for the augmented reality application
-        LabLight. Using this app you will define substances and plan the layout of
-        those substances in a 96 well plate. To continue this tutorial press "Next"
-        below.
+      value: "PipLight is a protocol generator for the LabLight Augmented Reality
+        system. Using this app \nyou will specify the substances to be added to the
+        different wells of\na 96-well plate. To continue this tutorial, press \"Next\"
+        below."
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}

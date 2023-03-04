@@ -291,7 +291,7 @@ MonoBehaviour:
   closeButton: {fileID: 269885370677654359}
   fullscreenToggle: {fileID: 269885371781014057}
   tutorialToggle: {fileID: 4448062713369258412}
-  generator: {fileID: 6382074054172720357}
+  generator: {fileID: 0}
 --- !u!1 &3674714021321153737
 GameObject:
   m_ObjectHideFlags: 0
@@ -1009,23 +1009,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1054784516156237091, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -120.68145
+      value: -165.4543
       objectReference: {fileID: 0}
     - target: {fileID: 1483327477467554550, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1483327477467554550, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1483327477467554550, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 300
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1483327477467554550, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -205.68146
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5745092987192211396, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
       propertyPath: m_Pivot.x
@@ -1141,7 +1141,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5745092988650978367, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -40.22715
+      value: -55.151432
       objectReference: {fileID: 0}
     - target: {fileID: 5745092988799958914, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1157,7 +1157,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5745092988799958914, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -295.22714
+      value: -280.30286
       objectReference: {fileID: 0}
     - target: {fileID: 5745092988799958917, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1218,16 +1218,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &6382074054172720357 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1483327477467554546, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
-  m_PrefabInstance: {fileID: 5477636030606876183}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e797e916c3d81b4cb14170f999fb361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
