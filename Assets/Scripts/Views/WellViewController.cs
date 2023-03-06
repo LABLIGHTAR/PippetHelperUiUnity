@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     void Start()
     {
         SessionState.stepStream.Subscribe(_ => LoadVisualState());
+        
         ProcedureLoader.procedureStream.Subscribe(_ => UpdateVisualState());
 
         SessionState.SampleRemovedStream.Subscribe(well =>
@@ -24,6 +26,32 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             if (well == name)
             {
                 UpdateVisualState();
+            }
+        });
+
+        //subscribe to update indicators if sample is edited
+        SessionState.editedSampleStream.Subscribe(editedSample =>
+        {
+            var currentStep = SessionState.Steps[SessionState.Step];
+            if (currentStep.wells.ContainsKey(name))
+            {
+                //if this well contains the edited sample
+                if (currentStep.wells[name].Samples.Where(sample => sample.name == editedSample.Item2).FirstOrDefault() != null)
+                {
+                    //update indicator colors
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (i + 1 <= SampleCount)
+                        {
+                            SampleIndicators[i].gameObject.SetActive(true);
+                            SampleIndicators[i].color = currentStep.wells[name].Samples[i].color;
+                        }
+                        else
+                        {
+                            SampleIndicators[i].gameObject.SetActive(false);
+                        }
+                    }
+                }
             }
         });
     }
