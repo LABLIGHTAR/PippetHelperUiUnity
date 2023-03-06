@@ -40,10 +40,7 @@ public class SampleDisplayViewController : MonoBehaviour
             newSampleSwatch.GetComponent<SampleSwatchViewController>().editButton.onClick.AddListener(delegate
             {
                 //open edit form
-                Debug.Log(newSample.volume.ToString());
                 newSampleForm.GetComponent<NewSampleFormController>().EditSample(newSample.name, newSample.abreviation, newSample.colorName, newSample.volume.ToString());
-                //remove this entry
-                Destroy(newSampleSwatch);
             });
         });
     }

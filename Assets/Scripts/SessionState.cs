@@ -162,6 +162,7 @@ public class SessionState : MonoBehaviour
     public static Subject<int> stepStream = new Subject<int>();
     public static Subject<Sample> activeSampleStream = new Subject<Sample>();
     public static Subject<Sample> newSampleStream = new Subject<Sample>();
+    public static Subject<(string, string)> editedSampleStream = new Subject<(string,string)>();
     public static Subject<string> SampleRemovedStream = new Subject<string>();
     public static Subject<Well> focusedWellStream = new Subject<Well>();
     public static Subject<string> procedureNameStream = new Subject<string>();
@@ -371,6 +372,25 @@ public class SessionState : MonoBehaviour
         {
             UsedColors.Remove(forRemoval.colorName);
             AvailableSamples.Remove(forRemoval);
+        }
+    }
+
+    public static void EditSample(string oldName, string newName, string newAbreviation, string newColorName, Color newColor, float newVolume)
+    {
+        Sample toEdit = AvailableSamples.Where(sample => sample.name == oldName).FirstOrDefault();
+        if (toEdit != null)
+        {
+            toEdit.name = newName;
+            toEdit.abreviation = newAbreviation;
+            if(newColor != toEdit.color)
+            {
+                UsedColors.Remove(toEdit.colorName);
+                toEdit.colorName = newColorName;
+                toEdit.color = newColor;
+                UsedColors.Add(newColorName);
+            }
+            toEdit.volume = newVolume;
+            editedSampleStream.OnNext((oldName, newName));
         }
     }
 
