@@ -31,9 +31,20 @@ public class SampleDisplayViewController : MonoBehaviour
         //subscribe to data stream
         SessionState.newSampleStream.Subscribe(newSample =>
         {
+            //create sample entry in list
             GameObject newSampleSwatch = Instantiate(SampleSwatchPrefab) as GameObject;
             newSampleSwatch.transform.SetParent(ContentParent, false);
             newSampleSwatch.GetComponent<SampleSwatchViewController>().InitSampleItem(newSample.name, newSample.abreviation, newSample.volume.ToString(), newSample.color);
+
+            //set edit button event
+            newSampleSwatch.GetComponent<SampleSwatchViewController>().editButton.onClick.AddListener(delegate
+            {
+                //open edit form
+                Debug.Log(newSample.volume.ToString());
+                newSampleForm.GetComponent<NewSampleFormController>().EditSample(newSample.name, newSample.abreviation, newSample.colorName, newSample.volume.ToString());
+                //remove this entry
+                Destroy(newSampleSwatch);
+            });
         });
     }
 }

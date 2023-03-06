@@ -14,11 +14,11 @@ public class SessionState : MonoBehaviour
     {
         Instance = this;
         //initalize state variables
-        steps = new List<WellPlate>();
+        Steps = new List<WellPlate>();
         SetStep(0);
-        steps.Add(new WellPlate());
-        availableSamples = new List<Sample>();
-        usedColors = new List<string>();
+        Steps.Add(new WellPlate());
+        AvailableSamples = new List<Sample>();
+        UsedColors = new List<string>();
     }
 
     //class definitions
@@ -359,6 +359,18 @@ public class SessionState : MonoBehaviour
             UsedColors.Add(colorName);
             AvailableSamples.Add(newSample);
             newSampleStream.OnNext(newSample);
+        }
+    }
+
+    //adds new Sample to the available Samples list
+    public static void RemoveSample(string name)
+    {
+        Sample forRemoval = AvailableSamples.Where(sample => sample.name == name).FirstOrDefault();
+        //return if the Sample already exists
+        if (forRemoval != null)
+        {
+            UsedColors.Remove(forRemoval.colorName);
+            AvailableSamples.Remove(forRemoval);
         }
     }
 

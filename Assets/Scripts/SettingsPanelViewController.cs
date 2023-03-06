@@ -25,8 +25,8 @@ public class SettingsPanelViewController : MonoBehaviour
 
         yesButton.onClick.AddListener(delegate
         {
-            generator.GenerateProcedure();
             savePanel.SetActive(false);
+            generator.GenerateProcedure();
             Application.Quit();
         });
 

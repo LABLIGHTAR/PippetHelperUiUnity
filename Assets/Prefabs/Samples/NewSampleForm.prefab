@@ -1292,7 +1292,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4281479730
   m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1305,7 +1305,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -2832,7 +2832,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0.2}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2912,7 +2912,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -18, y: 0}
+  m_SizeDelta: {x: -17, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1513832723024756586
 MonoBehaviour:
@@ -3923,12 +3923,12 @@ MonoBehaviour:
   dropdown: {fileID: 1513832722470072673}
   submitButton: {fileID: 1513832722162130518}
   closeButton: {fileID: 1513832721876036951}
-  nameText: {fileID: 1513832722005537554}
+  nameText: {fileID: 1513832723049936202}
   nameErrorText: {fileID: 1513832722925271048}
-  abreviationText: {fileID: 1513832722247553163}
+  abreviationText: {fileID: 1513832721977142679}
   abreviationErrorText: {fileID: 1513832723029929097}
   colorText: {fileID: 1513832722132875707}
-  volumeText: {fileID: 1513832723092138533}
+  volumeText: {fileID: 1513832722964334047}
   volumeErrorText: {fileID: 1513832723502835506}
   volumeLabel: {fileID: 1513832723398608754}
   volumePlaceholder: {fileID: 1513832722504227662}
@@ -3998,7 +3998,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Liquid Volume (\u03BCL)"
+  m_text: "Sample Volume (\u03BCL)"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4324,7 +4324,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1513832723016040238}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.2
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

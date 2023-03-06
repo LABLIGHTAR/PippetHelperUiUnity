@@ -16,12 +16,12 @@ public class NewSampleFormController : MonoBehaviour
     public Button submitButton;
     public Button closeButton;
 
-    public TextMeshProUGUI nameText;
+    public TMP_InputField nameText;
     public TextMeshProUGUI nameErrorText;
-    public TextMeshProUGUI abreviationText;
+    public TMP_InputField abreviationText;
     public TextMeshProUGUI abreviationErrorText;
     public TextMeshProUGUI colorText;
-    public TextMeshProUGUI volumeText;
+    public TMP_InputField volumeText;
     public TextMeshProUGUI volumeErrorText;
     public TextMeshProUGUI volumeLabel;
     public TextMeshProUGUI volumePlaceholder;
@@ -70,71 +70,94 @@ public class NewSampleFormController : MonoBehaviour
         dropdown.AddOptions(availableColors);
     }
 
+    void OnDisable()
+    {
+        //reset close button events
+        closeButton.onClick.RemoveAllListeners();
+
+        closeButton.onClick.AddListener(delegate
+        {
+            this.gameObject.SetActive(false);
+            SessionState.FormActive = false;
+        });
+
+        //reset submit button text
+        submitButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Add Substance";
+    }
+
+    /// <summary>
+    /// adds new sample to session state if input is valid
+    /// </summary>
     void AddNewSample()
     {
-        //check input
-        if (SessionState.AvailableSamples.Exists(x => x.name == nameText.text))
+        if(InputValid())
         {
-            nameError.gameObject.SetActive(true);
-            nameErrorText.text = "Sample with this name already exists*";
-            return;
-        }
-        if (!(nameText.text.Length > 1))
-        {
-            nameError.gameObject.SetActive(true);
-            nameErrorText.text = "Name cannot be empty*";
-            return;
-        }
-        else
-        {
-            nameError.gameObject.SetActive(false);
-        }
-        if (SessionState.AvailableSamples.Exists(x => x.abreviation == abreviationText.text))
-        {
-            abreviationError.gameObject.SetActive(true);
-            abreviationErrorText.text = "Sample with this abreviation already exists*";
-            return;
-        }
-        if (!(abreviationText.text.Length > 1))
-        {
-            abreviationError.gameObject.SetActive(true);
-            abreviationErrorText.text = "Abreviation cannot be empty*";
-            return;
-        }
-        if (abreviationText.text.Length > 5)
-        {
-            abreviationError.gameObject.SetActive(true);
-            abreviationErrorText.text = "Abreviation cannot be more than 4 characters*";
-            return;
-        }
-        else
-        {
-            abreviationError.gameObject.SetActive(false);
-        }
-        if (!(volumeText.text.Length > 1))
-        {
-            volumeError.gameObject.SetActive(true);
-            volumeErrorText.text = "Volume cannot be empty*";
-            return;
-        }
-        else
-        {
-            abreviationError.gameObject.SetActive(false);
-        }
+            //generate color an volume values
+            var color = SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true));
+            var volume = float.Parse(volumeText.text.Substring(0, volumeText.text.Length), CultureInfo.InvariantCulture.NumberFormat);
+            
+            //add new Sample to session state
+            SessionState.AddNewSample(nameText.text, abreviationText.text, colorText.text, color, volume);
 
-        var color = SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true));
-        var volume = float.Parse(volumeText.text.Substring(0, volumeText.text.Length - 1), CultureInfo.InvariantCulture.NumberFormat);
-        //add new Sample to session state
-        SessionState.AddNewSample(nameText.text, abreviationText.text, colorText.text, color, volume);
+            //update color dropdown options
+            dropdown.ClearOptions();
+            List<string> availableColors = dropdownOptions.Except(SessionState.UsedColors).ToList();
+            dropdown.AddOptions(availableColors);
 
-        //update color dropdown options
-        dropdown.ClearOptions();
-        List<string> availableColors = dropdownOptions.Except(SessionState.UsedColors).ToList();
-        dropdown.AddOptions(availableColors);
+            //disable form
+            this.gameObject.SetActive(false);
+            SessionState.FormActive = false;
+        }
+    }
 
-        //disable form
-        this.gameObject.SetActive(false);
-        SessionState.FormActive = false;
+    /// <summary>
+    /// edits existing sample in session state if input is valid
+    /// </summary>
+    /// <param name="oldName"> name of sample before edit </param>
+    /// <param name="abbreviation"></param>
+    /// <param name="colorText"></param>
+    /// <param name="volume"></param>
+    public void EditSample(string oldName, string oldAbbreviation, string oldColorString, string oldVolume)
+    {
+        //remove the sample from session state
+        SessionState.RemoveSample(oldName);
+
+        //activate edit form
+        this.gameObject.SetActive(true);
+        SessionState.FormActive = true;
+
+/*        //add the edited samples color back to the dropdown and set the picker to it
+        dropdown.AddOptions(new List<string>() { colorString });
+        dropdown.value = dropdown.options.Count() - 1;*/
+
+        //fill out the form with the old values
+        nameText.text = oldName;
+        abreviationText.text = oldAbbreviation;
+        volumeText.text = oldVolume;
+        dropdown.value = dropdown.options.FindIndex((i) => { return i.text.Equals(oldColorString); });
+        
+        //set the submit button text and remove events
+        submitButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Save Changes";
+
+        //set close button event
+        closeButton.onClick.AddListener(delegate
+        {
+            //generate color an volume values
+            var color = SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), oldColorString, true));
+            var volume = float.Parse(oldVolume, CultureInfo.InvariantCulture.NumberFormat);
+
+            //Re-add edited sample with original values
+            SessionState.AddNewSample(oldName, oldAbbreviation, oldColorString, color, volume);
+
+            //update color dropdown options
+            dropdown.ClearOptions();
+            List<string> availableColors = dropdownOptions.Except(SessionState.UsedColors).ToList();
+            dropdown.AddOptions(availableColors);
+
+            //disable form
+            this.gameObject.SetActive(false);
+            SessionState.FormActive = false;
+        });
     }
 
     public void BoxChecked(bool isSolid)
@@ -149,5 +172,65 @@ public class NewSampleFormController : MonoBehaviour
             volumeLabel.text = "Sample Volume (μL)";
             volumePlaceholder.text = "Enter Volume (μL)";
         }
+    }
+
+    private bool InputValid()
+    {
+        //check input
+        if (SessionState.AvailableSamples.Exists(x => x.name == nameText.text))
+        {
+            nameError.gameObject.SetActive(true);
+            nameErrorText.text = "Sample with this name already exists*";
+            return false;
+        }
+        if (!(nameText.text.Length > 1))
+        {
+            nameError.gameObject.SetActive(true);
+            nameErrorText.text = "Name cannot be empty*";
+            return false;
+        }
+        else
+        {
+            nameError.gameObject.SetActive(false);
+        }
+        if (SessionState.AvailableSamples.Exists(x => x.abreviation == abreviationText.text))
+        {
+            abreviationError.gameObject.SetActive(true);
+            abreviationErrorText.text = "Sample with this abreviation already exists*";
+            return false;
+        }
+        if (!(abreviationText.text.Length > 1))
+        {
+            abreviationError.gameObject.SetActive(true);
+            abreviationErrorText.text = "Abreviation cannot be empty*";
+            return false;
+        }
+        if (abreviationText.text.Length > 5)
+        {
+            abreviationError.gameObject.SetActive(true);
+            abreviationErrorText.text = "Abreviation cannot be more than 4 characters*";
+            return false;
+        }
+        else
+        {
+            abreviationError.gameObject.SetActive(false);
+        }
+        if (!(volumeText.text.Length > 0))
+        {
+            volumeError.gameObject.SetActive(true);
+            volumeErrorText.text = "Volume cannot be empty*";
+            return false;
+        }
+        if (!float.TryParse(volumeText.text.Substring(0, volumeText.text.Length), out _))
+        {
+            volumeError.gameObject.SetActive(true);
+            volumeErrorText.text = "Please do not include units*";
+            return false;
+        }
+        else
+        {
+            volumeError.gameObject.SetActive(false);
+        }
+        return true;
     }
 }

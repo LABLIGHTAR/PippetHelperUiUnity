@@ -14,6 +14,21 @@ public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
     public TextMeshProUGUI volume;
     public Image swatch;
 
+    public Button editButton;
+    public Button deleteButton;
+
+    void Start()
+    {
+        deleteButton.onClick.AddListener(delegate
+        {
+            if (name.text != null)
+            {
+                SessionState.RemoveSample(name.text);
+                Destroy(gameObject);
+            }
+        });
+    }
+
     public void OnPointerDown(PointerEventData eventData)
     {
         if(eventData.button == PointerEventData.InputButton.Left & !SessionState.FormActive)

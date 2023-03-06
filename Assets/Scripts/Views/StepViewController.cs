@@ -55,8 +55,8 @@ public class StepViewController : MonoBehaviour
         });
 
         //subscribe to datastream
-        SessionState.stepStream.Subscribe(_ => UpdateVisualState());
-        SessionState.procedureNameStream.Subscribe(name => procedureName.text = name);
+        SessionState.stepStream.Subscribe(_ => UpdateVisualState()).AddTo(this);
+        SessionState.procedureNameStream.Subscribe(name => procedureName.text = name).AddTo(this);
 
         UpdateVisualState();
     }

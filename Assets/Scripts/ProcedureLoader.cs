@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UniRx;
 using SFB;//Copyright (c) 2017 Gökhan Gökçe Under MIT License
 
@@ -19,11 +20,10 @@ public class ProcedureLoader : MonoBehaviour
                 new ExtensionFilter("Comma Seperated Variables", "csv"),
             };
 
-        var fileName = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, true)[0]; //Copyright (c) 2017 Gökhan Gökçe Under MIT License
-
-        if (fileName != null)
+        string[] fileName = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, true); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
+        if (fileName.Count() > 0)
         {
-            StartCoroutine(LoadProcedure(fileName));
+            StartCoroutine(LoadProcedure(fileName[0]));
         }
         else
         {
