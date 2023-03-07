@@ -10,6 +10,7 @@ public class NewSampleFormController : MonoBehaviour
 {
     public Transform nameError;
     public Transform abreviationError;
+    public Transform colorError;
     public Transform volumeError;
 
     public TMP_Dropdown dropdown;
@@ -27,27 +28,6 @@ public class NewSampleFormController : MonoBehaviour
     public TextMeshProUGUI volumePlaceholder;
 
     private Color newColor;
-
-    //colors
-    List<string> dropdownColors = new List<string>
-    {
-        "Lime",
-        "Green",
-        "Olive",
-        "Brown",
-        "Aqua",
-        "Blue",
-        "Navy",
-        "Slate",
-        "Purple",
-        "Plum",
-        "Pink",
-        "Salmon",
-        "Red",
-        "Orange",
-        "Yellow",
-        "Khaki",
-    };
 
     public List<TMP_Dropdown.OptionData> dropdownOptions = new List<TMP_Dropdown.OptionData>();
 
@@ -212,6 +192,15 @@ public class NewSampleFormController : MonoBehaviour
         {
             abreviationError.gameObject.SetActive(false);
         }
+        if(!(colorText.text.Length > 1))
+        {
+            colorError.gameObject.SetActive(true);
+            return false;
+        }
+        else
+        {
+            colorError.gameObject.SetActive(false);
+        }
         if (!(volumeText.text.Length > 0))
         {
             volumeError.gameObject.SetActive(true);
@@ -271,6 +260,15 @@ public class NewSampleFormController : MonoBehaviour
         else
         {
             abreviationError.gameObject.SetActive(false);
+        }
+        if (!(colorText.text.Length > 1))
+        {
+            colorError.gameObject.SetActive(true);
+            return false;
+        }
+        else
+        {
+            colorError.gameObject.SetActive(false);
         }
         if (!(volumeText.text.Length > 0))
         {
