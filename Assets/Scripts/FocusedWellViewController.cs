@@ -15,19 +15,16 @@ public class FocusedWellViewController : MonoBehaviour
 
     public GameObject sampleOneDisplay;
     public TextMeshProUGUI sampleOneNameText;
-    public TextMeshProUGUI sampleOneAbrevText;
     public TextMeshProUGUI sampleOneVolumeText;
     public Image sampleOneBG;
 
     public GameObject sampleTwoDisplay;
     public TextMeshProUGUI sampleTwoNameText;
-    public TextMeshProUGUI sampleTwoAbrevText;
     public TextMeshProUGUI sampleTwoVolumeText;
     public Image sampleTwoBG;
 
     public GameObject sampleThreeDisplay;
     public TextMeshProUGUI sampleThreeNameText;
-    public TextMeshProUGUI sampleThreeAbrevText;
     public TextMeshProUGUI sampleThreeVolumeText;
     public Image sampleThreeBG;
 
@@ -46,7 +43,6 @@ public class FocusedWellViewController : MonoBehaviour
         {
             sampleOneNameText.text = well.Samples[0].name;
             sampleOneBG.color = well.Samples[0].color;
-            sampleOneAbrevText.text = well.Samples[0].abreviation;
             sampleOneVolumeText.text = well.Samples[0].volume.ToString() + " μL";
             wellVolume += well.Samples[0].volume;
             sampleOneDisplay.SetActive(true);
@@ -60,7 +56,6 @@ public class FocusedWellViewController : MonoBehaviour
         {
             sampleTwoNameText.text = well.Samples[1].name;
             sampleTwoBG.color = well.Samples[1].color;
-            sampleTwoAbrevText.text = well.Samples[1].abreviation;
             sampleTwoVolumeText.text = well.Samples[1].volume.ToString() + " μL";
             wellVolume += well.Samples[1].volume;
             sampleTwoDisplay.SetActive(true);
@@ -74,7 +69,6 @@ public class FocusedWellViewController : MonoBehaviour
         {
             sampleThreeNameText.text = well.Samples[2].name;
             sampleThreeBG.color = well.Samples[2].color;
-            sampleThreeAbrevText.text = well.Samples[2].abreviation;
             sampleThreeVolumeText.text = well.Samples[2].volume.ToString() + " μL";
             wellVolume += well.Samples[2].volume;
             sampleThreeDisplay.SetActive(true);

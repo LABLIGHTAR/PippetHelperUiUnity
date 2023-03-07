@@ -181,9 +181,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: 'Wells that are not empty can be "focused" by hovering the cursor over
-        them. Information about substances inside the focused well appears at the
-        bottom right of the screen.
+      value: 'Wells can be "focused" by hovering the cursor over them. Information
+        about substances inside the focused well appears at the bottom right of the
+        screen.
 
 '
       objectReference: {fileID: 0}

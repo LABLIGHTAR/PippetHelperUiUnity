@@ -29,7 +29,7 @@ public class NewSampleFormController : MonoBehaviour
     private Color newColor;
 
     //colors
-    List<string> dropdownOptions = new List<string>
+    List<string> dropdownColors = new List<string>
     {
         "Lime",
         "Green",
@@ -49,6 +49,8 @@ public class NewSampleFormController : MonoBehaviour
         "Khaki",
     };
 
+    public List<TMP_Dropdown.OptionData> dropdownOptions = new List<TMP_Dropdown.OptionData>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -66,7 +68,7 @@ public class NewSampleFormController : MonoBehaviour
     {
         //update color dropdown options
         dropdown.ClearOptions();
-        List<string> availableColors = dropdownOptions.Except(SessionState.UsedColors).ToList();
+        List<TMP_Dropdown.OptionData> availableColors = dropdownOptions.Where(option => !SessionState.UsedColors.Contains(option.text)).ToList();
         dropdown.AddOptions(availableColors);
     }
 
@@ -95,7 +97,7 @@ public class NewSampleFormController : MonoBehaviour
 
             //update color dropdown options
             dropdown.ClearOptions();
-            List<string> availableColors = dropdownOptions.Except(SessionState.UsedColors).ToList();
+            List<TMP_Dropdown.OptionData> availableColors = dropdownOptions.Where(option => !SessionState.UsedColors.Contains(option.text)).ToList();
             dropdown.AddOptions(availableColors);
 
             //disable form
