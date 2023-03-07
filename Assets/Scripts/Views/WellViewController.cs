@@ -159,6 +159,11 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (SessionState.Steps != null & SessionState.Steps[SessionState.Step] != null)
         {
+            foreach (SpriteRenderer sr in SampleIndicators)
+            {
+                sr.gameObject.SetActive(false);
+            }
+
             SampleCount = 0;
             var currentStep = SessionState.Steps[SessionState.Step];
             //check if this well has Samples in it, if it does render them
@@ -171,14 +176,6 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     SampleIndicators[i].color = currentStep.wells[name].Samples[i].color;
                 }
             }
-            else
-            {
-                foreach (SpriteRenderer sr in SampleIndicators)
-                {
-                    sr.gameObject.SetActive(false);
-                }
-            }
-            DeactivateHighlight(0);
         }
     }
 
