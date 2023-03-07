@@ -63,16 +63,18 @@ public class ProcedureLoader : MonoBehaviour
                 lineCells = currentLine.Split(',');
                 
                 //cell 0 will always be blank
-                //cell goes: "","wellID","#Hex","ColorName","SampleName", "SampleVolume"
+                //cell goes: "","wellID","#Hex","ColorName","SampleName:SampleAbreviation", "SampleVolume"
                 string wellId = lineCells[1];
                 Color color;
                 ColorUtility.TryParseHtmlString(lineCells[2], out color);
                 string colorName = lineCells[3];
-                string SampleName = lineCells[4];
+                string[] nameAbrev = lineCells[4].Split(":");
+                string SampleName = nameAbrev[0];
+                string SampleAbbreviation = nameAbrev[1];
                 float SampleVolume = float.Parse(lineCells[5], CultureInfo.InvariantCulture.NumberFormat);
 
                 //add Sample to sessionState
-                SessionState.Sample newSample = new SessionState.Sample(SampleName, SampleName, colorName, color, SampleVolume);
+                SessionState.Sample newSample = new SessionState.Sample(SampleName, SampleAbbreviation, colorName, color, SampleVolume);
                 SessionState.AddNewSample(newSample.name, newSample.abreviation, newSample.colorName, newSample.color, newSample.volume);
                 //set new Sample as active  
 ;               SessionState.ActiveSample = SessionState.AvailableSamples.Where(sample => sample.name == SampleName).FirstOrDefault();

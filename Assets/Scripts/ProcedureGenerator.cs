@@ -75,13 +75,13 @@ public class ProcedureGenerator : MonoBehaviour
                             groupEnd = FindGroupEnd(groupId);
 
                             //Debug.Log(groupStart + ":" + groupEnd + " " + Sample.color + " " + Sample.colorName + Sample.name);
-                            sw.WriteLine(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(Sample.color).ToString() + delimiter + Sample.colorName + delimiter + Sample.name.Remove(Sample.name.Length - 1, 1) + delimiter + Sample.volume + delimiter + "μL");
+                            sw.WriteLine(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(Sample.color).ToString() + delimiter + Sample.colorName + delimiter + Sample.name + ":" + Sample.abreviation + delimiter + Sample.volume + delimiter + "μL");
                         }
                     }
                     else
                     {
                         //Debug.Log(well.Key + " " + Sample.color + " " + Sample.colorName + Sample.name);
-                        sw.WriteLine(delimiter + well.Key + delimiter + Color32ToHex(Sample.color).ToString() + delimiter + Sample.colorName + delimiter + Sample.name.Remove(Sample.name.Length - 1, 1) + delimiter + Sample.volume + delimiter + "μL");
+                        sw.WriteLine(delimiter + well.Key + delimiter + Color32ToHex(Sample.color).ToString() + delimiter + Sample.colorName + delimiter + Sample.name + ":" + Sample.abreviation + delimiter + Sample.volume + delimiter + "μL");
                     }
                 }
             }

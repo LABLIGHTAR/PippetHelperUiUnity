@@ -181,6 +181,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     sr.gameObject.SetActive(false);
                 }
             }
+            DeactivateHighlight(0);
         }
     }
 
