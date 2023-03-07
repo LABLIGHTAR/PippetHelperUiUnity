@@ -159,12 +159,12 @@ public class NewSampleFormController : MonoBehaviour
     {
         if(isSolid)
         {
-            volumeLabel.text = "Solid Weight (μg)";
+            volumeLabel.text = "Substance Weight (μg)";
             volumePlaceholder.text = "Enter Weight (μg)";
         }
         else
         {
-            volumeLabel.text = "Sample Volume (μL)";
+            volumeLabel.text = "Substance Volume (μL)";
             volumePlaceholder.text = "Enter Volume (μL)";
         }
     }
@@ -175,7 +175,7 @@ public class NewSampleFormController : MonoBehaviour
         if (nameText.text != oldName && SessionState.AvailableSamples.Exists(x => x.name == nameText.text))
         {
             nameError.gameObject.SetActive(true);
-            nameErrorText.text = "Sample with this name already exists*";
+            nameErrorText.text = "Substance with this name already exists*";
             return false;
         }
         if (!(nameText.text.Length > 1))
@@ -191,7 +191,7 @@ public class NewSampleFormController : MonoBehaviour
         if (abreviationText.text != oldAbbreviation && SessionState.AvailableSamples.Exists(x => x.abreviation == abreviationText.text))
         {
             abreviationError.gameObject.SetActive(true);
-            abreviationErrorText.text = "Sample with this abreviation already exists*";
+            abreviationErrorText.text = "Substance with this abreviation already exists*";
             return false;
         }
         if (!(abreviationText.text.Length > 1))
