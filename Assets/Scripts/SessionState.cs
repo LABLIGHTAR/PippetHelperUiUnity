@@ -411,8 +411,9 @@ public class SessionState : MonoBehaviour
     {
         if (!Steps[Step].wells.ContainsKey(wellId))
         {
-            Debug.LogWarning("Focused well is not available");
-            return;
+            //if the well does not exist create it
+            Steps[Step].wells.Add(wellId, new Well());
+            FocusedWell = Steps[Step].wells[wellId];
         }
         else
         {

@@ -70,10 +70,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 ActivateHighlight(SessionState.ActiveTool.numChannels);
             }
-            if (SessionState.Steps[SessionState.Step].wells.ContainsKey(name))
-            {
-                SessionState.SetFocusedWell(name);
-            }
+            SessionState.SetFocusedWell(name);
         }
     }
 
