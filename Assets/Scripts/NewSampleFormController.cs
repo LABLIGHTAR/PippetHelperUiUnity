@@ -160,7 +160,7 @@ public class NewSampleFormController : MonoBehaviour
             nameErrorText.text = "Substance with this name already exists*";
             return false;
         }
-        if (!(nameText.text.Length > 1))
+        if (!(nameText.text.Length > 0))
         {
             nameError.gameObject.SetActive(true);
             nameErrorText.text = "Name cannot be empty*";
@@ -176,7 +176,7 @@ public class NewSampleFormController : MonoBehaviour
             abreviationErrorText.text = "Substance with this abreviation already exists*";
             return false;
         }
-        if (!(abreviationText.text.Length > 1))
+        if (!(abreviationText.text.Length > 0))
         {
             abreviationError.gameObject.SetActive(true);
             abreviationErrorText.text = "Abreviation cannot be empty*";
@@ -192,7 +192,7 @@ public class NewSampleFormController : MonoBehaviour
         {
             abreviationError.gameObject.SetActive(false);
         }
-        if(!(colorText.text.Length > 1))
+        if(!(colorText.text.Length > 0))
         {
             colorError.gameObject.SetActive(true);
             return false;
