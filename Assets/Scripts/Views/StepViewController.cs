@@ -37,7 +37,6 @@ public class StepViewController : MonoBehaviour
         newStepButton.onClick.AddListener(delegate
         {
             SessionState.AddNewStep();
-            SessionState.SetStep(SessionState.Steps.Count - 1);
         });
 
         removeStepButton.onClick.AddListener(delegate { 

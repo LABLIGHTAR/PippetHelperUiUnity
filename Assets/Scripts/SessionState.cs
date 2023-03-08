@@ -160,6 +160,7 @@ public class SessionState : MonoBehaviour
 
     //data streams
     public static Subject<int> stepStream = new Subject<int>();
+    public static Subject<int> newStepStream = new Subject<int>();
     public static Subject<Sample> activeSampleStream = new Subject<Sample>();
     public static Subject<Sample> newSampleStream = new Subject<Sample>();
     public static Subject<(string, string)> editedSampleStream = new Subject<(string,string)>();
@@ -337,6 +338,8 @@ public class SessionState : MonoBehaviour
     public static void AddNewStep()
     {
         Steps.Add(new WellPlate());
+        Step = Steps.Count - 1;
+        newStepStream.OnNext(SessionState.Step);
     }
 
     public static void RemoveCurrentStep()

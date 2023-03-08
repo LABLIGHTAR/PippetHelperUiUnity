@@ -1525,6 +1525,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb7a637e5e4eff048bb4743fe618773e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &1377171353 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9075484175188779009, guid: 2060c52b44be50441b5ca3159b46e0c0, type: 3}
+  m_PrefabInstance: {fileID: 9075484175127346899}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1377430452 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1592522067953002069, guid: 2060c52b44be50441b5ca3159b46e0c0, type: 3}
@@ -5257,6 +5262,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 9075484173259576229, guid: 2060c52b44be50441b5ca3159b46e0c0, type: 3}
+      propertyPath: wells
+      value: 
+      objectReference: {fileID: 1377171353}
     - target: {fileID: 9075484173259576230, guid: 2060c52b44be50441b5ca3159b46e0c0, type: 3}
       propertyPath: m_Name
       value: WellPlate

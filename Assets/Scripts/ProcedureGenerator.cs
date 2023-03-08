@@ -46,6 +46,7 @@ public class ProcedureGenerator : MonoBehaviour
             //iterate through each well
             foreach (var well in step.wells)
             {
+                Debug.Log(well.Key);
                 //iterate through each Sample in the well
                 foreach (var Sample in well.Value.Samples)
                 {
@@ -57,7 +58,6 @@ public class ProcedureGenerator : MonoBehaviour
                     //check if this Sample is a part of a group
                     foreach (var group in well.Value.groups)
                     {
-                        Debug.Log(group.groupId);
                         if(group.Sample == Sample)
                         {
                             isGrouped = true;

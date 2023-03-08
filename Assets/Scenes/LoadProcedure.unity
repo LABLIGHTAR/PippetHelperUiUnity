@@ -2006,6 +2006,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 9075484173259576229, guid: 2060c52b44be50441b5ca3159b46e0c0, type: 3}
+      propertyPath: wells
+      value: 
+      objectReference: {fileID: 1672436145}
     - target: {fileID: 9075484173259576230, guid: 2060c52b44be50441b5ca3159b46e0c0, type: 3}
       propertyPath: m_Name
       value: WellPlate
@@ -4870,6 +4874,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30e0862495e42c947a9c7dee4cf33aca, type: 3}
+--- !u!4 &1672436145 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9075484175188779009, guid: 2060c52b44be50441b5ca3159b46e0c0, type: 3}
+  m_PrefabInstance: {fileID: 49392907}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1730347301
 PrefabInstance:
   m_ObjectHideFlags: 0
