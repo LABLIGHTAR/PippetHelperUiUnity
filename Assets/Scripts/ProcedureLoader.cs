@@ -51,7 +51,6 @@ public class ProcedureLoader : MonoBehaviour
                 if(!firstStep)
                 {
                     SessionState.AddNewStep();
-                    SessionState.SetStep(SessionState.Step + 1);
                 }
                 else
                 {
