@@ -9,6 +9,7 @@ using UniRx;
 public class FocusedWellViewController : MonoBehaviour
 {
     public GameObject wellDisplay;
+    public GameObject wellVolumeDisplay;
     public TextMeshProUGUI wellIdText;
     public TextMeshProUGUI wellVolumeText;
     public TextMeshProUGUI wellGroupText;
@@ -82,5 +83,6 @@ public class FocusedWellViewController : MonoBehaviour
         wellVolumeText.text = wellVolume.ToString() + " μL";
 
         wellDisplay.SetActive(true);
+        wellVolumeDisplay.SetActive(true);
     }
 }

@@ -27,7 +27,7 @@ public class SubstanceSaver : MonoBehaviour
 
         if (SessionState.ProcedureName != null)
         {
-            filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", SessionState.ProcedureName + "_Substance", extensionList); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
+            filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", SessionState.ProcedureName + "_Sample_List", extensionList); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
             Debug.Log(filePath);
         }
         else
