@@ -55,6 +55,7 @@ public class ProcedureGenerator : MonoBehaviour
             //iterate through each well to go start from the top left of the plate
             foreach (var well in step.wells)
             {
+                Debug.Log(well.Key);
                 //iterate through each Sample in the well
                 foreach (var sample in well.Value.Samples)
                 {

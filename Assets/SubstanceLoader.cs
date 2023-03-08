@@ -59,7 +59,10 @@ public class SubstanceLoader : MonoBehaviour
         }
         foreach(SessionState.WellPlate step in SessionState.Steps)
         {
-            step.wells.Clear();
+            foreach(var well in step.wells)
+            {
+                well.Value.Samples.Clear();
+            }
         }
 
         //read the file until the end of file is reached
