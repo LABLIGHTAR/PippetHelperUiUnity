@@ -45,7 +45,7 @@ public class SubstanceSaver : MonoBehaviour
 
         foreach (SessionState.Sample sample in SessionState.AvailableSamples)
         {
-            sw.WriteLine(sample.name + delimiter + sample.abreviation + delimiter + sample.colorName + delimiter + Color32ToHex(sample.color) + delimiter + sample.volume.ToString());
+            sw.WriteLine(sample.name + delimiter + sample.abreviation + delimiter + sample.colorName + delimiter + Color32ToHex(sample.color));
         }
 
         sw.Close();

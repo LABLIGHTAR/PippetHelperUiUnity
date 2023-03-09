@@ -71,16 +71,15 @@ public class SubstanceLoader : MonoBehaviour
 
             lineCells = currentLine.Split(',');
 
-            //line goes: "sampleName","SampleAbreviation","ColorName","#ColorHex", "SampleVolume"
+            //line goes: "sampleName","SampleAbreviation","ColorName","#ColorHex"
             string sampleName = lineCells[0];
             string sampleAbbreviation = lineCells[1];
             string sampleColorName = lineCells[2];
             Color sampleColor;
             ColorUtility.TryParseHtmlString(lineCells[3], out sampleColor);
-            float sampleVolume = float.Parse(lineCells[4], CultureInfo.InvariantCulture.NumberFormat);
 
             //add Sample to sessionState
-            SessionState.AddNewSample(sampleName, sampleAbbreviation, sampleColorName, sampleColor, sampleVolume);
+            SessionState.AddNewSample(sampleName, sampleAbbreviation, sampleColorName, sampleColor);
         }
         ProcedureLoader.procedureStream.OnNext(true);
     }

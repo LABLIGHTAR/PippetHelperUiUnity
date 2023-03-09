@@ -11,7 +11,6 @@ public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
 {
     public TextMeshProUGUI name;
     public TextMeshProUGUI abreviation;
-    public TextMeshProUGUI volume;
     public Image swatch;
 
     public Button editButton;
@@ -36,7 +35,7 @@ public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
                 SessionState.Sample editedSample = SessionState.AvailableSamples.Where(sample => sample.name == sampleNames.Item2).FirstOrDefault();
                 if (editedSample != null)
                 {
-                    InitSampleItem(editedSample.name, editedSample.abreviation, editedSample.volume.ToString(), editedSample.color);
+                    InitSampleItem(editedSample.name, editedSample.abreviation, editedSample.color);
                 }
             }
         });
@@ -46,17 +45,15 @@ public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
     {
         if(eventData.button == PointerEventData.InputButton.Left & !SessionState.FormActive)
         {
-            SessionState.SetActiveSample(SessionState.AvailableSamples.Where(x => x.abreviation.Equals(abreviation.GetComponent<TMP_Text>().text)).FirstOrDefault());
+            SessionState.SetActiveSample(SessionState.AvailableSamples.Where(x => x.name.Equals(name.GetComponent<TMP_Text>().text)).FirstOrDefault());
         }
     }
 
-    public bool InitSampleItem(string SampleName, string SampleAbrev, string SampleVolume, Color displayColor)
+    public bool InitSampleItem(string SampleName, string SampleAbrev, Color displayColor)
     {
         swatch.color = displayColor;
         name.GetComponent<TMP_Text>().text = SampleName;
         abreviation.GetComponent<TMP_Text>().text = SampleAbrev;
-        volume.GetComponent<TMP_Text>().text = SampleVolume + "μL";
-
         return true;
     }
 }

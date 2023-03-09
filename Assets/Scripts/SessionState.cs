@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using UniRx;
+using static SessionState;
 
 public class SessionState : MonoBehaviour
 {
@@ -28,15 +29,13 @@ public class SessionState : MonoBehaviour
         public string abreviation;
         public string colorName;
         public Color color;
-        public float volume;
 
-        public Sample(string name, string abreviation, string colorName, Color color, float volume)
+        public Sample(string name, string abreviation, string colorName, Color color)
         {
             this.name = name;
             this.abreviation = abreviation;
             this.colorName = colorName;
             this.color = color;
-            this.volume = volume;
         }
     }
 
@@ -58,12 +57,12 @@ public class SessionState : MonoBehaviour
             }
         }
 
-        public List<Sample> Samples;
+        public Dictionary<Sample, float> Samples;
         public List<SampleGroup> groups;
 
         public Well()
         {
-            Samples = new List<Sample>();
+            Samples = new Dictionary<Sample, float>();
             groups = new List<SampleGroup>();
         }
     }
@@ -130,12 +129,22 @@ public class SessionState : MonoBehaviour
         public string name;
         public int numChannels;
         public string orientation;
+        public float volume;
 
-        public Tool(string name, int numChannels, string orientation)
+        public Tool(string name, int numChannels, string orientation, float volume)
         {
             this.name = name;
             this.numChannels = numChannels;
             this.orientation = orientation;
+            this.volume = volume;
+        }
+
+        public void SetVolume(float value)
+        {
+            if(volume != value)
+            {
+                volume = value;
+            }
         }
     }
 
@@ -348,9 +357,9 @@ public class SessionState : MonoBehaviour
     }
 
     //adds new Sample to the available Samples list
-    public static void AddNewSample(string name, string abreviation, string colorName, Color color, float volume)
+    public static void AddNewSample(string name, string abreviation, string colorName, Color color)
     {
-        Sample newSample = new Sample(name, abreviation, colorName, color, volume);
+        Sample newSample = new Sample(name, abreviation, colorName, color);
         
         //return if the Sample already exists
         if (AvailableSamples.Exists(x => x.name == name || x.abreviation == abreviation || x.colorName == colorName || x.color == color))
@@ -366,7 +375,7 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    //adds new Sample to the available Samples list
+    //removes sample from available samples list
     public static void RemoveSample(string name)
     {
         Sample forRemoval = AvailableSamples.Where(sample => sample.name == name).FirstOrDefault();
@@ -381,9 +390,9 @@ public class SessionState : MonoBehaviour
             {
                 foreach (var well in step.wells)
                 {
-                    if (well.Value.Samples.Contains(forRemoval))
+                    if (well.Value.Samples.ContainsKey(forRemoval))
                     {
-                        RemoveActiveSampleFromWell(well.Key);
+                        RemoveActiveSampleFromWell(well.Key, step);
                     }
                 }
             }
@@ -396,7 +405,7 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    public static void EditSample(string oldName, string newName, string newAbreviation, string newColorName, Color newColor, float newVolume)
+    public static void EditSample(string oldName, string newName, string newAbreviation, string newColorName, Color newColor)
     {
         Sample toEdit = AvailableSamples.Where(sample => sample.name == oldName).FirstOrDefault();
         if (toEdit != null)
@@ -410,7 +419,6 @@ public class SessionState : MonoBehaviour
                 toEdit.color = newColor;
                 UsedColors.Add(newColorName);
             }
-            toEdit.volume = newVolume;
             editedSampleStream.OnNext((oldName, newName));
         }
     }
@@ -446,10 +454,10 @@ public class SessionState : MonoBehaviour
     {
         if(Steps[Step].wells.ContainsKey(wellName))
         {
-            if(!Steps[Step].wells[wellName].Samples.Contains(ActiveSample))
+            if(!Steps[Step].wells[wellName].Samples.ContainsKey(ActiveSample))
             {
                 //if the well exists and does not already have the active Sample add it
-                Steps[Step].wells[wellName].Samples.Add(ActiveSample);
+                Steps[Step].wells[wellName].Samples.Add(ActiveSample, ActiveTool.volume);
                 //if this Sample is grouped add it to the group list
                 if(inGroup)
                 {
@@ -473,7 +481,7 @@ public class SessionState : MonoBehaviour
             //if the well does not exist create it
             Steps[Step].wells.Add(wellName, new Well());
             //add the active Sample to the new well
-            Steps[Step].wells[wellName].Samples.Add(ActiveSample);
+            Steps[Step].wells[wellName].Samples.Add(ActiveSample, ActiveTool.volume);
             //if this Sample is grouped add it to the group list
             if (inGroup)
             {
@@ -488,19 +496,20 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    public static bool RemoveActiveSampleFromWell(string wellName)
+    public static bool RemoveActiveSampleFromWell(string wellName, WellPlate removalStep)
     {
-        if (Steps[Step].wells.ContainsKey(wellName))
+        if (removalStep.wells.ContainsKey(wellName))
         {
-            if (Steps[Step].wells[wellName].Samples.Contains(ActiveSample))
+            if (removalStep.wells[wellName].Samples.ContainsKey(ActiveSample))
             {
                 //if the well exists and already has the active Sample remove it
-                Steps[Step].wells[wellName].Samples.Remove(ActiveSample);
+                removalStep.wells[wellName].Samples.Remove(ActiveSample);
+                SampleRemovedStream.OnNext(wellName);
 
                 //if the Sample being removed is part of a group remove the group everywhere
-                if(Steps[Step].wells[wellName].groups != null)
+                if (removalStep.wells[wellName].groups != null)
                 {
-                    foreach(Well.SampleGroup group in Steps[Step].wells[wellName].groups)
+                    foreach(Well.SampleGroup group in removalStep.wells[wellName].groups)
                     {
                         if(group.Sample == ActiveSample)
                         {
@@ -517,7 +526,6 @@ public class SessionState : MonoBehaviour
             else
             {
                 Debug.LogWarning("Well does not contain the active Sample");
-                Debug.Log("Active Sample: " + ActiveSample.name + " Liquid in well " + Steps[Step].wells[wellName].Samples[0].name);
                 return false;
             }
         }

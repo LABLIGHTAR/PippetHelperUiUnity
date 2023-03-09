@@ -73,10 +73,12 @@ public class ProcedureLoader : MonoBehaviour
                 float SampleVolume = float.Parse(lineCells[5], CultureInfo.InvariantCulture.NumberFormat);
 
                 //add Sample to sessionState
-                SessionState.Sample newSample = new SessionState.Sample(SampleName, SampleAbbreviation, colorName, color, SampleVolume);
-                SessionState.AddNewSample(newSample.name, newSample.abreviation, newSample.colorName, newSample.color, newSample.volume);
+                SessionState.Sample newSample = new SessionState.Sample(SampleName, SampleAbbreviation, colorName, color);
+                SessionState.AddNewSample(newSample.name, newSample.abreviation, newSample.colorName, newSample.color);
                 //set new Sample as active  
 ;               SessionState.ActiveSample = SessionState.AvailableSamples.Where(sample => sample.name == SampleName).FirstOrDefault();
+                //set tool volume
+                SessionState.ActiveTool.volume = SampleVolume;
 
                 //if the well id has a colon this is a multichannel
                 if(wellId.Contains(':'))

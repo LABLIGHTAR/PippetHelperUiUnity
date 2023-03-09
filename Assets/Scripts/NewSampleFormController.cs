@@ -11,7 +11,6 @@ public class NewSampleFormController : MonoBehaviour
     public Transform nameError;
     public Transform abreviationError;
     public Transform colorError;
-    public Transform volumeError;
 
     public TMP_Dropdown dropdown;
     public Button submitButton;
@@ -22,10 +21,6 @@ public class NewSampleFormController : MonoBehaviour
     public TMP_InputField abreviationText;
     public TextMeshProUGUI abreviationErrorText;
     public TextMeshProUGUI colorText;
-    public TMP_InputField volumeText;
-    public TextMeshProUGUI volumeErrorText;
-    public TextMeshProUGUI volumeLabel;
-    public TextMeshProUGUI volumePlaceholder;
 
     private Color newColor;
 
@@ -57,7 +52,6 @@ public class NewSampleFormController : MonoBehaviour
         //reset form values
         nameText.text = "";
         abreviationText.text = "";
-        volumeText.text = "";
         dropdown.value = 0;
     }
 
@@ -68,12 +62,12 @@ public class NewSampleFormController : MonoBehaviour
     {
         if(InputValidNew())
         {
-            //generate color an volume values
+            //generate color value
             var color = SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true));
-            var volume = float.Parse(volumeText.text.Substring(0, volumeText.text.Length), CultureInfo.InvariantCulture.NumberFormat);
-            
+
             //add new Sample to session state
-            SessionState.AddNewSample(nameText.text, abreviationText.text, colorText.text, color, volume);
+            Debug.Log("Abreviation: " + abreviationText.text);
+            SessionState.AddNewSample(nameText.text, abreviationText.text, colorText.text, color);
 
             //update color dropdown options
             dropdown.ClearOptions();
@@ -92,8 +86,7 @@ public class NewSampleFormController : MonoBehaviour
     /// <param name="oldName"> name of sample before edit </param>
     /// <param name="abbreviation"></param>
     /// <param name="colorText"></param>
-    /// <param name="volume"></param>
-    public void EditSample(string oldName, string oldAbbreviation, string oldColorString, string oldVolume)
+    public void EditSample(string oldName, string oldAbbreviation, string oldColorString)
     {
         //activate edit form
         this.gameObject.SetActive(true);
@@ -106,7 +99,6 @@ public class NewSampleFormController : MonoBehaviour
         //fill out the form with the old values
         nameText.text = oldName;
         abreviationText.text = oldAbbreviation;
-        volumeText.text = oldVolume;
         dropdown.value = dropdown.options.FindIndex((i) => { return i.text.Equals(oldColorString); });
         
         //set the submit button text and change event to edit
@@ -116,12 +108,11 @@ public class NewSampleFormController : MonoBehaviour
         {
             if(InputValidEdit(oldName, oldAbbreviation))
             {
-                //generate color and volume values
+                //generate color value
                 var color = SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true));
-                var volume = float.Parse(volumeText.text.Substring(0, volumeText.text.Length), CultureInfo.InvariantCulture.NumberFormat);
 
                 //edit sample in session state
-                SessionState.EditSample(oldName, nameText.text, abreviationText.text, colorText.text, color, volume);
+                SessionState.EditSample(oldName, nameText.text, abreviationText.text, colorText.text, color);
 
                 //reset submit button event
                 submitButton.onClick.RemoveAllListeners();
@@ -135,20 +126,6 @@ public class NewSampleFormController : MonoBehaviour
                 SessionState.FormActive = false;
             }
         });
-    }
-
-    public void BoxChecked(bool isSolid)
-    {
-        if(isSolid)
-        {
-            volumeLabel.text = "Substance Weight (μg)";
-            volumePlaceholder.text = "Enter Weight (μg)";
-        }
-        else
-        {
-            volumeLabel.text = "Substance Volume (μL)";
-            volumePlaceholder.text = "Enter Volume (μL)";
-        }
     }
 
     private bool InputValidEdit(string oldName, string oldAbbreviation)
@@ -200,22 +177,6 @@ public class NewSampleFormController : MonoBehaviour
         else
         {
             colorError.gameObject.SetActive(false);
-        }
-        if (!(volumeText.text.Length > 0))
-        {
-            volumeError.gameObject.SetActive(true);
-            volumeErrorText.text = "Volume cannot be empty*";
-            return false;
-        }
-        if (!float.TryParse(volumeText.text.Substring(0, volumeText.text.Length), out _))
-        {
-            volumeError.gameObject.SetActive(true);
-            volumeErrorText.text = "Please do not include units*";
-            return false;
-        }
-        else
-        {
-            volumeError.gameObject.SetActive(false);
         }
         return true;
     }
@@ -269,22 +230,6 @@ public class NewSampleFormController : MonoBehaviour
         else
         {
             colorError.gameObject.SetActive(false);
-        }
-        if (!(volumeText.text.Length > 0))
-        {
-            volumeError.gameObject.SetActive(true);
-            volumeErrorText.text = "Volume cannot be empty*";
-            return false;
-        }
-        if (!float.TryParse(volumeText.text.Substring(0, volumeText.text.Length), out _))
-        {
-            volumeError.gameObject.SetActive(true);
-            volumeErrorText.text = "Please do not include units*";
-            return false;
-        }
-        else
-        {
-            volumeError.gameObject.SetActive(false);
         }
         return true;
     }

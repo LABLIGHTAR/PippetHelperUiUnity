@@ -37,47 +37,44 @@ public class FocusedWellViewController : MonoBehaviour
 
     void UpdateVisualState(SessionState.Well well)
     {
+        sampleOneDisplay.SetActive(false);
+        sampleTwoDisplay.SetActive(false);
+        sampleThreeDisplay.SetActive(false);
+
         float wellVolume = 0f;
 
-        //update sample one display
-        if (well.Samples.Count > 0)
+        int index = -1;
+
+        foreach(var sample in well.Samples)
         {
-            sampleOneNameText.text = well.Samples[0].name;
-            sampleOneBG.color = well.Samples[0].color;
-            sampleOneVolumeText.text = well.Samples[0].volume.ToString() + " μL";
-            wellVolume += well.Samples[0].volume;
-            sampleOneDisplay.SetActive(true);
+            index++;
+
+            if(index == 0)
+            {
+                sampleOneNameText.text = sample.Key.name;
+                sampleOneBG.color = sample.Key.color;
+                sampleOneVolumeText.text = sample.Value.ToString() + " μL";
+                wellVolume += sample.Value;
+                sampleOneDisplay.SetActive(true);
+            }
+            else if(index == 1)
+            {
+                sampleTwoNameText.text = sample.Key.name;
+                sampleTwoBG.color = sample.Key.color;
+                sampleTwoVolumeText.text = sample.Value.ToString() + " μL";
+                wellVolume += sample.Value;
+                sampleTwoDisplay.SetActive(true);
+            }
+            else if(index == 3)
+            {
+                sampleThreeNameText.text = sample.Key.name;
+                sampleThreeBG.color = sample.Key.color;
+                sampleThreeVolumeText.text = sample.Value.ToString() + " μL";
+                wellVolume += sample.Value;
+                sampleThreeDisplay.SetActive(true);
+            }
         }
-        else
-        {
-            sampleOneDisplay.SetActive(false);
-        }
-        //update sample two display
-        if (well.Samples.Count > 1)
-        {
-            sampleTwoNameText.text = well.Samples[1].name;
-            sampleTwoBG.color = well.Samples[1].color;
-            sampleTwoVolumeText.text = well.Samples[1].volume.ToString() + " μL";
-            wellVolume += well.Samples[1].volume;
-            sampleTwoDisplay.SetActive(true);
-        }
-        else
-        {
-            sampleTwoDisplay.SetActive(false);
-        }
-        //update sample three display
-        if (well.Samples.Count > 2)
-        {
-            sampleThreeNameText.text = well.Samples[2].name;
-            sampleThreeBG.color = well.Samples[2].color;
-            sampleThreeVolumeText.text = well.Samples[2].volume.ToString() + " μL";
-            wellVolume += well.Samples[2].volume;
-            sampleThreeDisplay.SetActive(true);
-        }
-        else
-        {
-            sampleThreeDisplay.SetActive(false);
-        }
+
         //update well display
         wellIdText.text = SessionState.Steps[SessionState.Step].wells.Where(x => x.Value == well).FirstOrDefault().Key;
         wellVolumeText.text = wellVolume.ToString() + " μL";

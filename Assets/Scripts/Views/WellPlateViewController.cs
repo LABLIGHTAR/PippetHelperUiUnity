@@ -19,7 +19,10 @@ public class WellPlateViewController : MonoBehaviour
         yield return new WaitForEndOfFrame();
         foreach (Transform child in wells)
         {
-            SessionState.Steps[SessionState.Step].wells.Add(child.gameObject.name, new SessionState.Well());
+            if (!SessionState.Steps[SessionState.Step].wells.ContainsKey(child.gameObject.name))
+            {
+                SessionState.Steps[SessionState.Step].wells.Add(child.gameObject.name, new SessionState.Well());
+            }
         }
     }
 }
