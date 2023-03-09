@@ -3227,7 +3227,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6305541758729540933, guid: 08b6db42cd540704bacfa99a54c9381c, type: 3}
       propertyPath: m_text
-      value: Substance List
+      value: Sample List
       objectReference: {fileID: 0}
     - target: {fileID: 6788686774779777861, guid: 08b6db42cd540704bacfa99a54c9381c, type: 3}
       propertyPath: m_RootOrder

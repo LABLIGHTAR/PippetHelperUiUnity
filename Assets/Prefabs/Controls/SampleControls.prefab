@@ -204,6 +204,10 @@ PrefabInstance:
       propertyPath: substanceList
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5644672901719079522, guid: fcaae2328798dc54097a5555ee0e12b9, type: 3}
+      propertyPath: m_text
+      value: Load List
+      objectReference: {fileID: 0}
     - target: {fileID: 8403596360274196051, guid: fcaae2328798dc54097a5555ee0e12b9, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -476,6 +480,10 @@ PrefabInstance:
     - target: {fileID: 6133858816155962921, guid: 08ed4fa1af9c0c448a70352e0efbed81, type: 3}
       propertyPath: m_Name
       value: SaveSubstanceButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133858816670722638, guid: 08ed4fa1af9c0c448a70352e0efbed81, type: 3}
+      propertyPath: m_text
+      value: Save List
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08ed4fa1af9c0c448a70352e0efbed81, type: 3}

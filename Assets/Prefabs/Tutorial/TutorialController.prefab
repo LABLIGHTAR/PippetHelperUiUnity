@@ -182,7 +182,7 @@ PrefabInstance:
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
       value: 'Wells can be "focused" by hovering the cursor over them. Information
-        about substances inside the focused well appears at the bottom right of the
+        about samples inside the focused well appears at the bottom right of the
         screen.
 
 '
@@ -352,7 +352,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 783509033112317129, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Substances Cont.
+      value: Samples Continued
       objectReference: {fileID: 0}
     - target: {fileID: 1140517474554353102, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_SizeDelta.y
@@ -456,10 +456,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Each substance must be assigned a name, an abbreviation and a color
-        that will be displayed in this editor as well as the resulting augment reality
+      value: Each sample must be assigned a name, an abbreviation and a color that
+        will be displayed in this editor as well as the resulting augment reality
         protocol. If the volume or weight is not defined simply enter 0 in that field.
-        When finished press "Add Substance:"
+        When finished press "Add Sample:"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -488,7 +488,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 783509033112317129, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Creating a Substance
+      value: Creating a Sample
       objectReference: {fileID: 0}
     - target: {fileID: 3735882242034018338, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_Pivot.x
@@ -585,8 +585,8 @@ PrefabInstance:
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
       value: 'Piplight calls the different things (reagents, buffers, samples, cell
-        suspensions, bacterial colonies to be loaded into wells) "substances". To
-        define particular substance, press the button labeled "+ New Substance".
+        suspensions, bacterial colonies to be loaded into wells) "samples". To define
+        particular sample, press the button labeled "+ New Sample".
 
 '
       objectReference: {fileID: 0}
@@ -617,7 +617,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 783509033112317129, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Substances Cont..
+      value: Samples Continued
       objectReference: {fileID: 0}
     - target: {fileID: 1140517474554353102, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_SizeDelta.y
@@ -721,10 +721,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: 'Once a substance is added, it will appear as an entry in the "Substance
-        List". Click on the entry to set it as the active substance. You will then
-        specify a tool and use that to click on each well you would like to add the
-        substance to. '
+      value: 'Once a sample is added, it will appear as an entry in the "Sample List".
+        Click on the entry to set it as the active sample. You will then specify
+        a tool and use that to click on each well you would like to add the sample
+        to. '
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -858,9 +858,9 @@ PrefabInstance:
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
       value: 'When using a tool, its icon will be the same color as the selected
-        substance. When generating a protocol, the tool can have two actions. To
-        add the selected substance to a plate well, left-click, to correct a mistake
-        or to remove a substance, right-click.
+        sample. When generating a protocol, the tool can have two actions. To add
+        the selected sample to a plate well, left-click, to correct a mistake or
+        to remove a sample, right-click.
 
 '
       objectReference: {fileID: 0}
@@ -1271,9 +1271,8 @@ PrefabInstance:
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
       value: "PipLight is a protocol generator for the LabLight Augmented Reality
-        system. Using this app \nyou will specify the substances to be added to the
-        different wells of\na 96-well plate. To continue this tutorial, press \"Next\"
-        below."
+        system. Using this app \nyou will specify the sample to be added to the different
+        wells of\na 96-well plate. To continue this tutorial, press \"Next\" below."
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
