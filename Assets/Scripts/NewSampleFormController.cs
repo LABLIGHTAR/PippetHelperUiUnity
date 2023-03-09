@@ -66,7 +66,6 @@ public class NewSampleFormController : MonoBehaviour
             var color = SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true));
 
             //add new Sample to session state
-            Debug.Log("Abreviation: " + abreviationText.text);
             SessionState.AddNewSample(nameText.text, abreviationText.text, colorText.text, color);
 
             //update color dropdown options

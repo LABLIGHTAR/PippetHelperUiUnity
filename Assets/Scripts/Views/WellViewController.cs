@@ -56,7 +56,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
 
 
-    // Pointer events
+    // Highlight and update focused well on hover
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (!SessionState.FormActive && SessionState.ActiveTool != null)
@@ -73,6 +73,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
     }
 
+    //remove highlight on hover exit
     public void OnPointerExit(PointerEventData eventData)
     {
         if (!SessionState.FormActive & SessionState.ActiveTool != null)
@@ -88,6 +89,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
     }
 
+    //add sample to well and update focused well on click
     public void OnPointerDown(PointerEventData eventData)
     {
         if (!SessionState.FormActive)

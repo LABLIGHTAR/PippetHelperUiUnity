@@ -31,6 +31,7 @@ public class ProcedureLoader : MonoBehaviour
         }
     }
 
+    ///loads procedure from csv (async to ensure all objects in scene are instantiated fully before loading)
     IEnumerator LoadProcedure(string fileName)
     {
         yield return new WaitForEndOfFrame();
@@ -91,6 +92,7 @@ public class ProcedureLoader : MonoBehaviour
 
                     activeWellId = wellGroup[0];
 
+                    //fill well group horizontal
                     if (wellGroup[0][0] == wellGroup[1][0])
                     {
                         numChannels = GetNumberChannels(wellGroup, true);
@@ -116,6 +118,7 @@ public class ProcedureLoader : MonoBehaviour
                             activeWellId = GetNextWellHorizontal(activeWellId);
                         }
                     }
+                    //fill well group vertical
                     else
                     {
                         numChannels = GetNumberChannels(wellGroup, false);
@@ -157,6 +160,7 @@ public class ProcedureLoader : MonoBehaviour
         }
     }
 
+    //returns number of channels from well group identifier
     int GetNumberChannels(string[] wellGroup, bool isHorizontal)
     {
         int startWellNumber;
@@ -192,6 +196,7 @@ public class ProcedureLoader : MonoBehaviour
         return endWellNumber - (startWellNumber - 1);
     }
 
+    //returns the well id of the well to right
     string GetNextWellHorizontal(string currentWell)
     {
         int startWellNumber;
@@ -211,6 +216,7 @@ public class ProcedureLoader : MonoBehaviour
         return new string(currentWell[0] + startWellNumber.ToString());
     }
 
+    //returns the id of the well below
     string GetNextWellVertical(string currentWell)
     {
         string columnId = currentWell.Substring(1);

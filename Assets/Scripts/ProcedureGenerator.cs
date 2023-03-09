@@ -55,7 +55,6 @@ public class ProcedureGenerator : MonoBehaviour
             //iterate through each well to go start from the top left of the plate
             foreach (var well in step.wells)
             {
-                Debug.Log(well.Key);
                 //iterate through each Sample in the well
                 foreach (var sample in well.Value.Samples)
                 {
@@ -75,6 +74,10 @@ public class ProcedureGenerator : MonoBehaviour
                             string groupEnd = null;
                             bool isGrouped = false;
                             int groupId = -1;
+
+                            //get the volume in this well
+                            float volume;
+                            well2.Value.Samples.TryGetValue(sample.Key, out volume);
 
                             //check if this Sample is a part of a group
                             foreach (var group in well2.Value.groups)
@@ -97,15 +100,15 @@ public class ProcedureGenerator : MonoBehaviour
                                 if (groupStart != null)
                                 {
                                     groupEnd = FindGroupEnd(groupId);
-                                    Debug.Log(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + sample.Value.ToString() + delimiter + "μL");
-                                    sw.WriteLine(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + sample.Value.ToString() + delimiter + "μL");
+                                    //Debug.Log(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
+                                    sw.WriteLine(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
                                 }
                             }
                             //if this is a single sample well add the single sample entry to the csv output
                             else
                             {
-                                Debug.Log(delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + sample.Value.ToString() + delimiter + "μL");
-                                sw.WriteLine(delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + sample.Value.ToString() + delimiter + "μL");
+                                //Debug.Log(delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
+                                sw.WriteLine(delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
                             }
                         }
                     }

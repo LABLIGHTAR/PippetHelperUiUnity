@@ -23,6 +23,7 @@ public class SessionState : MonoBehaviour
     }
 
     //class definitions
+    #region
     public class Sample
     {
         public string name;
@@ -147,6 +148,7 @@ public class SessionState : MonoBehaviour
             }
         }
     }
+    #endregion
 
     //state variables
     private static string procedureName;
@@ -177,7 +179,8 @@ public class SessionState : MonoBehaviour
     public static Subject<Well> focusedWellStream = new Subject<Well>();
     public static Subject<string> procedureNameStream = new Subject<string>();
 
-    //setters
+    //getters and setters
+    #region
     public static string ProcedureName
     {
         set
@@ -343,7 +346,9 @@ public class SessionState : MonoBehaviour
             Step = value;
         }
     }
+    #endregion
 
+    //adds new step to protocol and navigates ui to new step
     public static void AddNewStep()
     {
         Steps.Add(new WellPlate());
@@ -351,6 +356,7 @@ public class SessionState : MonoBehaviour
         newStepStream.OnNext(SessionState.Step);
     }
 
+    //deletes the active step
     public static void RemoveCurrentStep()
     {
         Steps.Remove(Steps[Step]);
@@ -405,6 +411,7 @@ public class SessionState : MonoBehaviour
         }
     }
 
+    //edits a sample in the available sample list
     public static void EditSample(string oldName, string newName, string newAbreviation, string newColorName, Color newColor)
     {
         Sample toEdit = AvailableSamples.Where(sample => sample.name == oldName).FirstOrDefault();
@@ -423,6 +430,7 @@ public class SessionState : MonoBehaviour
         }
     }
 
+    //sets the active sample
     public static void SetActiveSample(Sample selected)
     {
         if (!AvailableSamples.Contains(selected))
@@ -436,6 +444,7 @@ public class SessionState : MonoBehaviour
         }
     }
 
+    //sets the focused well
     public static void SetFocusedWell(string wellId)
     {
         if (!Steps[Step].wells.ContainsKey(wellId))
@@ -450,6 +459,7 @@ public class SessionState : MonoBehaviour
         }
     }
 
+    //adds active sample to passed well
     public static bool AddActiveSampleToWell(string wellName, bool inGroup, bool isStart, bool isEnd)
     {
         if(Steps[Step].wells.ContainsKey(wellName))
@@ -496,6 +506,7 @@ public class SessionState : MonoBehaviour
         }
     }
 
+    //removes active sample from passed well at passed step
     public static bool RemoveActiveSampleFromWell(string wellName, WellPlate removalStep)
     {
         if (removalStep.wells.ContainsKey(wellName))
@@ -536,6 +547,7 @@ public class SessionState : MonoBehaviour
         }
     }
 
+    //removes all samples in the passed sample group id
     static void RemoveAllSamplesInGroup(int removalID)
     {
         List<Well.SampleGroup> groupsToRemove = new List<Well.SampleGroup>();
