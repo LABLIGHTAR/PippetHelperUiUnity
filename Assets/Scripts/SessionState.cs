@@ -370,10 +370,28 @@ public class SessionState : MonoBehaviour
     public static void RemoveSample(string name)
     {
         Sample forRemoval = AvailableSamples.Where(sample => sample.name == name).FirstOrDefault();
-        //return if the Sample already exists
+
         if (forRemoval != null)
         {
+            //set the sample for removal to the active sample
+            ActiveSample = forRemoval;
+
+            //remove this sample from all wells
+            foreach (var step in Steps)
+            {
+                foreach (var well in step.wells)
+                {
+                    if (well.Value.Samples.Contains(forRemoval))
+                    {
+                        RemoveActiveSampleFromWell(well.Key);
+                    }
+                }
+            }
+ 
+            ActiveSample = null;
+            //return this samples color to the available colors
             UsedColors.Remove(forRemoval.colorName);
+            //remove this sample from the sample list
             AvailableSamples.Remove(forRemoval);
         }
     }

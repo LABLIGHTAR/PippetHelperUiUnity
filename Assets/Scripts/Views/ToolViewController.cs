@@ -40,7 +40,7 @@ public class ToolViewController : MonoBehaviour
 
     void UpdateVisualState()
     {
-        if(SessionState.ActiveTool != null)
+        if(SessionState.ActiveTool != null && SessionState.ActiveSample != null)
         {
             if (SessionState.ActiveTool.name == "micropipette")
             {
