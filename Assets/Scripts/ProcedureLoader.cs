@@ -13,6 +13,10 @@ public class ProcedureLoader : MonoBehaviour
 {
     public static Subject<bool> procedureStream = new Subject<bool>();
 
+    private string folderPath;
+
+    private string[] fileName;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +24,21 @@ public class ProcedureLoader : MonoBehaviour
                 new ExtensionFilter("Comma Seperated Variables", "csv"),
             };
 
-        string[] fileName = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, true); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
+#if UNITY_STANDALONE && !UNITY_EDITOR
+        //check if protocol folder exists
+        folderPath = Application.dataPath + "/../protocols";
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
+        //open file
+        fileName = StandaloneFileBrowser.OpenFilePanel("Open File", folderPath, extensionList, true); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
+#endif
+#if UNITY_EDITOR
+        fileName = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, true); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
+#endif
+
+
         if (fileName.Count() > 0)
         {
             StartCoroutine(LoadProcedure(fileName[0]));
