@@ -14,7 +14,7 @@ public class UiInteraction : MonoBehaviour
 
     public Camera Camera;
     public RectTransform SelectionBox;
-    public float DragDelay = 0.1f;
+    public float DragDelay = 0.00001f;
     
     private LayerMask WellLayers;
     private float MouseDownTime;
@@ -37,6 +37,7 @@ public class UiInteraction : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(SessionState.SelectionActive);
 /*        if (Mouse.current.leftButton.wasReleasedThisFrame && !SessionState.FormActive)
         {
             var selectedObject = GetUiElementsClicked();
@@ -65,20 +66,22 @@ public class UiInteraction : MonoBehaviour
 
     void HandleSelectionInput()
     {
-        if(Mouse.current.leftButton.wasPressedThisFrame)
+        if(Mouse.current.leftButton.wasPressedThisFrame && SessionState.ActiveTool.name == "micropipette")
         {
             //set up selection box
             SelectionBox.sizeDelta = Vector2.zero;
             SelectionBox.gameObject.SetActive(true);
-            SessionState.SelectionActive = true;
             StartMousePosition = Mouse.current.position.ReadValue();
             MouseDownTime = Time.time;
         }
-        else if(Mouse.current.leftButton.isPressed && MouseDownTime + DragDelay < Time.time)
+        else if(Mouse.current.leftButton.isPressed && MouseDownTime + DragDelay < Time.time && SessionState.ActiveTool.name == "micropipette")
         {
             //rezize box if holding and dragging
-            SessionState.SelectionActive = true;
             ResizeSelectionBox();
+            if(!SelectionManager.Instance.SelectionIsEmpty())
+            {
+                SessionState.SelectionActive = true;
+            }
         }
         else if(Mouse.current.leftButton.wasReleasedThisFrame)
         {
@@ -86,12 +89,21 @@ public class UiInteraction : MonoBehaviour
             SelectionBox.sizeDelta = Vector2.zero;
             SelectionBox.gameObject.SetActive(false);
 
+            if(SelectionManager.Instance.SelectionIsEmpty())
+            {
+                SessionState.SelectionActive = false;
+            }
+            else
+            {
+                SessionState.SelectionActive = true;
+            }
+
             //check what was clicked on
             RaycastHit2D hit = Physics2D.Raycast(Camera.ScreenToWorldPoint(Mouse.current.position.ReadValue()), Vector2.zero);
 
             if (hit.collider != null && hit.collider.TryGetComponent<WellViewController>(out WellViewController well))
             {
-                //if a well was clicked check for changes to selection
+                //if the shift key is held down edit selection
                 if(Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed)
                 {
                     if(SelectionManager.Instance.IsSelected(well))
@@ -101,12 +113,18 @@ public class UiInteraction : MonoBehaviour
                     else
                     {
                         SelectionManager.Instance.Select(well);
+                        SessionState.SelectionActive = true;
                     }
                 }
-                //else we are selecting a single well
-                else
+                //if the shift key is not held and the selection is active deselect and add sample to all wells
+                else if (MouseDownTime + DragDelay > Time.time && SessionState.SelectionActive)
                 {
-                    if (SessionState.ActiveTool != null && SessionState.ActiveSample != null && !SessionState.SelectionActive)
+                    SelectionManager.Instance.DeselectAllAndAdd();
+                }
+                //else there is no group selection and we are selecting a single well
+                else 
+                {
+                    if (SessionState.ActiveTool != null && SessionState.ActiveSample != null && SessionState.SelectionActive == false)
                     {
                         if (SessionState.ActiveTool.name == "micropipette")
                         {
@@ -124,9 +142,12 @@ public class UiInteraction : MonoBehaviour
                     }
                 }
             }
-            else if(MouseDownTime + DragDelay > Time.time)
+            else if (MouseDownTime + DragDelay > Time.time && SessionState.SelectionActive)
             {
-                SelectionManager.Instance.DeselectAllAndAdd();
+                if (!Keyboard.current.leftShiftKey.isPressed && !Keyboard.current.rightShiftKey.isPressed)
+                {
+                    SelectionManager.Instance.DeselectAllAndAdd();
+                }
             }
 
             MouseDownTime = 0;

@@ -67,4 +67,16 @@ public class SelectionManager
     {
         return SelectedWells.Contains(well);
     }
+
+    public bool SelectionIsEmpty()
+    {
+        if(SelectedWells.Count > 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 }
