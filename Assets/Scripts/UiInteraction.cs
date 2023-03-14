@@ -12,7 +12,7 @@ public class UiInteraction : MonoBehaviour
 
     public Camera Camera;
     public RectTransform SelectionBox;
-    public float DragDelay = 0.00001f;
+    public float DragDelay = 0.1f;
     
     private LayerMask WellLayers;
     private float MouseDownTime;
@@ -49,24 +49,32 @@ public class UiInteraction : MonoBehaviour
             SelectionBox.sizeDelta = Vector2.zero;
             SelectionBox.gameObject.SetActive(false);
 
-            if(SelectionManager.Instance.SelectionIsEmpty())
-            {
-                SessionState.SelectionActive = false;
-            }
-            else
-            {
-                SessionState.SelectionActive = true;
-            }
-
             //check what was clicked on
             RaycastHit2D hit = Physics2D.Raycast(Camera.ScreenToWorldPoint(Mouse.current.position.ReadValue()), Vector2.zero);
 
             if (hit.collider != null && hit.collider.TryGetComponent<WellViewController>(out WellViewController well))
             {
-                //if the shift key is held down edit selection
-                if(Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed)
+                //if there is no group selection and we are selecting a single well
+                if (SessionState.ActiveTool != null && SessionState.ActiveSample != null && !SessionState.SelectionActive)
                 {
-                    if(SelectionManager.Instance.IsSelected(well))
+                    if (SessionState.ActiveTool.name == "micropipette")
+                    {
+                        //add active sample to well single
+                        if (SessionState.AddActiveSampleToWell(well.name, false, false, false))
+                        {
+                            well.UpdateVisualState();
+                        }
+                    }
+                    else
+                    {
+                        //add active sample to well
+                        well.AddSampleMultichannel(SessionState.ActiveTool.numChannels);
+                    }
+                }
+                //if the shift key is held down edit selection
+                if (Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed)
+                {
+                    if (SelectionManager.Instance.IsSelected(well))
                     {
                         SelectionManager.Instance.Deselect(well);
                     }
@@ -81,26 +89,7 @@ public class UiInteraction : MonoBehaviour
                 {
                     SelectionManager.Instance.DeselectAllAndAdd();
                 }
-                //else there is no group selection and we are selecting a single well
-                else 
-                {
-                    if (SessionState.ActiveTool != null && SessionState.ActiveSample != null && SessionState.SelectionActive == false)
-                    {
-                        if (SessionState.ActiveTool.name == "micropipette")
-                        {
-                            //add active sample to well single
-                            if (SessionState.AddActiveSampleToWell(well.name, false, false, false))
-                            {
-                                well.UpdateVisualState();
-                            }
-                        }
-                        else
-                        {
-                            //add active sample to well
-                            well.AddSampleMultichannel(SessionState.ActiveTool.numChannels);
-                        }
-                    }
-                }
+
             }
             else if (MouseDownTime + DragDelay > Time.time && SessionState.SelectionActive)
             {
@@ -131,16 +120,19 @@ public class UiInteraction : MonoBehaviour
         //create selection bounds
         Bounds bounds = new Bounds(SelectionBox.anchoredPosition, SelectionBox.sizeDelta);
 
-        //select all wells in bounds
-        for(int i=0; i<SelectionManager.Instance.AvailableWells.Count; i++)
+        if(bounds.size.x > 35f && bounds.size.y > 35f)
         {
-            if (WellIsInSelectionBox(Camera.WorldToScreenPoint(SelectionManager.Instance.AvailableWells[i].transform.position), bounds))
+            //select all wells in bounds
+            for (int i = 0; i < SelectionManager.Instance.AvailableWells.Count; i++)
             {
-                SelectionManager.Instance.Select(SelectionManager.Instance.AvailableWells[i]);
-            }
-            else
-            {
-                SelectionManager.Instance.Deselect(SelectionManager.Instance.AvailableWells[i]);
+                if (WellIsInSelectionBox(Camera.WorldToScreenPoint(SelectionManager.Instance.AvailableWells[i].transform.position), bounds))
+                {
+                    SelectionManager.Instance.Select(SelectionManager.Instance.AvailableWells[i]);
+                }
+                else
+                {
+                    SelectionManager.Instance.Deselect(SelectionManager.Instance.AvailableWells[i]);
+                }
             }
         }
     }
