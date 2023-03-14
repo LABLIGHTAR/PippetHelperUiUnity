@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class NewProcedureManager : MonoBehaviour
 {
     public TextMeshProUGUI inputText;
+    public TMP_InputField input;
 
     public GameObject inputError;
 
@@ -21,6 +23,16 @@ public class NewProcedureManager : MonoBehaviour
         //set background transparancy;
         var background = this.GetComponent<Image>();
         background.color = new Color(background.color.r, background.color.g, background.color.b, 1f);
+
+        input.Select();
+    }
+
+    void Update()
+    {
+        if(Keyboard.current.enterKey.wasPressedThisFrame)
+        {
+            CreateProcedure();
+        }
     }
     
     void CreateProcedure()

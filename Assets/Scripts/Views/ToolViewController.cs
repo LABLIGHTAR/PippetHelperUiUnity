@@ -26,19 +26,7 @@ public class ToolViewController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-/*        //subscribe to data streams
-        UiInteraction.uiClickStream.Subscribe(selectedObject =>
-        {
-            if(selectedObject.name == "PipetteImage")
-            {
-                SelectMicropipette();
-            }
-            else if(selectedObject.name == "MultichannelImage")
-            {
-                SelectMultichannel();
-            }
-        });*/
-
+       //subscribe to data stream
         SessionState.activeSampleStream.Subscribe(_ => UpdateVisualState());
 
         //set default volume values
@@ -51,13 +39,24 @@ public class ToolViewController : MonoBehaviour
 
     void Update()
     {
-        if(Keyboard.current.digit1Key.wasPressedThisFrame && !SessionState.FormActive)
+        if(Keyboard.current.digit1Key.wasPressedThisFrame && !SessionState.FormActive && !pipetteVolumeText.isFocused && !multiVolumeText.isFocused)
         {
             SelectMicropipette();
         }
-        else if(Keyboard.current.digit2Key.wasPressedThisFrame && !SessionState.FormActive)
+        else if(Keyboard.current.digit2Key.wasPressedThisFrame && !SessionState.FormActive && !pipetteVolumeText.isFocused && !multiVolumeText.isFocused)
         {
             SelectMultichannel();
+        }
+        if(Keyboard.current.tabKey.wasPressedThisFrame && !SessionState.FormActive)
+        {
+            if(SessionState.ActiveTool.name == "micropipette")
+            {
+                pipetteVolumeText.Select();
+            }
+            else if(SessionState.ActiveTool.name == "multichannel")
+            {
+                multiVolumeText.Select();
+            }
         }
     }
 

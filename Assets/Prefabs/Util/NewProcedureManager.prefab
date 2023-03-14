@@ -189,7 +189,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputText: {fileID: 5251745628180085852}
-  inputError: {fileID: 421520716484235362}
+  input: {fileID: 5625521681241808178}
+  inputError: {fileID: 4067189652852808998}
   createProcedureButton: {fileID: 8318714441793874324}
 --- !u!222 &2665979060590753751
 CanvasRenderer:

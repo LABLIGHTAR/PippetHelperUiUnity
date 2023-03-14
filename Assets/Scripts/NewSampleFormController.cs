@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class NewSampleFormController : MonoBehaviour
@@ -23,6 +24,9 @@ public class NewSampleFormController : MonoBehaviour
     public TextMeshProUGUI colorText;
 
     private Color newColor;
+    private int inputSelected;
+    private float tabDelay = 0.2f;
+    private float tabDownTime = 0f;
 
     public List<TMP_Dropdown.OptionData> dropdownOptions = new List<TMP_Dropdown.OptionData>();
 
@@ -54,6 +58,36 @@ public class NewSampleFormController : MonoBehaviour
         abreviationText.text = "";
         dropdown.value = 0;
     }
+
+    void Update()
+    {
+        if(Keyboard.current.tabKey.isPressed && ((Time.time - tabDelay) > tabDownTime))
+        {
+            tabDownTime = Time.time;
+            inputSelected++;
+            inputSelected = inputSelected > 1 ? 0 : inputSelected;
+
+            SelectInputField();
+        }
+        if(Keyboard.current.enterKey.wasPressedThisFrame)
+        {
+            AddNewSample();
+        }
+    }
+
+    void SelectInputField()
+    {
+        switch(inputSelected)
+        {
+            case 0: nameText.Select();
+                break;
+            case 1: abreviationText.Select(); 
+                break;
+        }
+    }
+
+    public void NameSelected() => inputSelected = 0;
+    public void AbrevSelected() => inputSelected = 1;
 
     /// <summary>
     /// adds new sample to session state if input is valid

@@ -26,7 +26,7 @@ public class UiInteraction : MonoBehaviour
 
     void HandleSelectionInput()
     {
-        if(Mouse.current.leftButton.wasPressedThisFrame && SessionState.ActiveTool.name == "micropipette")
+        if(Mouse.current.leftButton.wasPressedThisFrame && SessionState.ActiveTool.name == "micropipette" && !SessionState.FormActive)
         {
             //set up selection box
             SelectionBox.sizeDelta = Vector2.zero;
@@ -34,7 +34,7 @@ public class UiInteraction : MonoBehaviour
             StartMousePosition = Mouse.current.position.ReadValue();
             MouseDownTime = Time.time;
         }
-        else if(Mouse.current.leftButton.isPressed && MouseDownTime + DragDelay < Time.time && SessionState.ActiveTool.name == "micropipette")
+        else if(Mouse.current.leftButton.isPressed && MouseDownTime + DragDelay < Time.time && SessionState.ActiveTool.name == "micropipette" && !SessionState.FormActive)
         {
             //rezize box if holding and dragging
             ResizeSelectionBox();
@@ -43,7 +43,7 @@ public class UiInteraction : MonoBehaviour
                 SessionState.SelectionActive = true;
             }
         }
-        else if(Mouse.current.leftButton.wasReleasedThisFrame)
+        else if(Mouse.current.leftButton.wasReleasedThisFrame && !SessionState.FormActive)
         {
             //deactive selection box
             SelectionBox.sizeDelta = Vector2.zero;
@@ -101,7 +101,7 @@ public class UiInteraction : MonoBehaviour
 
             MouseDownTime = 0;
         }
-        else if(Mouse.current.rightButton.wasReleasedThisFrame)
+        else if(Mouse.current.rightButton.wasReleasedThisFrame && !SessionState.FormActive)
         {
             SelectionManager.Instance.DeselectAll();
         }
