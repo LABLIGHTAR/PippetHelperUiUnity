@@ -26,7 +26,7 @@ public class ToolViewController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //subscribe to data streams
+/*        //subscribe to data streams
         UiInteraction.uiClickStream.Subscribe(selectedObject =>
         {
             if(selectedObject.name == "PipetteImage")
@@ -37,7 +37,7 @@ public class ToolViewController : MonoBehaviour
             {
                 SelectMultichannel();
             }
-        });
+        });*/
 
         SessionState.activeSampleStream.Subscribe(_ => UpdateVisualState());
 
@@ -47,6 +47,18 @@ public class ToolViewController : MonoBehaviour
 
         //set micropipette as default tool
         SelectMicropipette();
+    }
+
+    void Update()
+    {
+        if(Keyboard.current.digit1Key.wasPressedThisFrame && !SessionState.FormActive)
+        {
+            SelectMicropipette();
+        }
+        else if(Keyboard.current.digit2Key.wasPressedThisFrame && !SessionState.FormActive)
+        {
+            SelectMultichannel();
+        }
     }
 
     //change volume with mousewheel

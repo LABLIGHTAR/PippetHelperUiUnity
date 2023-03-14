@@ -13,7 +13,15 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     public WellViewController NextInRow;
     public WellViewController NextInCol;
 
+    public SpriteRenderer SelectionSprite;
+
     private int SampleCount;
+
+    void Awake()
+    {
+        SelectionManager.Instance.AvailableWells.Add(this);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -59,7 +67,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     // Highlight and update focused well on hover
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!SessionState.FormActive && SessionState.ActiveTool != null)
+        if (!SessionState.FormActive && !SessionState.SelectionActive && SessionState.ActiveTool != null)
         {
             if (SessionState.ActiveTool.name == "micropipette")
             {
@@ -76,7 +84,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     //remove highlight on hover exit
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!SessionState.FormActive & SessionState.ActiveTool != null)
+        if (!SessionState.FormActive && !SessionState.SelectionActive && SessionState.ActiveTool != null)
         {
             if (SessionState.ActiveTool.name == "micropipette")
             {
@@ -92,11 +100,11 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     //add sample to well and update focused well on click
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (!SessionState.FormActive)
+        if (!SessionState.FormActive && !SessionState.SelectionActive && SessionState.Steps != null && SessionState.Step != null)
         {
-            if (eventData.button == PointerEventData.InputButton.Left)
+/*            if (eventData.button == PointerEventData.InputButton.Left)
             {
-                if (SessionState.ActiveTool != null && SessionState.ActiveSample != null)
+                if (SessionState.ActiveTool != null && !SessionState.SelectionActive && SessionState.ActiveSample != null)
                 {
                     if (SessionState.ActiveTool.name == "micropipette")
                     {
@@ -110,8 +118,8 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                         AddSampleMultichannel(SessionState.ActiveTool.numChannels);
                     }
                 }
-            }
-            else if (eventData.button == PointerEventData.InputButton.Right)
+            }*/
+            if (eventData.button == PointerEventData.InputButton.Right)
             {
                 if (!SessionState.FormActive & SessionState.RemoveActiveSampleFromWell(name, SessionState.Steps[SessionState.Step]))
                 {
@@ -126,7 +134,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
 
     //called when well is clicked
-    void UpdateVisualState()
+    public void UpdateVisualState()
     {
         if (SessionState.Steps != null & SessionState.Steps[SessionState.Step] != null)
         {
@@ -193,7 +201,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     /// Only ever called on multichannel clicks
     /// </summary>
     /// <param name="numChannels"></param>
-    void AddSampleMultichannel(int numChannels)
+    public void AddSampleMultichannel(int numChannels)
     {
         //if number of channels is greater than the number of wells in the given orientation return
         if (SessionState.ActiveTool.orientation == "Row")
@@ -316,5 +324,17 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             NextInCol.DeactivateHighlight(numChannels);
         }
+    }
+
+    public void OnSelected()
+    {
+        SelectionSprite.gameObject.SetActive(true);
+        ActivateHighlight(1);
+    }
+
+    public void OnDeselected()
+    {
+        SelectionSprite.gameObject.SetActive(false);
+        DeactivateHighlight(1);
     }
 }

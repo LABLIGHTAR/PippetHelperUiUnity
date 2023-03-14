@@ -160,6 +160,7 @@ public class SessionState : MonoBehaviour
     private static Sample activeSample;
 
     private static bool formActive;
+    private static bool selectionActive;
 
     private static List<string> usedColors;
 
@@ -287,6 +288,21 @@ public class SessionState : MonoBehaviour
         get
         {
             return formActive;
+        }
+    }
+
+    public static bool SelectionActive
+    {
+        set
+        {
+            if (selectionActive != value)
+            {
+                selectionActive = value;
+            }
+        }
+        get
+        {
+            return selectionActive;
         }
     }
 
@@ -511,7 +527,7 @@ public class SessionState : MonoBehaviour
     {
         if (removalStep.wells.ContainsKey(wellName))
         {
-            if (removalStep.wells[wellName].Samples.ContainsKey(ActiveSample))
+            if (ActiveSample != null && removalStep.wells[wellName].Samples.ContainsKey(ActiveSample))
             {
                 //if the well exists and already has the active Sample remove it
                 removalStep.wells[wellName].Samples.Remove(ActiveSample);

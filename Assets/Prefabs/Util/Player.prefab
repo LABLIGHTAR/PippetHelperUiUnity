@@ -45,3 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 0}
+  Camera: {fileID: 0}
+  SelectionBox: {fileID: 0}
+  WellLayers:
+    serializedVersion: 2
+    m_Bits: 8
