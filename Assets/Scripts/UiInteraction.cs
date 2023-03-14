@@ -10,8 +10,6 @@ public class UiInteraction : MonoBehaviour
 {
     public GameObject canvas;
 
-    public static Subject<GameObject> uiClickStream = new Subject<GameObject>();
-
     public Camera Camera;
     public RectTransform SelectionBox;
     public float DragDelay = 0.00001f;
@@ -20,48 +18,10 @@ public class UiInteraction : MonoBehaviour
     private float MouseDownTime;
     private Vector2 StartMousePosition;
 
-    GraphicRaycaster raycaster;
-    PointerEventData clickData;
-    List<RaycastResult> clickResults;
-
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        raycaster = canvas.GetComponent<GraphicRaycaster>();
-        clickData = new PointerEventData(EventSystem.current);
-        clickResults = new List<RaycastResult>();
-    }
-
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(SessionState.SelectionActive);
-/*        if (Mouse.current.leftButton.wasReleasedThisFrame && !SessionState.FormActive)
-        {
-            var selectedObject = GetUiElementsClicked();
-            if (selectedObject != null)
-            {
-                uiClickStream.OnNext(selectedObject);
-            }
-        }*/
         HandleSelectionInput();
-    }
-
-    GameObject GetUiElementsClicked()
-    {
-        clickData.position = Mouse.current.position.ReadValue();
-        clickResults.Clear();
-
-        raycaster.Raycast(clickData, clickResults);
-        
-        if(clickResults.Count > 0)
-        {
-            GameObject uiElement = clickResults[0].gameObject;
-            return uiElement;
-        }
-        return null;
     }
 
     void HandleSelectionInput()

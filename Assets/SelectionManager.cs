@@ -19,7 +19,7 @@ public class SelectionManager
             _instance = value; 
         }
     }
-
+    
     public HashSet<WellViewController> SelectedWells = new HashSet<WellViewController>();
     public List<WellViewController> AvailableWells = new List<WellViewController>();
 
