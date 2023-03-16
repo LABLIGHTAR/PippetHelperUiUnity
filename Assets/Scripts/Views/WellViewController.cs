@@ -25,6 +25,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     // Start is called before the first frame update
     void Start()
     {
+        name = this.gameObject.name;
         SessionState.stepStream.Subscribe(_ => LoadVisualState());
         
         ProcedureLoader.procedureStream.Subscribe(_ => LoadVisualState());
@@ -102,23 +103,6 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (!SessionState.FormActive && !SessionState.SelectionActive && SessionState.Steps != null && SessionState.Step != null)
         {
-/*            if (eventData.button == PointerEventData.InputButton.Left)
-            {
-                if (SessionState.ActiveTool != null && !SessionState.SelectionActive && SessionState.ActiveSample != null)
-                {
-                    if (SessionState.ActiveTool.name == "micropipette")
-                    {
-                        if (SessionState.AddActiveSampleToWell(name, false, false, false))
-                        {
-                            UpdateVisualState();
-                        }
-                    }
-                    else
-                    {
-                        AddSampleMultichannel(SessionState.ActiveTool.numChannels);
-                    }
-                }
-            }*/
             if (eventData.button == PointerEventData.InputButton.Right)
             {
                 if (!SessionState.FormActive & SessionState.RemoveActiveSampleFromWell(name, SessionState.Steps[SessionState.Step]))

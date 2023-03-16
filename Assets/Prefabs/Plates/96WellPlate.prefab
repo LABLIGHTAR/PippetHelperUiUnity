@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9075484173259576228}
   - component: {fileID: 9075484173259576229}
   m_Layer: 0
-  m_Name: WellPlate
+  m_Name: 96WellPlate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
