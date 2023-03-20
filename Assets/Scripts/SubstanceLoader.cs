@@ -57,7 +57,7 @@ public class SubstanceLoader : MonoBehaviour
         foreach (Transform child in substanceList) {
             Destroy(child.gameObject);
         }
-        foreach(SessionState.WellPlate step in SessionState.Steps)
+        foreach(Wellplate step in SessionState.Steps)
         {
             foreach(var well in step.wells)
             {

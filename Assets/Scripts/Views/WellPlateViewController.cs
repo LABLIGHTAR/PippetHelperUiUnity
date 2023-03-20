@@ -21,7 +21,7 @@ public class WellPlateViewController : MonoBehaviour
         {
             if (!SessionState.Steps[SessionState.Step].wells.ContainsKey(child.gameObject.name))
             {
-                SessionState.Steps[SessionState.Step].wells.Add(child.gameObject.name, new SessionState.Well());
+                SessionState.Steps[SessionState.Step].wells.Add(child.gameObject.name, new Well());
             }
         }
     }

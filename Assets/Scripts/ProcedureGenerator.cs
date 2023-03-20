@@ -14,7 +14,7 @@ public class ProcedureGenerator : MonoBehaviour
 
     private string delimiter = ",";
 
-    private List<SessionState.Sample> addedSamples;
+    private List<Sample> addedSamples;
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +22,7 @@ public class ProcedureGenerator : MonoBehaviour
         generateProcedureButton.onClick.AddListener(GenerateProcedure);
 
 
-        addedSamples = new List<SessionState.Sample>();
+        addedSamples = new List<Sample>();
 #if UNITY_STANDALONE && !UNITY_EDITOR
         //check if new protocol folder exists
         folderPath = @"%userprofile%\AppData\Local\Temp\LablightAR\new_protocols";
@@ -60,7 +60,7 @@ public class ProcedureGenerator : MonoBehaviour
 
         StreamWriter sw = new StreamWriter(filePath);
 
-        foreach (SessionState.WellPlate step in SessionState.Steps)
+        foreach (Wellplate step in SessionState.Steps)
         {
             //clear added samples list
             addedSamples.Clear();
@@ -141,7 +141,7 @@ public class ProcedureGenerator : MonoBehaviour
 
     string FindGroupEnd(int Id)
     {
-        foreach (SessionState.WellPlate step in SessionState.Steps)
+        foreach (Wellplate step in SessionState.Steps)
         {
             foreach (var well in step.wells)
             {

@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using UniRx;
-using static SessionState;
 
 public class SessionState : MonoBehaviour
 {
@@ -15,145 +14,17 @@ public class SessionState : MonoBehaviour
     {
         Instance = this;
         //initalize state variables
-        Steps = new List<WellPlate>();
+        Steps = new List<Wellplate>();
         SetStep(0);
-        Steps.Add(new WellPlate());
+        Steps.Add(new Wellplate());
         AvailableSamples = new List<Sample>();
         UsedColors = new List<string>();
     }
 
-    //class definitions
-    #region
-    public class Sample
-    {
-        public string name;
-        public string abreviation;
-        public string colorName;
-        public Color color;
-
-        public Sample(string name, string abreviation, string colorName, Color color)
-        {
-            this.name = name;
-            this.abreviation = abreviation;
-            this.colorName = colorName;
-            this.color = color;
-        }
-    }
-
-    public class Well
-    {
-        public struct SampleGroup
-        {
-            public int groupId;
-            public bool isStart;
-            public bool isEnd;
-            public Sample Sample;
-
-            public SampleGroup(int groupId, bool isStart, bool isEnd, Sample Sample)
-            {
-                this.groupId = groupId;
-                this.isStart = isStart;
-                this.isEnd = isEnd;
-                this.Sample = Sample;
-            }
-        }
-
-        public Dictionary<Sample, float> Samples;
-        public List<SampleGroup> groups;
-
-        public Well()
-        {
-            Samples = new Dictionary<Sample, float>();
-            groups = new List<SampleGroup>();
-        }
-    }
-
-    public class WellPlate
-    {
-        public Dictionary<string, Well> wells;
-
-        public WellPlate()
-        {
-            wells = new Dictionary<string, Well>();
-        }
-    }
-
-    public class Colors
-    {
-        public enum ColorNames
-        {
-            Lime,
-            Green,
-            Olive,
-            Brown,
-            Aqua,
-            Blue,
-            Navy,
-            Slate,
-            Purple,
-            Plum,
-            Pink,
-            Salmon,
-            Red,
-            Orange,
-            Yellow,
-            Khaki
-        }
-
-        private static Hashtable colorValues = new Hashtable{
-             {  ColorNames.Lime,    new Color32( 166 , 254 , 0, 255 ) },
-             {  ColorNames.Green,   new Color32( 0 , 254 , 111, 255 ) },
-             {  ColorNames.Olive,   new Color32( 85, 107, 47, 255 ) },
-             {  ColorNames.Brown,   new Color32( 139, 69, 19, 255 ) },
-             {  ColorNames.Aqua,    new Color32( 0 , 201 , 254, 255 ) },
-             {  ColorNames.Blue,    new Color32( 0 , 122 , 254, 255 ) },
-             {  ColorNames.Navy,    new Color32( 60 , 0 , 254, 255 ) },
-             {  ColorNames.Slate,   new Color32( 72, 61, 139, 255 ) },
-             {  ColorNames.Purple,  new Color32( 143 , 0 , 254, 255 ) },
-             {  ColorNames.Plum,    new Color32( 221, 160, 221, 255 ) },
-             {  ColorNames.Pink,    new Color32( 232 , 0 , 254, 255 ) },
-             {  ColorNames.Salmon,  new Color32( 255, 160, 122, 255 ) },
-             {  ColorNames.Red,     new Color32( 254 , 9 , 0, 255 ) },
-             {  ColorNames.Orange,  new Color32( 254 , 161 , 0, 255 ) },
-             {  ColorNames.Yellow,  new Color32( 254 , 224 , 0, 255 ) },
-             {  ColorNames.Khaki,   new Color32( 240,230,140, 255 ) },
-        };
-
-        public static Color32 ColorValue(ColorNames color)
-        {
-            return (Color32)colorValues[color];
-        }
-    }
-
-    public class Tool
-    {
-        public string name;
-        public int numChannels;
-        public string orientation;
-        public float volume;
-
-        public Tool(string name, int numChannels, string orientation, float volume)
-        {
-            this.name = name;
-            this.numChannels = numChannels;
-            this.orientation = orientation;
-            this.volume = volume;
-        }
-
-        public void SetVolume(float value)
-        {
-            if(volume != value)
-            {
-                volume = value;
-            }
-        }
-    }
-    #endregion
-
     //state variables
     private static string procedureName;
 
-    private static List<WellPlate> steps;
+    private static List<Wellplate> steps;
     private static int step;
 
     private static List<Sample> availableSamples;
@@ -198,7 +69,7 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    public static List<WellPlate> Steps
+    public static List<Wellplate> Steps
     {
         set
         {
@@ -367,7 +238,7 @@ public class SessionState : MonoBehaviour
     //adds new step to protocol and navigates ui to new step
     public static void AddNewStep()
     {
-        Steps.Add(new WellPlate());
+        Steps.Add(new Wellplate());
         Step = Steps.Count - 1;
         newStepStream.OnNext(SessionState.Step);
     }
@@ -523,7 +394,7 @@ public class SessionState : MonoBehaviour
     }
 
     //removes active sample from passed well at passed step
-    public static bool RemoveActiveSampleFromWell(string wellName, WellPlate removalStep)
+    public static bool RemoveActiveSampleFromWell(string wellName, Wellplate removalStep)
     {
         if (removalStep.wells.ContainsKey(wellName))
         {

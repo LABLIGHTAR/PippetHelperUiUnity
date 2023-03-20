@@ -97,7 +97,7 @@ public class NewSampleFormController : MonoBehaviour
         if(InputValidNew())
         {
             //generate color value
-            var color = SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true));
+            var color = Colors.ColorValue((Colors.ColorNames)System.Enum.Parse(typeof(Colors.ColorNames), colorText.text, true));
 
             //add new Sample to session state
             SessionState.AddNewSample(nameText.text, abreviationText.text, colorText.text, color);
@@ -142,7 +142,7 @@ public class NewSampleFormController : MonoBehaviour
             if(InputValidEdit(oldName, oldAbbreviation))
             {
                 //generate color value
-                var color = SessionState.Colors.ColorValue((SessionState.Colors.ColorNames)System.Enum.Parse(typeof(SessionState.Colors.ColorNames), colorText.text, true));
+                var color = Colors.ColorValue((Colors.ColorNames)System.Enum.Parse(typeof(Colors.ColorNames), colorText.text, true));
 
                 //edit sample in session state
                 SessionState.EditSample(oldName, nameText.text, abreviationText.text, colorText.text, color);

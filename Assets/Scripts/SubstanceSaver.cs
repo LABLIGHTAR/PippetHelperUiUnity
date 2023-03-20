@@ -43,7 +43,7 @@ public class SubstanceSaver : MonoBehaviour
 
         StreamWriter sw = new StreamWriter(filePath);
 
-        foreach (SessionState.Sample sample in SessionState.AvailableSamples)
+        foreach (Sample sample in SessionState.AvailableSamples)
         {
             sw.WriteLine(sample.name + delimiter + sample.abreviation + delimiter + sample.colorName + delimiter + Color32ToHex(sample.color));
         }

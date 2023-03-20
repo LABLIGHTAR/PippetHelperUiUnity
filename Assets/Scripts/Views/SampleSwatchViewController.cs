@@ -32,7 +32,7 @@ public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
             //if the edited samples old name is equal to this displays sample name update this display
             if (sampleNames.Item1 == name.text)
             {
-                SessionState.Sample editedSample = SessionState.AvailableSamples.Where(sample => sample.name == sampleNames.Item2).FirstOrDefault();
+                Sample editedSample = SessionState.AvailableSamples.Where(sample => sample.name == sampleNames.Item2).FirstOrDefault();
                 if (editedSample != null)
                 {
                     InitSampleItem(editedSample.name, editedSample.abreviation, editedSample.color);

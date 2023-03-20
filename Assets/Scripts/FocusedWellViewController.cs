@@ -35,7 +35,7 @@ public class FocusedWellViewController : MonoBehaviour
         SessionState.focusedWellStream.Subscribe(well => UpdateVisualState(well));
     }
 
-    void UpdateVisualState(SessionState.Well well)
+    void UpdateVisualState(Well well)
     {
         sampleOneDisplay.SetActive(false);
         sampleTwoDisplay.SetActive(false);

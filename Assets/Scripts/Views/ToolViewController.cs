@@ -144,7 +144,7 @@ public class ToolViewController : MonoBehaviour
 
         pipetteErrorText.gameObject.SetActive(false);
 
-        SessionState.ActiveTool = new SessionState.Tool("micropipette", 1, "Horizontal", volume);
+        SessionState.ActiveTool = new Tool("micropipette", 1, "Horizontal", volume);
         //Debug.Log(SessionState.ActiveTool.name + " " + SessionState.ActiveTool.volume + " " + SessionState.ActiveTool.numChannels + " " + SessionState.ActiveTool.orientation + " " + SessionState.ActiveTool.volume);
     }
 
@@ -186,7 +186,7 @@ public class ToolViewController : MonoBehaviour
 
         multiErrorText.gameObject.SetActive(false);
 
-        SessionState.ActiveTool = new SessionState.Tool("multichannel", channels, orientationText.text, volume);
+        SessionState.ActiveTool = new Tool("multichannel", channels, orientationText.text, volume);
         //Debug.Log(SessionState.ActiveTool.name + " " + SessionState.ActiveTool.volume + " " + SessionState.ActiveTool.numChannels + " " + SessionState.ActiveTool.orientation);
     }
 

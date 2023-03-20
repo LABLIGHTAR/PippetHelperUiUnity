@@ -31,12 +31,12 @@ public class MaterialViewController : MonoBehaviour
     {
         if(!addMaterialButton.transform.parent.gameObject.activeSelf)
         {
-            if (this.transform.childCount < 11)
+            if (this.transform.childCount < 4)
             {
                 addMaterialButton.transform.parent.gameObject.SetActive(true);
             }
         }
-        else if(this.transform.childCount == 11)
+        else if(this.transform.childCount == 4)
         {
             addMaterialButton.transform.parent.gameObject.SetActive(false);
         }
@@ -44,7 +44,7 @@ public class MaterialViewController : MonoBehaviour
 
     void AddNewMaterial()
     {
-        if(this.transform.childCount < 11)
+        if(this.transform.childCount < 4)
         {
             addMaterialButton.transform.parent.gameObject.SetActive(true);
             materialList.SetActive(true);

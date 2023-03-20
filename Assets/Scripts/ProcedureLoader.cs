@@ -92,7 +92,7 @@ public class ProcedureLoader : MonoBehaviour
                 float SampleVolume = float.Parse(lineCells[5], CultureInfo.InvariantCulture.NumberFormat);
 
                 //add Sample to sessionState
-                SessionState.Sample newSample = new SessionState.Sample(SampleName, SampleAbbreviation, colorName, color);
+                Sample newSample = new Sample(SampleName, SampleAbbreviation, colorName, color);
                 SessionState.AddNewSample(newSample.name, newSample.abreviation, newSample.colorName, newSample.color);
                 //set new Sample as active  
 ;               SessionState.ActiveSample = SessionState.AvailableSamples.Where(sample => sample.name == SampleName).FirstOrDefault();
