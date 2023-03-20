@@ -1694,6 +1694,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: 384WellPlate
       objectReference: {fileID: 0}
+    - target: {fileID: 2509370189197280798, guid: f83e22f31b803064894afdba953354ac, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f83e22f31b803064894afdba953354ac, type: 3}
 --- !u!224 &1488724426 stripped

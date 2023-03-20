@@ -23,10 +23,9 @@ public class ProcedureGenerator : MonoBehaviour
 
 
         addedSamples = new List<SessionState.Sample>();
-
 #if UNITY_STANDALONE && !UNITY_EDITOR
         //check if new protocol folder exists
-        folderPath = Application.dataPath + "/../new_protocols";
+        folderPath = @"%userprofile%\AppData\Local\Temp\LablightAR\new_protocols";
         if(!Directory.Exists(folderPath))
         {
             Directory.CreateDirectory(folderPath);
@@ -67,7 +66,7 @@ public class ProcedureGenerator : MonoBehaviour
             addedSamples.Clear();
 
             //write step start code
-            sw.WriteLine("plate:horizontal" + delimiter);
+            sw.WriteLine("plate:horizontal" + delimiter + step.wells.Count);
 
             //iterate through each well to go start from the top left of the plate
             foreach (var well in step.wells)
