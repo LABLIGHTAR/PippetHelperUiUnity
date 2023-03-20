@@ -1441,8 +1441,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1488724426}
-  - {fileID: 510896814}
   - {fileID: 729466609}
+  - {fileID: 510896814}
   - {fileID: 369059769}
   - {fileID: 606556148}
   - {fileID: 1559440066}
@@ -2152,7 +2152,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1006884098878888282, guid: b578ce1c3bbf8c74399468a8cdd152e0, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1006884098878888282, guid: b578ce1c3bbf8c74399468a8cdd152e0, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2238,6 +2238,10 @@ PrefabInstance:
     - target: {fileID: 1399440549887279753, guid: fbfa1e700ffafa74db6bbede71bc60ce, type: 3}
       propertyPath: m_Name
       value: SelectionCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 1399440549887279796, guid: fbfa1e700ffafa74db6bbede71bc60ce, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 1399440549887279797, guid: fbfa1e700ffafa74db6bbede71bc60ce, type: 3}
       propertyPath: m_Pivot.x
@@ -3097,7 +3101,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6952655605631127095, guid: 95bb5c43810270c4f8798b7489476437, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6952655605631127095, guid: 95bb5c43810270c4f8798b7489476437, type: 3}
       propertyPath: m_AnchorMax.x
