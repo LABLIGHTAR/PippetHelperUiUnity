@@ -76,7 +76,7 @@ public class FocusedWellViewController : MonoBehaviour
         }
 
         //update well display
-        wellIdText.text = SessionState.Steps[SessionState.Step].wells.Where(x => x.Value == well).FirstOrDefault().Key;
+        wellIdText.text = well.id;
         wellVolumeText.text = wellVolume.ToString() + " μL";
 
         wellDisplay.SetActive(true);

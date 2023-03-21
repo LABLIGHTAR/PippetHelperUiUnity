@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 36.72461, y: -0.12183}
-  m_SizeDelta: {x: 63.4192, y: 21.156}
+  m_AnchoredPosition: {x: 25.0139, y: -0.12183}
+  m_SizeDelta: {x: 39.9977, y: 21.156}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3499999949112332456
 CanvasRenderer:
@@ -446,7 +446,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 330, y: 25}
+  m_SizeDelta: {x: 280, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &539209438385221177
 MonoBehaviour:
@@ -462,7 +462,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: {fileID: 8516625951051939039}
   abreviation: {fileID: 4551998578238334738}
-  volume: {fileID: 0}
   swatch: {fileID: 6302759666710162506}
   editButton: {fileID: 2516033805894312154}
   deleteButton: {fileID: 1502120832622587189}
@@ -541,7 +540,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 137.9, y: -0.000012398}
+  m_AnchoredPosition: {x: 113.2, y: -0.000012398}
   m_SizeDelta: {x: 80, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5656887995159343383
@@ -661,8 +660,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -78.3, y: -0.1219}
-  m_SizeDelta: {x: 166.63, y: 21.1564}
+  m_AnchoredPosition: {x: -65.972916, y: -0.1219}
+  m_SizeDelta: {x: 141.9758, y: 21.1564}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8129811716392492762
 CanvasRenderer:
@@ -798,7 +797,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 90.8, y: -0.000012398}
+  m_AnchoredPosition: {x: 66.09993, y: -0.000012398}
   m_SizeDelta: {x: 80, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6576626612712953009

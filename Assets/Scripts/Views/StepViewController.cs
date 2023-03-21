@@ -12,7 +12,6 @@ public class StepViewController : MonoBehaviour
     public Button newStepButton;
     public Button removeStepButton;
     public Transform stepDisplay;
-    public TextMeshProUGUI procedureName;
 
     private TextMeshProUGUI stepDisplayText;
     // Start is called before the first frame update
@@ -23,14 +22,14 @@ public class StepViewController : MonoBehaviour
         //add button events
         previousButton.onClick.AddListener(delegate
         {
-            SessionState.SetStep(SessionState.Step - 1);
+            SessionState.SetActiveStep(SessionState.ActiveStep - 1);
         });
 
         nextButton.onClick.AddListener(delegate
         {
-            if (SessionState.Step + 1 < SessionState.Steps.Count)
+            if (SessionState.ActiveStep + 1 < SessionState.Steps.Count)
             {
-                SessionState.SetStep(SessionState.Step + 1);
+                SessionState.SetActiveStep(SessionState.ActiveStep + 1);
             }
         });
 
@@ -42,29 +41,28 @@ public class StepViewController : MonoBehaviour
         removeStepButton.onClick.AddListener(delegate { 
             if(SessionState.Steps.Count > 1) {
                 SessionState.RemoveCurrentStep();
-                if(SessionState.Step > 0)
+                if(SessionState.ActiveStep > 0)
                 {
-                    SessionState.SetStep(SessionState.Step - 1);
+                    SessionState.SetActiveStep(SessionState.ActiveStep - 1);
                 }
                 else
                 {
-                    SessionState.SetStep(0);
+                    SessionState.SetActiveStep(0);
                 }
             }
         });
 
         //subscribe to datastream
         SessionState.stepStream.Subscribe(_ => UpdateVisualState()).AddTo(this);
-        SessionState.procedureNameStream.Subscribe(name => procedureName.text = name).AddTo(this);
 
         UpdateVisualState();
     }
 
     void UpdateVisualState()
     {
-        stepDisplayText.text = "Step " + (SessionState.Step + 1) + "/" + SessionState.Steps.Count;
+        stepDisplayText.text = "Step " + (SessionState.ActiveStep + 1) + "/" + SessionState.Steps.Count;
 
-        if (SessionState.Step == 0)
+        if (SessionState.ActiveStep == 0)
         {
             previousButton.enabled = false;
         }
@@ -72,7 +70,7 @@ public class StepViewController : MonoBehaviour
         {
             previousButton.enabled = true;
         }
-        if (SessionState.Step == SessionState.Steps.Count)
+        if (SessionState.ActiveStep == SessionState.Steps.Count)
         {
             nextButton.enabled = false;
         }

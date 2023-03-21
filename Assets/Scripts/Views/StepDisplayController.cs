@@ -17,9 +17,9 @@ public class StepDisplayController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(currentStep != SessionState.Step + 1)
+        if(currentStep != SessionState.ActiveStep + 1)
         {
-            currentStep = SessionState.Step + 1;
+            currentStep = SessionState.ActiveStep + 1;
             stepDisplayText.text = "Step " + "/" + SessionState.Steps.Count + 1;
         }
     }

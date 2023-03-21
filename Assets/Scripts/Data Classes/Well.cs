@@ -20,11 +20,15 @@ public class Well
         }
     }
 
+    public int plateId;
+    public string id;
     public Dictionary<Sample, float> Samples;
     public List<SampleGroup> groups;
 
-    public Well()
+    public Well(string wellId, int plateId)
     {
+        id = wellId;
+        plateId = plateId;
         Samples = new Dictionary<Sample, float>();
         groups = new List<SampleGroup>();
     }

@@ -17,6 +17,8 @@ public class ProcedureLoader : MonoBehaviour
 
     private string[] fileName;
 
+    private int activePlateId;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -65,7 +67,7 @@ public class ProcedureLoader : MonoBehaviour
         //read the file until the end of file is reached
         while ((currentLine = sr.ReadLine()) != null)
         {
-            if(currentLine.Contains("plate:horizontal") || currentLine.Contains("plate:vertical"))
+            if(currentLine.Contains("step"))
             {
                 if(!firstStep)
                 {
@@ -76,12 +78,23 @@ public class ProcedureLoader : MonoBehaviour
                     firstStep = false;
                 }
             }
+            else if(currentLine.Contains("plate:horizontal") || currentLine.Contains("plate:vertical"))
+            {
+                lineCells = currentLine.Split(',');
+
+                //cells go: start code, # of wells, plate id 
+
+                int numWells =  Int32.Parse(lineCells[1]);
+                int plateID = Int32.Parse(lineCells[2]);
+
+                activePlateId = plateID;
+            }
             else
             {
                 lineCells = currentLine.Split(',');
                 
                 //cell 0 will always be blank
-                //cell goes: "","wellID","#Hex","ColorName","SampleName:SampleAbreviation", "SampleVolume"
+                //cells go: "","wellID","#Hex","ColorName","SampleName:SampleAbreviation", "SampleVolume"
                 string wellId = lineCells[1];
                 Color color;
                 ColorUtility.TryParseHtmlString(lineCells[2], out color);
@@ -119,17 +132,16 @@ public class ProcedureLoader : MonoBehaviour
                         {
                             if (activeWellId == wellGroup[0])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, true, true, false);
-                                
+                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, true, false);
                             }
                             else if(activeWellId == wellGroup[1])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, true, false, true);
+                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, false, true);
                                 
                             }
                             else
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, true, false, false);
+                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, false, false);
                                 
                             }
                             numChannels--;
@@ -144,17 +156,17 @@ public class ProcedureLoader : MonoBehaviour
                         {
                             if (activeWellId == wellGroup[0])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, true, true, false);
+                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, true, false);
                                 
                             }
                             else if (activeWellId == wellGroup[1])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, true, false, true);
+                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, false, true);
                                 
                             }
                             else
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, true, false, false);
+                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, false, false);
                                 
                             }
                             numChannels--;
@@ -165,11 +177,11 @@ public class ProcedureLoader : MonoBehaviour
                 //else its a single well
                 else
                 {
-                    SessionState.AddActiveSampleToWell(wellId, false, false, false);
+                    SessionState.AddActiveSampleToWell(wellId, activePlateId, false, false, false);
                 }
             }
         }
-        SessionState.SetStep(0);
+        SessionState.SetActiveStep(0);
         procedureStream.OnNext(true);
 
         if(fileName != null)
