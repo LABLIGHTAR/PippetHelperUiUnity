@@ -64,6 +64,11 @@ public class ProcedureGenerator : MonoBehaviour
 
         StreamWriter sw = new StreamWriter(filePath);
 
+        foreach(Wellplate material in SessionState.Materials)
+        {
+            sw.WriteLine("material" + delimiter + "wellplate" + material.numWells + delimiter + "horizontal" + delimiter + material.id);
+        }
+
         foreach (Step step in SessionState.Steps)
         {
             stepNumber++;
@@ -74,9 +79,6 @@ public class ProcedureGenerator : MonoBehaviour
             {
                 //clear added samples list
                 addedSamples.Clear();
-
-                //write plate start code
-                sw.WriteLine("plate:horizontal" + delimiter + plate.wells.Count + delimiter + plate.id);
 
                 //save the plate id
                 currentPlateId = plate.id;
@@ -130,14 +132,14 @@ public class ProcedureGenerator : MonoBehaviour
                                     {
                                         groupEnd = FindGroupEnd(groupId, currentPlateId);
                                         //Debug.Log(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
-                                        sw.WriteLine(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
+                                        sw.WriteLine(delimiter + "action:pipette" + delimiter + currentPlateId + delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
                                     }
                                 }
                                 //if this is a single sample well add the single sample entry to the csv output
                                 else
                                 {
                                     //Debug.Log(delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
-                                    sw.WriteLine(delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
+                                    sw.WriteLine(delimiter + "action:pipette" + delimiter + currentPlateId + delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
                                 }
                             }
                         }

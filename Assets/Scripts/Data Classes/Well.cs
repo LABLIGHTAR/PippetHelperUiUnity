@@ -25,10 +25,10 @@ public class Well
     public Dictionary<Sample, float> Samples;
     public List<SampleGroup> groups;
 
-    public Well(string wellId, int plateId)
+    public Well(string wellId, int parentId)
     {
         id = wellId;
-        plateId = plateId;
+        plateId = parentId;
         Samples = new Dictionary<Sample, float>();
         groups = new List<SampleGroup>();
     }

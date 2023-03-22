@@ -12,16 +12,14 @@ public class WellPlateViewController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SessionState.newStepStream.Subscribe(_ => StartCoroutine(AddWellsToDictionary()));
-        StartCoroutine(AddWellsToDictionary());
+        AddWellsToDictionary();
+        SessionState.newStepStream.Subscribe(_ => AddWellsToDictionary());
     }
 
-    IEnumerator AddWellsToDictionary()
+    void AddWellsToDictionary()
     {
-        yield return new WaitForEndOfFrame();
         foreach (Transform child in wells)
         {
-            Debug.Log("Step count: " + SessionState.Steps.Count + " current step: " + SessionState.ActiveStep + " plate ID: " + id + "Number of plates: " + SessionState.Steps[SessionState.ActiveStep].plates.Count);
             if (!SessionState.Steps[SessionState.ActiveStep].plates[id].wells.ContainsKey(child.gameObject.name))
             {
                 SessionState.Steps[SessionState.ActiveStep].plates[id].wells.Add(child.gameObject.name, new Well(child.name, id));

@@ -24,6 +24,11 @@ public class ProgressionViewController : MonoBehaviour
         {
             SetMethod();
         });
+
+        ProcedureLoader.procedureStream.Subscribe(_ =>
+        {
+            SetMethod();
+        });
     }
 
    void SetMaterials()

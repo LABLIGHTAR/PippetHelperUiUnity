@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System;
 using System.IO;
 using System.Linq;
@@ -12,6 +13,7 @@ using SFB;//Copyright (c) 2017 Gökhan Gökçe Under MIT License
 public class ProcedureLoader : MonoBehaviour
 {
     public static Subject<bool> procedureStream = new Subject<bool>();
+    public static Subject<int> materialsLoadedStream = new Subject<int>();
 
     private string folderPath;
 
@@ -57,58 +59,50 @@ public class ProcedureLoader : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         StreamReader sr = new StreamReader(fileName);
-
         string currentLine;
-
         string[] lineCells;
-
-        bool firstStep = true;
 
         //read the file until the end of file is reached
         while ((currentLine = sr.ReadLine()) != null)
         {
-            if(currentLine.Contains("step"))
-            {
-                if(!firstStep)
-                {
-                    SessionState.AddNewStep();
-                }
-                else
-                {
-                    firstStep = false;
-                }
-            }
-            else if(currentLine.Contains("plate:horizontal") || currentLine.Contains("plate:vertical"))
+            if (currentLine.Contains("material"))
             {
                 lineCells = currentLine.Split(',');
 
-                //cells go: start code, # of wells, plate id 
+                //cells go: start code, material name, material orientation, material id
+                int numWells = Int32.Parse(Regex.Match(lineCells[1], @"\d+").Value);
+                int materialID = Int32.Parse(lineCells[3]);
 
-                int numWells =  Int32.Parse(lineCells[1]);
-                int plateID = Int32.Parse(lineCells[2]);
-
-                activePlateId = plateID;
+                SessionState.Materials.Add(new Wellplate(materialID, numWells));
             }
-            else
+            else if (currentLine.Contains("step"))
+            {
+                SessionState.AddNewStep();
+                SessionState.SetActiveStep(SessionState.Steps.Count - 1);
+            }
+            else if (currentLine.Contains("action"))
             {
                 lineCells = currentLine.Split(',');
-                
+
                 //cell 0 will always be blank
-                //cells go: "","wellID","#Hex","ColorName","SampleName:SampleAbreviation", "SampleVolume"
-                string wellId = lineCells[1];
+                //cells go: "", action code, materialID, "wellID","#Hex","ColorName","SampleName:SampleAbreviation", "SampleVolume"
+                int materialID = Int32.Parse(lineCells[2]);
+                string wellId = lineCells[3];
                 Color color;
-                ColorUtility.TryParseHtmlString(lineCells[2], out color);
-                string colorName = lineCells[3];
-                string[] nameAbrev = lineCells[4].Split(":");
+                ColorUtility.TryParseHtmlString(lineCells[4], out color);
+                string colorName = lineCells[5];
+                string[] nameAbrev = lineCells[6].Split(":");
                 string SampleName = nameAbrev[0];
                 string SampleAbbreviation = nameAbrev[1];
-                float SampleVolume = float.Parse(lineCells[5], CultureInfo.InvariantCulture.NumberFormat);
+                float SampleVolume = float.Parse(lineCells[7], CultureInfo.InvariantCulture.NumberFormat);
 
                 //add Sample to sessionState
                 Sample newSample = new Sample(SampleName, SampleAbbreviation, colorName, color);
                 SessionState.AddNewSample(newSample.name, newSample.abreviation, newSample.colorName, newSample.color);
+
                 //set new Sample as active  
 ;               SessionState.ActiveSample = SessionState.AvailableSamples.Where(sample => sample.name == SampleName).FirstOrDefault();
+
                 //set tool volume
                 SessionState.ActiveTool.volume = SampleVolume;
 
@@ -132,17 +126,15 @@ public class ProcedureLoader : MonoBehaviour
                         {
                             if (activeWellId == wellGroup[0])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, true, false);
+                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, true, false);
                             }
                             else if(activeWellId == wellGroup[1])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, false, true);
-                                
+                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, false, true);
                             }
                             else
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, false, false);
-                                
+                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, false, false);
                             }
                             numChannels--;
                             activeWellId = GetNextWellHorizontal(activeWellId);
@@ -156,18 +148,15 @@ public class ProcedureLoader : MonoBehaviour
                         {
                             if (activeWellId == wellGroup[0])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, true, false);
-                                
+                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, true, false);
                             }
                             else if (activeWellId == wellGroup[1])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, false, true);
-                                
+                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, false, true);
                             }
                             else
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, activePlateId, true, false, false);
-                                
+                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, false, false);    
                             }
                             numChannels--;
                             activeWellId = GetNextWellVertical(activeWellId);
@@ -177,10 +166,11 @@ public class ProcedureLoader : MonoBehaviour
                 //else its a single well
                 else
                 {
-                    SessionState.AddActiveSampleToWell(wellId, activePlateId, false, false, false);
+                    SessionState.AddActiveSampleToWell(wellId, materialID, false, false, false);
                 }
             }
         }
+        materialsLoadedStream.OnNext(SessionState.Materials.Count);
         SessionState.SetActiveStep(0);
         procedureStream.OnNext(true);
 

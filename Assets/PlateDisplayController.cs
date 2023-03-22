@@ -28,5 +28,22 @@ public class PlateDisplayController : MonoBehaviour
                 }
             }
         });
+
+        ProcedureLoader.materialsLoadedStream.Subscribe(numMaterials =>
+        {
+            for (int i = 0; i < numMaterials; i++)
+            {
+                if (SessionState.Materials[i].numWells == 96)
+                {
+                    var newPlateDisplay = Instantiate(wellplate96Prefab, plateSlots[i].transform);
+                    newPlateDisplay.GetComponent<WellPlateViewController>().id = SessionState.Materials[i].id;
+                }
+                else if (SessionState.Materials[i].numWells == 384)
+                {
+                    var newPlateDisplay = Instantiate(wellplate384Prefab, plateSlots[i].transform);
+                    newPlateDisplay.GetComponent<WellPlateViewController>().id = SessionState.Materials[i].id;
+                }
+            }
+        });
     }
 }

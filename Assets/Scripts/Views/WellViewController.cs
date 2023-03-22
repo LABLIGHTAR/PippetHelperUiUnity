@@ -20,6 +20,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     void Awake()
     {
+        ProcedureLoader.procedureStream.Subscribe(_ => LoadVisualState());
         SelectionManager.Instance.AvailableWells.Add(this);
     }
 
@@ -30,8 +31,6 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         plateId = transform.parent.transform.parent.GetComponent<WellPlateViewController>().id;
 
         SessionState.stepStream.Subscribe(_ => LoadVisualState());
-        
-        ProcedureLoader.procedureStream.Subscribe(_ => LoadVisualState());
 
         SessionState.SampleRemovedStream.Subscribe(well =>
         {
@@ -104,7 +103,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     //add sample to well and update focused well on click
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (!SessionState.FormActive && !SessionState.SelectionActive && SessionState.Steps != null && SessionState.ActiveStep != null)
+        if (!SessionState.FormActive && !SessionState.SelectionActive)
         {
             if (eventData.button == PointerEventData.InputButton.Right)
             {
@@ -151,7 +150,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
 
     //called when step is changed
-    void LoadVisualState()
+    public void LoadVisualState()
     {
         if (SessionState.Steps != null & SessionState.Steps[SessionState.ActiveStep] != null)
         {
@@ -166,7 +165,6 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             if (currentStep.plates[plateId].wells.ContainsKey(name))
             {
                 SampleCount = currentStep.plates[plateId].wells[name].Samples.Count;
-                
                 int index = -1;
                 SampleIndicators[0].gameObject.SetActive(false);
                 SampleIndicators[1].gameObject.SetActive(false);
