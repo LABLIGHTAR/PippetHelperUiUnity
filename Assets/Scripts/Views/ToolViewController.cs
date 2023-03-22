@@ -60,39 +60,6 @@ public class ToolViewController : MonoBehaviour
         }
     }
 
-    //change volume with mousewheel
-    void OnGUI()
-    {
-        if (Mouse.current.scroll.ReadValue().y > 0 & SessionState.ActiveTool != null)
-        {
-            SessionState.ActiveTool.SetVolume((float)Math.Round(SessionState.ActiveTool.volume + 0.1f, 2));
-            if(SessionState.ActiveTool.name == "micropipette")
-            {
-                pipetteVolumeText.text = SessionState.ActiveTool.volume.ToString();
-            }
-            else if(SessionState.ActiveTool.name == "multichannel")
-            {
-                multiVolumeText.text = SessionState.ActiveTool.volume.ToString();
-            }
-        }
-        else if(Mouse.current.scroll.ReadValue().y < 0 & SessionState.ActiveTool != null)
-        {
-            if (SessionState.ActiveTool.volume - 0.1f > 0)
-            {
-                SessionState.ActiveTool.SetVolume((float)Math.Round(SessionState.ActiveTool.volume - 0.1f, 2));
-                if (SessionState.ActiveTool.name == "micropipette")
-                {
-                    pipetteVolumeText.text = SessionState.ActiveTool.volume.ToString();
-                }
-                else if (SessionState.ActiveTool.name == "multichannel")
-                {
-                    multiVolumeText.text = SessionState.ActiveTool.volume.ToString();
-                }
-            }
-            
-        }
-    }
-
     void UpdateVisualState()
     {
         if(SessionState.ActiveTool != null && SessionState.ActiveSample != null)
@@ -188,13 +155,5 @@ public class ToolViewController : MonoBehaviour
 
         SessionState.ActiveTool = new Tool("multichannel", channels, orientationText.text, volume);
         //Debug.Log(SessionState.ActiveTool.name + " " + SessionState.ActiveTool.volume + " " + SessionState.ActiveTool.numChannels + " " + SessionState.ActiveTool.orientation);
-    }
-
-    public void ChangeOrientation()
-    {
-        if(int.Parse(multichannelDropdown.text) > 8 && orientationText.text == "Vertical")
-        {
-            orientationDropdown.value = 1;
-        }
     }
 }

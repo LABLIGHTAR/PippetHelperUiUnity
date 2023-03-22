@@ -18,10 +18,24 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     private int SampleCount;
 
+    private int maxRowNum;
+    private int maxColNum;
+
     void Awake()
     {
         ProcedureLoader.procedureStream.Subscribe(_ => LoadVisualState());
         SelectionManager.Instance.AvailableWells.Add(this);
+
+        if(this.transform.parent.transform.childCount == 96)
+        {
+            maxRowNum = 12;
+            maxColNum = 8;
+        }
+        else if(this.transform.parent.transform.childCount == 384)
+        {
+            maxRowNum = 24;
+            maxColNum = 16;
+        }
     }
 
     // Start is called before the first frame update
@@ -191,14 +205,14 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         //if number of channels is greater than the number of wells in the given orientation return
         if (SessionState.ActiveTool.orientation == "Row")
         {
-            if ((Int32.Parse(name.Substring(1)) - 1) + numChannels > 12)
+            if ((Int32.Parse(name.Substring(1)) - 1) + numChannels > maxRowNum)
             {
                 return;
             }
         }
         else if (SessionState.ActiveTool.orientation == "Column")
         {
-            if (((int)name[0] % 32) - 1 + numChannels > 8)
+            if (((int)name[0] % 32) - 1 + numChannels > maxColNum)
             {
                 return;
             }
@@ -237,14 +251,14 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         //if number of channels is greater than the number of wells in the given orientation return
         if (SessionState.ActiveTool.orientation == "Row")
         {
-            if ((Int32.Parse(name.Substring(1)) - 1) + numChannels > 12)
+            if ((Int32.Parse(name.Substring(1)) - 1) + numChannels > maxRowNum)
             {
                 return false;
             }
         }
         else if(SessionState.ActiveTool.orientation == "Column")
         {
-            if (((int)name[0] % 32) - 1 + numChannels > 8)
+            if (((int)name[0] % 32) - 1 + numChannels > maxColNum)
             {
                 return false;
             }
