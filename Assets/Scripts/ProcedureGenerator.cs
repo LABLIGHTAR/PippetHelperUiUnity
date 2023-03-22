@@ -73,7 +73,7 @@ public class ProcedureGenerator : MonoBehaviour
         {
             stepNumber++;
             //write step start code
-            sw.WriteLine("step" + stepNumber);
+            sw.WriteLine("step");
 
             foreach (Wellplate plate in step.plates)
             {

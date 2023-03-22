@@ -171,7 +171,9 @@ public class ProcedureLoader : MonoBehaviour
             }
         }
         materialsLoadedStream.OnNext(SessionState.Materials.Count);
+        yield return new WaitForEndOfFrame();
         SessionState.SetActiveStep(0);
+        SessionState.ActiveSample = null;
         procedureStream.OnNext(true);
 
         if(fileName != null)
