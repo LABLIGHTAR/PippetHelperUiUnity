@@ -75,7 +75,7 @@ public class ProcedureGenerator : MonoBehaviour
             //write step start code
             sw.WriteLine("step");
 
-            foreach (Wellplate plate in step.plates)
+            foreach (Wellplate plate in step.materials)
             {
                 //clear added samples list
                 addedSamples.Clear();
@@ -148,6 +148,8 @@ public class ProcedureGenerator : MonoBehaviour
                     }
                 }
             }
+            //write step end code
+            sw.WriteLine("end");
         }
 
         sw.Close();
@@ -159,7 +161,7 @@ public class ProcedureGenerator : MonoBehaviour
     {
         foreach (Step step in SessionState.Steps)
         {
-            foreach (Wellplate plate in step.plates)
+            foreach (Wellplate plate in step.materials)
             {
                 if(plate.id == plateId)
                 {

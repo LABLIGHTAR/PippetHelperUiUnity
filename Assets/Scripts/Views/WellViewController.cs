@@ -58,10 +58,10 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         SessionState.editedSampleStream.Subscribe(editedSample =>
         {
             var currentStep = SessionState.Steps[SessionState.ActiveStep];
-            if (currentStep.plates[plateId].wells.ContainsKey(name))
+            if (currentStep.materials[plateId].ContainsWell(name))
             {
                 //if this well contains the edited sample
-                if (currentStep.plates[plateId].wells[name].Samples.Keys.Where(sample => sample.name == editedSample.Item2).FirstOrDefault() != null)
+                if (currentStep.materials[plateId].GetWell(name).Samples.Keys.Where(sample => sample.name == editedSample.Item2).FirstOrDefault() != null)
                 {
                     int index = -1;
                     SampleIndicators[0].gameObject.SetActive(false);
@@ -69,7 +69,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     SampleIndicators[2].gameObject.SetActive(false);
 
                     //update indicator colors
-                    foreach (var sample in currentStep.plates[plateId].wells[name].Samples)
+                    foreach (var sample in currentStep.materials[plateId].GetWell(name).Samples)
                     {
                         index++;
                         SampleIndicators[index].gameObject.SetActive(true);
@@ -126,7 +126,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     UpdateVisualState();
                 }
             }
-            if (SessionState.Steps[SessionState.ActiveStep].plates[plateId].wells.ContainsKey(name))
+            if (SessionState.Steps[SessionState.ActiveStep].materials[plateId].ContainsWell(name))
             {
                 SessionState.SetFocusedWell(name, plateId);
             }
@@ -140,11 +140,11 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             var currentStep = SessionState.Steps[SessionState.ActiveStep];
             //check if this well has Samples in it, if it does render them
-            if (currentStep.plates[plateId].wells.ContainsKey(name))
+            if (currentStep.materials[plateId].ContainsWell(name))
             {
-                if (currentStep.plates[plateId].wells[name].Samples.Count != SampleCount)
+                if (currentStep.materials[plateId].GetWell(name).Samples.Count != SampleCount)
                 {
-                    SampleCount = currentStep.plates[plateId].wells[name].Samples.Count;
+                    SampleCount = currentStep.materials[plateId].GetWell(name).Samples.Count;
 
                     int index = -1;
                     SampleIndicators[0].gameObject.SetActive(false);
@@ -152,7 +152,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     SampleIndicators[2].gameObject.SetActive(false);
 
                     //update indicator colors
-                    foreach (var sample in currentStep.plates[plateId].wells[name].Samples)
+                    foreach (var sample in currentStep.materials[plateId].GetWell(name).Samples)
                     {
                         index++;
                         SampleIndicators[index].gameObject.SetActive(true);
@@ -176,16 +176,16 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             SampleCount = 0;
             var currentStep = SessionState.Steps[SessionState.ActiveStep];
             //check if this well has Samples in it, if it does render them
-            if (currentStep.plates[plateId].wells.ContainsKey(name))
+            if (currentStep.materials[plateId].ContainsWell(name))
             {
-                SampleCount = currentStep.plates[plateId].wells[name].Samples.Count;
+                SampleCount = currentStep.materials[plateId].GetWell(name).Samples.Count;
                 int index = -1;
                 SampleIndicators[0].gameObject.SetActive(false);
                 SampleIndicators[1].gameObject.SetActive(false);
                 SampleIndicators[2].gameObject.SetActive(false);
 
                 //update indicator colors
-                foreach (var sample in currentStep.plates[plateId].wells[name].Samples)
+                foreach (var sample in currentStep.materials[plateId].GetWell(name).Samples)
                 {
                     index++;
                     SampleIndicators[index].gameObject.SetActive(true);
@@ -289,7 +289,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (this.SampleCount < 3 && SessionState.ActiveSample != null)
         {
             //if this well already contains the active deactivate all highlights
-            if (SessionState.Steps[SessionState.ActiveStep].plates[plateId].wells.ContainsKey(name) && SessionState.Steps[SessionState.ActiveStep].plates[plateId].wells[name].Samples.ContainsKey(SessionState.ActiveSample))
+            if (SessionState.Steps[SessionState.ActiveStep].materials[plateId].ContainsWell(name) && SessionState.Steps[SessionState.ActiveStep].materials[plateId].GetWell(name).Samples.ContainsKey(SessionState.ActiveSample))
             {
                 DeactivateHighlight(SessionState.ActiveTool.numChannels);
                 return false;

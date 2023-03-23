@@ -84,7 +84,7 @@ public class MaterialViewController : MonoBehaviour
 
         newMaterial.GetComponent<MaterialDisplayViewController>().InitDisplay("96-Well Plate", sprite96);
 
-        SessionState.Materials.Add(new Wellplate(materialID, 96));
+        SessionState.Materials.Add(new Wellplate(materialID, "wellplate96", 96));
         materialID++;
 
         numMaterials++;
@@ -97,7 +97,7 @@ public class MaterialViewController : MonoBehaviour
 
         newMaterial.GetComponent<MaterialDisplayViewController>().InitDisplay("384-Well Plate", sprite384);
 
-        SessionState.Materials.Add(new Wellplate(materialID, 384));
+        SessionState.Materials.Add(new Wellplate(materialID, "wellplate384", 384));
         materialID++;
 
         numMaterials++;

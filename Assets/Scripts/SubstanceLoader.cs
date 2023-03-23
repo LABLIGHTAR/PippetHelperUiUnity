@@ -59,7 +59,7 @@ public class SubstanceLoader : MonoBehaviour
         }
         foreach(Step step in SessionState.Steps)
         {
-            foreach(Wellplate plate in step.plates)
+            foreach(Wellplate plate in step.materials)
             {
                 foreach (var well in plate.wells)
                 {

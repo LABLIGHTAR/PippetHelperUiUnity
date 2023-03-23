@@ -70,10 +70,14 @@ public class ProcedureLoader : MonoBehaviour
                 lineCells = currentLine.Split(',');
 
                 //cells go: start code, material name, material orientation, material id
+                string materialName = lineCells[1];
                 int numWells = Int32.Parse(Regex.Match(lineCells[1], @"\d+").Value);
                 int materialID = Int32.Parse(lineCells[3]);
 
-                SessionState.Materials.Add(new Wellplate(materialID, numWells));
+                if(materialName.Contains("wellplate"))
+                {
+                    SessionState.Materials.Add(new Wellplate(materialID, materialName, numWells));
+                }    
             }
             else if (currentLine.Contains("step"))
             {

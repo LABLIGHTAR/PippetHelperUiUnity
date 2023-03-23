@@ -20,9 +20,12 @@ public class WellPlateViewController : MonoBehaviour
     {
         foreach (Transform child in wells)
         {
-            if (!SessionState.Steps[SessionState.ActiveStep].plates[id].wells.ContainsKey(child.gameObject.name))
+            if(SessionState.Steps[SessionState.ActiveStep].materials[id] is Wellplate)
             {
-                SessionState.Steps[SessionState.ActiveStep].plates[id].wells.Add(child.gameObject.name, new Well(child.name, id));
+                if (!SessionState.Steps[SessionState.ActiveStep].materials[id].ContainsWell(child.gameObject.name))
+                {
+                    SessionState.Steps[SessionState.ActiveStep].materials[id].AddWell(child.gameObject.name, new Well(child.name, id));
+                }
             }
         }
     }

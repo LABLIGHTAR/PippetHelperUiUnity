@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class Step
 {
-    public List<Wellplate> plates;
+    public List<LabMaterial> materials;
 
     public Step()
     {
-        plates = new List<Wellplate>();
+        materials = new List<LabMaterial>();
 
-        foreach (Wellplate material in SessionState.Materials)
+        foreach (LabMaterial material in SessionState.Materials)
         {
-            plates.Add(new Wellplate(material.id, material.numWells));
+            if (material is Wellplate)
+            {
+                materials.Add(new Wellplate(material.id, material.materialName, material.numWells));
+            }
         }
     }
 }
