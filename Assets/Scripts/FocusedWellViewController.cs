@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UniRx;
@@ -51,7 +48,7 @@ public class FocusedWellViewController : MonoBehaviour
 
             if(index == 0)
             {
-                sampleOneNameText.text = sample.Key.name;
+                sampleOneNameText.text = sample.Key.sampleName;
                 sampleOneBG.color = sample.Key.color;
                 sampleOneVolumeText.text = sample.Value.ToString() + " μL";
                 wellVolume += sample.Value;
@@ -59,7 +56,7 @@ public class FocusedWellViewController : MonoBehaviour
             }
             else if(index == 1)
             {
-                sampleTwoNameText.text = sample.Key.name;
+                sampleTwoNameText.text = sample.Key.sampleName;
                 sampleTwoBG.color = sample.Key.color;
                 sampleTwoVolumeText.text = sample.Value.ToString() + " μL";
                 wellVolume += sample.Value;
@@ -67,7 +64,7 @@ public class FocusedWellViewController : MonoBehaviour
             }
             else if(index == 3)
             {
-                sampleThreeNameText.text = sample.Key.name;
+                sampleThreeNameText.text = sample.Key.sampleName;
                 sampleThreeBG.color = sample.Key.color;
                 sampleThreeVolumeText.text = sample.Value.ToString() + " μL";
                 wellVolume += sample.Value;

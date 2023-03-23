@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -132,14 +131,14 @@ public class ProcedureGenerator : MonoBehaviour
                                     {
                                         groupEnd = FindGroupEnd(groupId, currentPlateId);
                                         //Debug.Log(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
-                                        sw.WriteLine(delimiter + "action:pipette" + delimiter + currentPlateId + delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
+                                        sw.WriteLine(delimiter + "action:pipette" + delimiter + currentPlateId + delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.sampleName + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
                                     }
                                 }
                                 //if this is a single sample well add the single sample entry to the csv output
                                 else
                                 {
                                     //Debug.Log(delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
-                                    sw.WriteLine(delimiter + "action:pipette" + delimiter + currentPlateId + delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
+                                    sw.WriteLine(delimiter + "action:pipette" + delimiter + currentPlateId + delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.sampleName + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
                                 }
                             }
                         }

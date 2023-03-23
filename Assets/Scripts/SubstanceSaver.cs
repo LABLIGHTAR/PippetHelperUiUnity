@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using SFB; //Copyright (c) 2017 Gökhan Gökçe Under MIT License
@@ -45,7 +43,7 @@ public class SubstanceSaver : MonoBehaviour
 
         foreach (Sample sample in SessionState.AvailableSamples)
         {
-            sw.WriteLine(sample.name + delimiter + sample.abreviation + delimiter + sample.colorName + delimiter + Color32ToHex(sample.color));
+            sw.WriteLine(sample.sampleName + delimiter + sample.abreviation + delimiter + sample.colorName + delimiter + Color32ToHex(sample.color));
         }
 
         sw.Close();

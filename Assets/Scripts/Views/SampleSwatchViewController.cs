@@ -9,7 +9,7 @@ using UniRx;
 
 public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
 {
-    public TextMeshProUGUI name;
+    public TextMeshProUGUI sampleName;
     public TextMeshProUGUI abreviation;
     public Image swatch;
 
@@ -20,22 +20,23 @@ public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
     {
         deleteButton.onClick.AddListener(delegate
         {
-            if (name.text != null)
+            if (sampleName.text != null)
             {
-                SessionState.RemoveSample(name.text);
+                SessionState.RemoveSample(sampleName.text);
                 Destroy(gameObject);
+                Debug.Log(SessionState.AvailableSamples.Count);
             }
         });
 
         SessionState.editedSampleStream.Subscribe(sampleNames =>
         {
             //if the edited samples old name is equal to this displays sample name update this display
-            if (sampleNames.Item1 == name.text)
+            if (sampleNames.Item1 == sampleName.text)
             {
-                Sample editedSample = SessionState.AvailableSamples.Where(sample => sample.name == sampleNames.Item2).FirstOrDefault();
+                Sample editedSample = SessionState.AvailableSamples.Where(sample => sample.sampleName == sampleNames.Item2).FirstOrDefault();
                 if (editedSample != null)
                 {
-                    InitSampleItem(editedSample.name, editedSample.abreviation, editedSample.color);
+                    InitSampleItem(editedSample.sampleName, editedSample.abreviation, editedSample.color);
                 }
             }
         });
@@ -45,15 +46,19 @@ public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
     {
         if(eventData.button == PointerEventData.InputButton.Left & !SessionState.FormActive)
         {
-            SessionState.SetActiveSample(SessionState.AvailableSamples.Where(x => x.name.Equals(name.GetComponent<TMP_Text>().text)).FirstOrDefault());
+            SessionState.SetActiveSample(SessionState.AvailableSamples.Where(x => x.sampleName.Equals(sampleName.GetComponent<TMP_Text>().text)).FirstOrDefault());
         }
     }
 
     public bool InitSampleItem(string SampleName, string SampleAbrev, Color displayColor)
     {
-        swatch.color = displayColor;
-        name.GetComponent<TMP_Text>().text = SampleName;
-        abreviation.GetComponent<TMP_Text>().text = SampleAbrev;
-        return true;
+        if(swatch != null && sampleName != null && abreviation != null)
+        {
+            swatch.color = displayColor;
+            sampleName.GetComponent<TMP_Text>().text = SampleName;
+            abreviation.GetComponent<TMP_Text>().text = SampleAbrev;
+            return true;
+        }
+        else return false;
     }
 }

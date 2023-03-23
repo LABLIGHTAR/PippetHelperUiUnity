@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
 public class WellPlateViewController : MonoBehaviour
 {
-    private GameObject selectedObject;
     public Transform wells;
     public int id;
 

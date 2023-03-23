@@ -460,7 +460,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faff074b133fbc649afa488d7317f78c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: {fileID: 8516625951051939039}
+  sampleName: {fileID: 8516625951051939039}
   abreviation: {fileID: 4551998578238334738}
   swatch: {fileID: 6302759666710162506}
   editButton: {fileID: 2516033805894312154}

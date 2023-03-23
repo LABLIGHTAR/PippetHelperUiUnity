@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
@@ -34,13 +32,13 @@ public class SampleDisplayViewController : MonoBehaviour
             //create sample entry in list
             GameObject newSampleSwatch = Instantiate(SampleSwatchPrefab) as GameObject;
             newSampleSwatch.transform.SetParent(ContentParent, false);
-            newSampleSwatch.GetComponent<SampleSwatchViewController>().InitSampleItem(newSample.name, newSample.abreviation, newSample.color);
+            newSampleSwatch.GetComponent<SampleSwatchViewController>().InitSampleItem(newSample.sampleName, newSample.abreviation, newSample.color);
 
             //set edit button event
             newSampleSwatch.GetComponent<SampleSwatchViewController>().editButton.onClick.AddListener(delegate
             {
                 //open edit form
-                newSampleForm.GetComponent<NewSampleFormController>().EditSample(newSample.name, newSample.abreviation, newSample.colorName);
+                newSampleForm.GetComponent<NewSampleFormController>().EditSample(newSample.sampleName, newSample.abreviation, newSample.colorName);
             });
         });
     }

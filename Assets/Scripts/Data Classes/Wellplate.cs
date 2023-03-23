@@ -1,10 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-
 public class Wellplate : LabMaterial
 {
-    public int numWells;
+    new public int numWells;
     public Dictionary<string, Well> wells;
 
     public Wellplate(int id, string name, int numberOfWells) : base(id, name, numberOfWells)

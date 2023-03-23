@@ -1,12 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UniRx;
 using SFB;//Copyright (c) 2017 Gökhan Gökçe Under MIT License
 
@@ -18,8 +16,6 @@ public class ProcedureLoader : MonoBehaviour
     private string folderPath;
 
     private string[] fileName;
-
-    private int activePlateId;
 
     // Start is called before the first frame update
     void Start()
@@ -71,8 +67,8 @@ public class ProcedureLoader : MonoBehaviour
 
                 //cells go: start code, material name, material orientation, material id
                 string materialName = lineCells[1];
-                int numWells = Int32.Parse(Regex.Match(lineCells[1], @"\d+").Value);
-                int materialID = Int32.Parse(lineCells[3]);
+                int numWells = int.Parse(Regex.Match(lineCells[1], @"\d+").Value);
+                int materialID = int.Parse(lineCells[3]);
 
                 if(materialName.Contains("wellplate"))
                 {
@@ -102,10 +98,10 @@ public class ProcedureLoader : MonoBehaviour
 
                 //add Sample to sessionState
                 Sample newSample = new Sample(SampleName, SampleAbbreviation, colorName, color);
-                SessionState.AddNewSample(newSample.name, newSample.abreviation, newSample.colorName, newSample.color);
+                SessionState.AddNewSample(newSample.sampleName, newSample.abreviation, newSample.colorName, newSample.color);
 
                 //set new Sample as active  
-;               SessionState.ActiveSample = SessionState.AvailableSamples.Where(sample => sample.name == SampleName).FirstOrDefault();
+;               SessionState.ActiveSample = SessionState.AvailableSamples.Where(sample => sample.sampleName == SampleName).FirstOrDefault();
 
                 //set tool volume
                 SessionState.ActiveTool.volume = SampleVolume;

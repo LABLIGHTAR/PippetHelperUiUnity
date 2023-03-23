@@ -1,12 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System;
 using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using UniRx;
 using SFB;//Copyright (c) 2017 Gökhan Gökçe Under MIT License
 
 public class SubstanceLoader : MonoBehaviour

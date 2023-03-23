@@ -1,6 +1,4 @@
 ﻿using System.Linq;
-using System.Globalization;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -164,7 +162,7 @@ public class NewSampleFormController : MonoBehaviour
     private bool InputValidEdit(string oldName, string oldAbbreviation)
     {
         //check input
-        if (nameText.text != oldName && SessionState.AvailableSamples.Exists(x => x.name == nameText.text))
+        if (nameText.text != oldName && SessionState.AvailableSamples.Exists(x => x.sampleName == nameText.text))
         {
             nameError.gameObject.SetActive(true);
             nameErrorText.text = "Substance with this name already exists*";
@@ -217,7 +215,7 @@ public class NewSampleFormController : MonoBehaviour
     private bool InputValidNew()
     {
         //check input
-        if (SessionState.AvailableSamples.Exists(x => x.name == nameText.text))
+        if (SessionState.AvailableSamples.Exists(x => x.sampleName == nameText.text))
         {
             nameError.gameObject.SetActive(true);
             nameErrorText.text = "Sample with this name already exists*";

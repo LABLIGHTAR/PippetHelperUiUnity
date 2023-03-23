@@ -1,9 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using TMPro;
 using UniRx;
 
 public class SessionState : MonoBehaviour
@@ -275,7 +272,7 @@ public class SessionState : MonoBehaviour
         Sample newSample = new Sample(name, abreviation, colorName, color);
         
         //return if the Sample already exists
-        if (AvailableSamples.Exists(x => x.name == name || x.abreviation == abreviation || x.colorName == colorName || x.color == color))
+        if (AvailableSamples.Exists(x => x.sampleName == name || x.abreviation == abreviation || x.colorName == colorName || x.color == color))
         {
             Debug.LogWarning("Sample already exists");
             return;
@@ -291,7 +288,7 @@ public class SessionState : MonoBehaviour
     //removes sample from available samples list
     public static void RemoveSample(string name)
     {
-        Sample forRemoval = AvailableSamples.Where(sample => sample.name == name).FirstOrDefault();
+        Sample forRemoval = AvailableSamples.Where(sample => sample.sampleName == name).FirstOrDefault();
 
         if (forRemoval != null)
         {
@@ -324,10 +321,10 @@ public class SessionState : MonoBehaviour
     //edits a sample in the available sample list
     public static void EditSample(string oldName, string newName, string newAbreviation, string newColorName, Color newColor)
     {
-        Sample toEdit = AvailableSamples.Where(sample => sample.name == oldName).FirstOrDefault();
+        Sample toEdit = AvailableSamples.Where(sample => sample.sampleName == oldName).FirstOrDefault();
         if (toEdit != null)
         {
-            toEdit.name = newName;
+            toEdit.sampleName = newName;
             toEdit.abreviation = newAbreviation;
             if(newColor != toEdit.color)
             {
