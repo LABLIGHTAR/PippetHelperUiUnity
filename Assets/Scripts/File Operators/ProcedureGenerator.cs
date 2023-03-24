@@ -24,11 +24,10 @@ public class ProcedureGenerator : MonoBehaviour
     {
         generateProcedureButton.onClick.AddListener(GenerateProcedure);
 
-
         addedSamples = new List<Sample>();
 #if UNITY_STANDALONE && !UNITY_EDITOR
         //check if new protocol folder exists
-        folderPath = @"%userprofile%\AppData\Local\Temp\LablightAR\new_protocols";
+        folderPath = Path.Combine(@Application.temporaryCachePath, "..", "new_protocols");
         if(!Directory.Exists(folderPath))
         {
             Directory.CreateDirectory(folderPath);
