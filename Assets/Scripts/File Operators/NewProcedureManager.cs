@@ -38,7 +38,7 @@ public class NewProcedureManager : MonoBehaviour
         if (inputText.text.Length > 1)
         {
             inputError.SetActive(false);
-            SessionState.ProcedureName = inputText.text;
+            SessionState.ProcedureName = inputText.text.Substring(0, inputText.text.Length - 1);
             this.gameObject.SetActive(false);
             SessionState.FormActive = false;
         }
