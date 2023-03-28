@@ -14,36 +14,32 @@ public class PlateDisplayController : MonoBehaviour
     {
         MaterialViewController.materialsSelectedStream.Subscribe(materialCount =>
         {
-            for(int i = 0; i < materialCount; i++)
-            {
-                if (SessionState.Materials[i].numWells == 96)
-                {
-                    var newPlateDisplay = Instantiate(wellplate96Prefab, plateSlots[i].transform);
-                    newPlateDisplay.GetComponent<WellPlateViewController>().id = SessionState.Materials[i].id;
-                }
-                else if(SessionState.Materials[i].numWells == 384)
-                {
-                    var newPlateDisplay = Instantiate(wellplate384Prefab, plateSlots[i].transform);
-                    newPlateDisplay.GetComponent<WellPlateViewController>().id = SessionState.Materials[i].id;
-                }
-            }
+            AddWellplatesToScene(materialCount);
         });
 
-        ProcedureLoader.materialsLoadedStream.Subscribe(numMaterials =>
+        ProcedureLoader.materialsLoadedStream.Subscribe(materialCount =>
         {
-            for (int i = 0; i < numMaterials; i++)
+            AddWellplatesToScene(materialCount);
+        });
+    }
+
+    void AddWellplatesToScene(int materialCount)
+    {
+        for (int i = 0; i < materialCount; i++)
+        {
+            if (SessionState.Materials[i] is Wellplate)
             {
-                if (SessionState.Materials[i].numWells == 96)
+                if (((Wellplate)SessionState.Materials[i]).numWells == 96)
                 {
                     var newPlateDisplay = Instantiate(wellplate96Prefab, plateSlots[i].transform);
                     newPlateDisplay.GetComponent<WellPlateViewController>().id = SessionState.Materials[i].id;
                 }
-                else if (SessionState.Materials[i].numWells == 384)
+                else if (((Wellplate)SessionState.Materials[i]).numWells == 384)
                 {
                     var newPlateDisplay = Instantiate(wellplate384Prefab, plateSlots[i].transform);
                     newPlateDisplay.GetComponent<WellPlateViewController>().id = SessionState.Materials[i].id;
                 }
             }
-        });
+        }
     }
 }

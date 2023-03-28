@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+
 public class Wellplate : LabMaterial
 {
-    new public int numWells;
+    public int numWells;
     public Dictionary<string, Well> wells;
 
-    public Wellplate(int id, string name, int numberOfWells) : base(id, name, numberOfWells)
+    public Wellplate(int id, string name, int numberOfWells) : base(id, name)
     {
         wells = new Dictionary<string, Well>();
+        numWells = numberOfWells;
     }
 
     public override bool ContainsWell(string wellID)

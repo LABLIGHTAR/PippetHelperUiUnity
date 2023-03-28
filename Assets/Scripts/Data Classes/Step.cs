@@ -9,7 +9,7 @@ public class Step
     {
         materials = new List<LabMaterial>();
 
-        foreach (LabMaterial material in SessionState.Materials)
+        foreach (Wellplate material in SessionState.Materials)
         {
             if (material is Wellplate)
             {

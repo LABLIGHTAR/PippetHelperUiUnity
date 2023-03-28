@@ -4,13 +4,11 @@ public class LabMaterial
 {
     public int id;
     public string materialName;
-    public int numWells;
 
-    public LabMaterial(int materialId, string name, int numberOfWells)
+    public LabMaterial(int materialId, string name)
     {
         id = materialId;
         materialName = name;
-        numWells = numberOfWells;
     }
 
     public virtual bool ContainsWell(string wellID)
