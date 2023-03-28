@@ -30,4 +30,14 @@ public class Wellplate : LabMaterial
     {
         return wells;
     }
+
+    public override string GetNameAsSource(string subID)
+    {
+        return "well " + subID.ToString();
+    }
+
+    public override string GetNameAsTarget(string subID)
+    {
+        return "well " + subID.ToString();
+    }
 }

@@ -205,14 +205,14 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         //if number of channels is greater than the number of wells in the given orientation return
         if (SessionState.ActiveTool.orientation == "Row")
         {
-            if ((Int32.Parse(wellId.Substring(1)) - 1) + numChannels > maxRowNum)
+            if (int.Parse(wellId.Substring(1)) - 1 + numChannels > maxRowNum)
             {
                 return;
             }
         }
         else if (SessionState.ActiveTool.orientation == "Column")
         {
-            if (((int)wellId[0] % 32) - 1 + numChannels > maxColNum)
+            if ((wellId[0] % 32) - 1 + numChannels > maxColNum)
             {
                 return;
             }

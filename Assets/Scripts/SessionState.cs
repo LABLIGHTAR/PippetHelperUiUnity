@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UniRx;
+using UnityEngine.UIElements;
 
 public class SessionState : MonoBehaviour
 {
@@ -52,6 +53,7 @@ public class SessionState : MonoBehaviour
     public static Subject<string> SampleRemovedStream = new Subject<string>();
     public static Subject<Well> focusedWellStream = new Subject<Well>();
     public static Subject<string> procedureNameStream = new Subject<string>();
+    public static Subject<LabAction> actionAddedStream = new Subject<LabAction>();
 
     //getters and setters
     #region
@@ -267,7 +269,7 @@ public class SessionState : MonoBehaviour
     }
 
     //adds new Sample to the available Samples list
-    public static void AddNewSample(string name, string abreviation, string colorName, Color color)
+    public static void AddNewSample(string name, string abreviation, string colorName, Color color, string vesselType)
     {
         Sample newSample = new Sample(name, abreviation, colorName, color);
         
@@ -282,6 +284,27 @@ public class SessionState : MonoBehaviour
             UsedColors.Add(colorName);
             AvailableSamples.Add(newSample);
             newSampleStream.OnNext(newSample);
+
+            //add sample to materials list
+            if(vesselType == "5mL Tube")
+            {
+                if(TubeSlotAvailable5mL())
+                {
+                    var tubeRack = Materials.Where(mat => mat is TubeRack5mL).FirstOrDefault();
+
+                    ((TubeRack5mL)tubeRack).AddNewTube(newSample);
+                }
+                else
+                {
+                    TubeRack5mL newRack = new TubeRack5mL(Materials.Count, "tuberack5ml");
+                    newRack.AddNewTube(newSample);
+                    Materials.Add(newRack);
+                }
+            }
+            else if(vesselType == "Reservoir")
+            {
+                Materials.Add(new Reservoir(Materials.Count, "reservoir", newSample));
+            }
         }
     }
 
@@ -315,6 +338,25 @@ public class SessionState : MonoBehaviour
             UsedColors.Remove(forRemoval.colorName);
             //remove this sample from the sample list
             AvailableSamples.Remove(forRemoval);
+
+            //remove sample from materials list
+            foreach (var material in Materials)
+            {
+                if(material is TubeRack5mL)
+                {
+                    foreach(var tube in material.GetTubes())
+                    {
+                        if(tube.Value == forRemoval)
+                        {
+                            material.GetTubes().Remove(tube.Key);
+                        }
+                    }    
+                }
+                else if(material is Reservoir && ((Reservoir)material).sample == forRemoval)
+                {
+                    Materials.Remove(material);
+                }
+            }    
         }
     }
 
@@ -478,5 +520,24 @@ public class SessionState : MonoBehaviour
             well.Value.groups.RemoveAll(item => groupsToRemove.Contains(item));
             groupsToRemove.Clear();
         }
+    }
+
+    public static bool TubeSlotAvailable5mL()
+    {
+        foreach (LabMaterial material in Materials)
+        {
+            if (material is TubeRack5mL && ((TubeRack5mL)material).tubes.Count < 24)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void AddActionToCurrentStep(LabAction.ActionType action, LabAction.Source source, LabAction.Target target)
+    {
+        var newAction = new LabAction(action, source, target);
+        Steps[ActiveStep].actions.Add(newAction);
+        actionAddedStream.OnNext(newAction);
     }
 }

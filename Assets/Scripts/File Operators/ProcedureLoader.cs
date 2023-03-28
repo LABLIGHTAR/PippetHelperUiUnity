@@ -41,7 +41,7 @@ public class ProcedureLoader : MonoBehaviour
 
         if (fileName.Count() > 0)
         {
-            StartCoroutine(LoadProcedure(fileName[0]));
+            //StartCoroutine(LoadProcedure(fileName[0]));
         }
         else
         {
@@ -50,7 +50,7 @@ public class ProcedureLoader : MonoBehaviour
     }
 
     ///loads procedure from csv (async to ensure all objects in scene are instantiated fully before loading)
-    IEnumerator LoadProcedure(string fileName)
+    /*IEnumerator LoadProcedure(string fileName)
     {
         yield return new WaitForEndOfFrame();
 
@@ -180,7 +180,7 @@ public class ProcedureLoader : MonoBehaviour
         {
             SessionState.ProcedureName = Path.GetFileNameWithoutExtension(fileName);
         }
-    }
+    }*/
 
     //returns number of channels from well group identifier
     int GetNumberChannels(string[] wellGroup, bool isHorizontal)

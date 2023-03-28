@@ -16,7 +16,7 @@ public class SubstanceLoader : MonoBehaviour
     void Start()
     {
         loadSubstancesButton.onClick.AddListener(ShowConfirmation);
-        yesButton.onClick.AddListener(LoadSubstances);
+        //yesButton.onClick.AddListener(LoadSubstances);
         noButton.onClick.AddListener(delegate { savePanel.SetActive(false); });
     }
 
@@ -25,7 +25,7 @@ public class SubstanceLoader : MonoBehaviour
         savePanel.SetActive(true);
     }
 
-    void LoadSubstances()
+   /* void LoadSubstances()
     {
         savePanel.SetActive(false);
 
@@ -80,5 +80,5 @@ public class SubstanceLoader : MonoBehaviour
             SessionState.AddNewSample(sampleName, sampleAbbreviation, sampleColorName, sampleColor);
         }
         ProcedureLoader.procedureStream.OnNext(true);
-    }
+    }*/
 }

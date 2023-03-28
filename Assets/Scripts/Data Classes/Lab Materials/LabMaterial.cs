@@ -30,4 +30,24 @@ public class LabMaterial
     {
         return null;
     }
+
+    public virtual void AddNewTube(Sample sample)
+    {
+        return;
+    }
+
+    public virtual Dictionary<string, Sample> GetTubes()
+    {
+        return null;
+    }
+
+    public virtual string GetNameAsSource(string subID)
+    {
+        return null;
+    }
+
+    public virtual string GetNameAsTarget(string subID) 
+    {
+        return null;
+    }
 }

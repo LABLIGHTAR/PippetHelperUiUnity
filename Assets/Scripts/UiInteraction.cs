@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class UiInteraction : MonoBehaviour
@@ -57,6 +57,33 @@ public class UiInteraction : MonoBehaviour
                         //add active sample to well single
                         if (SessionState.AddActiveSampleToWell(well.name, well.plateId, false, false, false))
                         {
+                            string sourceID = "";
+                            string sourceSubID = "";
+
+                            //add action to session state
+                            foreach (var material in SessionState.Materials)
+                            {
+                                if(material is TubeRack5mL)
+                                {
+                                    foreach(var tube in material.GetTubes())
+                                    {
+                                        if(tube.Value == SessionState.ActiveSample)
+                                        {
+                                            sourceID = material.id.ToString();
+                                            sourceSubID = tube.Key;
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+
+                            Debug.Log(sourceID);
+                            var source = new LabAction.Source(sourceID, sourceSubID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName, SessionState.ActiveTool.volume, "μL");
+                            var target = new LabAction.Target(well.plateId.ToString(), well.wellId.ToString(), SessionState.ActiveSample.color, SessionState.ActiveSample.colorName);
+
+                            SessionState.AddActionToCurrentStep(LabAction.ActionType.Pipette, source, target);
+
                             well.UpdateVisualState();
                         }
                     }

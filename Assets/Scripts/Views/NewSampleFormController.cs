@@ -20,6 +20,7 @@ public class NewSampleFormController : MonoBehaviour
     public TMP_InputField abreviationText;
     public TextMeshProUGUI abreviationErrorText;
     public TextMeshProUGUI colorText;
+    public TextMeshProUGUI vesselText;
 
     private Color newColor;
     private int inputSelected;
@@ -98,7 +99,7 @@ public class NewSampleFormController : MonoBehaviour
             var color = Colors.ColorValue((Colors.ColorNames)System.Enum.Parse(typeof(Colors.ColorNames), colorText.text, true));
 
             //add new Sample to session state
-            SessionState.AddNewSample(nameText.text, abreviationText.text, colorText.text, color);
+            SessionState.AddNewSample(nameText.text, abreviationText.text, colorText.text, color, vesselText.text);
 
             //update color dropdown options
             dropdown.ClearOptions();
