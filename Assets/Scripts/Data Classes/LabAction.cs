@@ -6,9 +6,9 @@ public class LabAction
 {
     public enum ActionType
     { 
-        Pipette,
-        Transfer,
-        Dilution
+        pipette,
+        transfer,
+        dilution
     }
 
     public struct Source
@@ -60,7 +60,7 @@ public class LabAction
 
     public string GetActionString()
     {
-
+        Debug.Log(source.matID);
         string sourceName = SessionState.Materials[int.Parse(source.matID)].GetNameAsSource(source.matSubID);
         string targetName = SessionState.Materials[int.Parse(target.matID)].GetNameAsTarget(target.matSubID);
 

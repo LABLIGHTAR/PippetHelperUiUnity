@@ -41,9 +41,14 @@ public class LabMaterial
         return null;
     }
 
-    public virtual void AddNewTube(Sample sample)
+    public virtual void AddNewSample(Sample sample)
     {
         return;
+    }
+
+    public virtual bool HasSampleSlot()
+    {
+        return false;
     }
 
     public virtual Dictionary<string, Sample> GetTubes()

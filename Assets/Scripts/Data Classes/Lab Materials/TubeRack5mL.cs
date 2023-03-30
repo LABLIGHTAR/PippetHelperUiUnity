@@ -14,7 +14,7 @@ public class TubeRack5mL : LabMaterial
 
     public override bool ContainsSample(Sample sample)
     {
-        if(tubes.ContainsValue(sample))
+        if (tubes.ContainsValue(sample))
         {
             return true;
         }
@@ -26,10 +26,20 @@ public class TubeRack5mL : LabMaterial
         return tubes.Values.ToList();
     }
 
-    public override void AddNewTube(Sample sample)
+    public override void AddNewSample(Sample sample)
     {
         tubes.Add(subId.ToString(), sample);
         subId++;
+    }
+
+    public override bool HasSampleSlot()
+    {
+        var samples = GetSampleList();
+        if(samples.Count < 24)
+        {
+            return true;
+        }
+        return false;
     }
 
     public override Dictionary<string, Sample> GetTubes()

@@ -15,8 +15,6 @@ public class ProcedureGenerator : MonoBehaviour
 
     private List<Sample> addedSamples;
 
-    private int stepNumber;
-
     private int currentPlateId;
 
     // Start is called before the first frame update
@@ -62,90 +60,34 @@ public class ProcedureGenerator : MonoBehaviour
 
         StreamWriter sw = new StreamWriter(filePath);
 
-        foreach(Wellplate material in SessionState.Materials)
+        foreach(LabMaterial material in SessionState.Materials)
         {
-            sw.WriteLine("material" + delimiter + "wellplate" + material.numWells + delimiter + "horizontal" + delimiter + material.id);
+            var samples = material.GetSampleList();
+            if (samples != null)
+            {
+                
+                foreach(var sample in samples)
+                {
+                    string matID = material.id + ":" + samples.IndexOf(sample);
+                    sw.WriteLine("material" + delimiter + material.materialName + delimiter + "horizontal" + delimiter + matID + delimiter + sample.sampleName + ":" + sample.abreviation);
+                }
+            }
+            else
+            {
+                sw.WriteLine("material" + delimiter + material.materialName + delimiter + "horizontal" + delimiter + material.id);
+            }
         }
 
         foreach (Step step in SessionState.Steps)
         {
-            stepNumber++;
             //write step start code
             sw.WriteLine("step");
 
-            foreach (Wellplate plate in step.materials)
+            foreach (var action in step.actions)
             {
-                //clear added samples list
-                addedSamples.Clear();
-
-                //save the plate id
-                currentPlateId = plate.id;
-
-                //iterate through each well to go start from the top left of the plate
-                foreach (var well in plate.wells)
-                {
-                    //iterate through each Sample in the well
-                    foreach (var sample in well.Value.Samples)
-                    {
-                        //if this sample has already been added continue to the next sample
-                        if (addedSamples.Contains(sample.Key))
-                        {
-                            continue;
-                        }
-                        //iterate through each well again to order actions by sample
-                        foreach (var well2 in plate.wells)
-                        {
-                            //check if each well contains the sample
-                            if (well2.Value.Samples.ContainsKey(sample.Key))
-                            {
-                                //reset grouping vars
-                                string groupStart = null;
-                                string groupEnd = null;
-                                bool isGrouped = false;
-                                int groupId = -1;
-
-                                //get the volume in this well
-                                float volume;
-                                well2.Value.Samples.TryGetValue(sample.Key, out volume);
-
-                                //check if this Sample is a part of a group
-                                foreach (var group in well2.Value.groups)
-                                {
-                                    if (group.Sample == sample.Key)
-                                    {
-                                        isGrouped = true;
-                                        groupId = group.groupId;
-
-                                        //check if this is the start of the group
-                                        if (group.isStart)
-                                        {
-                                            groupStart = well2.Key;
-                                        }
-                                    }
-                                }
-                                if (isGrouped)
-                                {
-                                    //if this well was the start of the sample group add the group to the csv output
-                                    if (groupStart != null)
-                                    {
-                                        groupEnd = FindGroupEnd(groupId, currentPlateId);
-                                        //Debug.Log(delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
-                                        sw.WriteLine(delimiter + "action:pipette" + delimiter + currentPlateId + delimiter + groupStart + ":" + groupEnd + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.sampleName + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
-                                    }
-                                }
-                                //if this is a single sample well add the single sample entry to the csv output
-                                else
-                                {
-                                    //Debug.Log(delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.name + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
-                                    sw.WriteLine(delimiter + "action:pipette" + delimiter + currentPlateId + delimiter + well2.Key + delimiter + Color32ToHex(sample.Key.color).ToString() + delimiter + sample.Key.colorName + delimiter + sample.Key.sampleName + ":" + sample.Key.abreviation + delimiter + volume.ToString() + delimiter + "μL");
-                                }
-                            }
-                        }
-                        //once finished looking at all wells add this sample to the added samples list
-                        addedSamples.Add(sample.Key);
-                    }
-                }
+                sw.WriteLine("action:" + action.type.ToString() + delimiter + action.source.matID + ":" + action.source.matSubID + delimiter + Color32ToHex(action.source.color) + ":" + action.source.colorName + delimiter + action.source.volume + delimiter + "μL" + delimiter + action.target.matID + ":" + action.target.matSubID + delimiter + Color32ToHex(action.target.color) + ":" + action.target.colorName);
             }
+            
             //write step end code
             sw.WriteLine("end");
         }

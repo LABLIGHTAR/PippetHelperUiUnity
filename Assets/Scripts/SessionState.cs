@@ -291,8 +291,8 @@ public class SessionState : MonoBehaviour
         }
 
         UsedColors.Add(colorName);
-        newSampleStream.OnNext(newSample);
         AddSampleToMaterialsList(newSample, vesselType);
+        newSampleStream.OnNext(newSample);
     }
 
     static void AddSampleToMaterialsList(Sample newSample, string vesselType)
@@ -300,22 +300,27 @@ public class SessionState : MonoBehaviour
         //add sample to materials list
         if (vesselType == "5mL Tube")
         {
-            if (TubeSlotAvailable5mL())
+            var tubeRack = Materials.Where(mat => mat is TubeRack5mL).FirstOrDefault();
+            if (tubeRack != null && tubeRack.HasSampleSlot())
             {
-                var tubeRack = Materials.Where(mat => mat is TubeRack5mL).FirstOrDefault();
-
-                ((TubeRack5mL)tubeRack).AddNewTube(newSample);
+                tubeRack.AddNewSample(newSample);
             }
             else
             {
                 TubeRack5mL newRack = new TubeRack5mL(Materials.Count, "tuberack5ml");
-                newRack.AddNewTube(newSample);
+                newRack.AddNewSample(newSample);
                 Materials.Add(newRack);
             }
         }
         else if (vesselType == "Reservoir")
         {
-            Materials.Add(new Reservoir(Materials.Count, "reservoir", newSample));
+            var reservoir = new Reservoir(Materials.Count, "reservoir");
+            reservoir.AddNewSample(newSample);
+            materials.Add(reservoir);
+        }
+        foreach(var material in Materials)
+        {
+            Debug.Log(material.id + " " + material.materialName);
         }
     }
 
@@ -497,7 +502,6 @@ public class SessionState : MonoBehaviour
                 LabAction removalAction = removalStep.actions.Where(a => a.source.color == ActiveSample.color && a.target.matID == plateId.ToString() && a.target.matSubID == wellName).FirstOrDefault();
                 if (removalAction != null)
                 {
-                    Debug.Log("Removing Action");
                     removalStep.actions.Remove(removalAction);
                     actionRemovedStream.OnNext(removalAction);
                 }
@@ -537,6 +541,7 @@ public class SessionState : MonoBehaviour
                                 removalStep.actions.Remove(removalAction);
                                 actionRemovedStream.OnNext(removalAction);
                             }
+
                             //go through each well and remove all Samples in this group
                             RemoveAllSamplesInGroup(IdForRemoval, plateId);
                             //break since the active Sample cannot be in a well more than once
@@ -585,18 +590,6 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    public static bool TubeSlotAvailable5mL()
-    {
-        foreach (LabMaterial material in Materials)
-        {
-            if (material is TubeRack5mL && ((TubeRack5mL)material).tubes.Count < 24)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static void AddActionToCurrentStep(LabAction.ActionType action, LabAction.Source source, LabAction.Target target)
     {
         var newAction = new LabAction(action, source, target);
@@ -611,22 +604,22 @@ public class SessionState : MonoBehaviour
         string sourceSubID = "";
         foreach (var material in Materials)
         {
-            if (material is TubeRack5mL)
+            var samples = material.GetSampleList();
+            if (samples != null)
             {
-                foreach (var tube in material.GetTubes())
+                foreach (var sample in samples)
                 {
-                    if (tube.Value == ActiveSample)
+                    if (sample == ActiveSample)
                     {
                         sourceID = material.id.ToString();
-                        sourceSubID = tube.Key;
+                        sourceSubID = samples.IndexOf(sample).ToString();
                         break;
                     }
                 }
-                break;
             }
         }
         var source = new LabAction.Source(sourceID, sourceSubID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName, SessionState.ActiveTool.volume, "μL");
         var target = new LabAction.Target(plateID, wellID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName);
-        SessionState.AddActionToCurrentStep(LabAction.ActionType.Pipette, source, target);
+        SessionState.AddActionToCurrentStep(LabAction.ActionType.pipette, source, target);
     }
 }

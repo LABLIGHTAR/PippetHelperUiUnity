@@ -6,9 +6,14 @@ public class Reservoir : LabMaterial
 {
     public Sample sample;
 
-    public Reservoir(int id, string name, Sample newSample) : base(id, name)
+    public Reservoir(int id, string name) : base(id, name)
     {
-        sample = newSample;
+
+    }
+
+    public override void AddNewSample(Sample sampleIn)
+    {
+        sample = sampleIn;
     }
 
     public override bool ContainsSample(Sample sampleIn)
