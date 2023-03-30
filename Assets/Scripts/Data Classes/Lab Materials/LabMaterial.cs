@@ -31,6 +31,16 @@ public class LabMaterial
         return null;
     }
 
+    public virtual bool ContainsSample(Sample sample)
+    {
+        return false;
+    }
+
+    public virtual List<Sample> GetSampleList()
+    {
+        return null;
+    }
+
     public virtual void AddNewTube(Sample sample)
     {
         return;

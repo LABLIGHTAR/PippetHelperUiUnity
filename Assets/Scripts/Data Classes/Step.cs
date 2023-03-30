@@ -12,11 +12,12 @@ public class Step
         materials = new List<LabMaterial>();
         actions = new List<LabAction>();
 
-        foreach (Wellplate material in SessionState.Materials)
+        foreach (var material in SessionState.Materials)
         {
             if (material is Wellplate)
             {
-                materials.Add(new Wellplate(material.id, material.materialName, material.numWells));
+                var wellplate = (Wellplate)material;
+                materials.Add(new Wellplate(wellplate.id, wellplate.materialName, wellplate.numWells));
             }
         }
     }

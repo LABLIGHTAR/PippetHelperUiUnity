@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UniRx;
@@ -20,6 +20,7 @@ public class SessionState : MonoBehaviour
 
     void Start()
     {
+        //after materials are chosen create step 1
         MaterialViewController.materialsSelectedStream.Subscribe(_ => AddNewStep());
     }
 
@@ -54,6 +55,7 @@ public class SessionState : MonoBehaviour
     public static Subject<Well> focusedWellStream = new Subject<Well>();
     public static Subject<string> procedureNameStream = new Subject<string>();
     public static Subject<LabAction> actionAddedStream = new Subject<LabAction>();
+    public static Subject<LabAction> actionRemovedStream = new Subject<LabAction>();
 
     //getters and setters
     #region
@@ -130,7 +132,15 @@ public class SessionState : MonoBehaviour
         }
         get
         {
-            return availableSamples;
+            List<Sample> sampleList = new List<Sample>();
+            foreach(var material in Materials)
+            {
+                if(material.GetSampleList() != null)
+                {
+                    sampleList.AddRange(material.GetSampleList());
+                }
+            }
+            return sampleList;
         }
     }
 
@@ -272,39 +282,40 @@ public class SessionState : MonoBehaviour
     public static void AddNewSample(string name, string abreviation, string colorName, Color color, string vesselType)
     {
         Sample newSample = new Sample(name, abreviation, colorName, color);
-        
+
         //return if the Sample already exists
-        if (AvailableSamples.Exists(x => x.sampleName == name || x.abreviation == abreviation || x.colorName == colorName || x.color == color))
+        if(AvailableSamples.Contains(newSample))
         {
             Debug.LogWarning("Sample already exists");
             return;
         }
-        else
+
+        UsedColors.Add(colorName);
+        newSampleStream.OnNext(newSample);
+        AddSampleToMaterialsList(newSample, vesselType);
+    }
+
+    static void AddSampleToMaterialsList(Sample newSample, string vesselType)
+    {
+        //add sample to materials list
+        if (vesselType == "5mL Tube")
         {
-            UsedColors.Add(colorName);
-            AvailableSamples.Add(newSample);
-            newSampleStream.OnNext(newSample);
-
-            //add sample to materials list
-            if(vesselType == "5mL Tube")
+            if (TubeSlotAvailable5mL())
             {
-                if(TubeSlotAvailable5mL())
-                {
-                    var tubeRack = Materials.Where(mat => mat is TubeRack5mL).FirstOrDefault();
+                var tubeRack = Materials.Where(mat => mat is TubeRack5mL).FirstOrDefault();
 
-                    ((TubeRack5mL)tubeRack).AddNewTube(newSample);
-                }
-                else
-                {
-                    TubeRack5mL newRack = new TubeRack5mL(Materials.Count, "tuberack5ml");
-                    newRack.AddNewTube(newSample);
-                    Materials.Add(newRack);
-                }
+                ((TubeRack5mL)tubeRack).AddNewTube(newSample);
             }
-            else if(vesselType == "Reservoir")
+            else
             {
-                Materials.Add(new Reservoir(Materials.Count, "reservoir", newSample));
+                TubeRack5mL newRack = new TubeRack5mL(Materials.Count, "tuberack5ml");
+                newRack.AddNewTube(newSample);
+                Materials.Add(newRack);
             }
+        }
+        else if (vesselType == "Reservoir")
+        {
+            Materials.Add(new Reservoir(Materials.Count, "reservoir", newSample));
         }
     }
 
@@ -336,27 +347,31 @@ public class SessionState : MonoBehaviour
             ActiveSample = null;
             //return this samples color to the available colors
             UsedColors.Remove(forRemoval.colorName);
-            //remove this sample from the sample list
-            AvailableSamples.Remove(forRemoval);
+            //remove this sample from the materials list
+            RemoveSampleFromMateralsList(forRemoval);
+        }
+    }
 
-            //remove sample from materials list
-            foreach (var material in Materials)
+    static void RemoveSampleFromMateralsList(Sample forRemoval)
+    {
+        //remove sample from materials list
+        foreach (var material in Materials)
+        {
+            if (material is TubeRack5mL)
             {
-                if(material is TubeRack5mL)
+                foreach (var tube in material.GetTubes())
                 {
-                    foreach(var tube in material.GetTubes())
+                    if (tube.Value == forRemoval)
                     {
-                        if(tube.Value == forRemoval)
-                        {
-                            material.GetTubes().Remove(tube.Key);
-                        }
-                    }    
+                        material.GetTubes().Remove(tube.Key);
+                        break;
+                    }
                 }
-                else if(material is Reservoir && ((Reservoir)material).sample == forRemoval)
-                {
-                    Materials.Remove(material);
-                }
-            }    
+            }
+            else if (material is Reservoir && material.ContainsSample(forRemoval))
+            {
+                Materials.Remove(material);
+            }
         }
     }
 
@@ -382,15 +397,12 @@ public class SessionState : MonoBehaviour
     //sets the active sample
     public static void SetActiveSample(Sample selected)
     {
-        if (!AvailableSamples.Contains(selected))
-        {
-            Debug.LogWarning("Selected Sample is not available");
-            return;
-        }
-        else
+        if(AvailableSamples.Contains(selected))
         {
             ActiveSample = selected;
+            return;
         }
+        Debug.LogWarning("Selected sample is not available");
     }
 
     //sets the focused well
@@ -424,8 +436,25 @@ public class SessionState : MonoBehaviour
                     //if this is the last well in the group increment the group id for the next group
                     if(isEnd)
                     {
-                        GroupId++; 
+                        //Add group action
+                        string multichannelTargetID = "";
+                        foreach (var well in Steps[ActiveStep].materials[plateId].GetWells())
+                        {
+                            if(well.Value.IsStartOfGroup(GroupId))
+                            {
+                                multichannelTargetID = well.Value.id;
+                            }
+                        }
+                        multichannelTargetID = multichannelTargetID + "-" + wellName;
+                        AddPipetteAction(plateId.ToString(), multichannelTargetID);
+
+                        GroupId++;
                     }
+                }
+                else
+                {
+                    //add single action
+                    AddPipetteAction(plateId.ToString(), wellName);
                 }
                 return true;
             }
@@ -462,8 +491,17 @@ public class SessionState : MonoBehaviour
         {
             if (ActiveSample != null && removalStep.materials[plateId].GetWell(wellName).Samples.ContainsKey(ActiveSample))
             {
-                //if the well exists and already has the active Sample remove it
+                //if the well exists and has the active Sample remove it
                 removalStep.materials[plateId].GetWell(wellName).Samples.Remove(ActiveSample);
+                //remove the associated action
+                LabAction removalAction = removalStep.actions.Where(a => a.source.color == ActiveSample.color && a.target.matID == plateId.ToString() && a.target.matSubID == wellName).FirstOrDefault();
+                if (removalAction != null)
+                {
+                    Debug.Log("Removing Action");
+                    removalStep.actions.Remove(removalAction);
+                    actionRemovedStream.OnNext(removalAction);
+                }
+
                 SampleRemovedStream.OnNext(wellName);
 
                 //if the Sample being removed is part of a group remove the group everywhere
@@ -474,9 +512,34 @@ public class SessionState : MonoBehaviour
                         if(group.Sample == ActiveSample)
                         {
                             int IdForRemoval = group.groupId;
+
+                            //remove group action
+                            string multichannelTargetID = "";
+                            string groupStart = "";
+                            string groupEnd = "";
+                            foreach (var well in removalStep.materials[plateId].GetWells())
+                            {
+                                if (well.Value.IsStartOfGroup(IdForRemoval))
+                                {
+                                    groupStart = well.Value.id;
+                                }
+                                else if (well.Value.IsEndOfGroup(IdForRemoval))
+                                {
+                                    groupEnd = well.Value.id;
+                                }
+                            }
+                            multichannelTargetID = groupStart + "-" + groupEnd;
+                            Debug.Log(multichannelTargetID);
+                            removalAction = removalStep.actions.Where(a => a.source.color == ActiveSample.color && a.target.matID == plateId.ToString() && a.target.matSubID == multichannelTargetID).FirstOrDefault();
+                            if (removalAction != null)
+                            {
+                                Debug.Log("Removing Action");
+                                removalStep.actions.Remove(removalAction);
+                                actionRemovedStream.OnNext(removalAction);
+                            }
                             //go through each well and remove all Samples in this group
                             RemoveAllSamplesInGroup(IdForRemoval, plateId);
-                            //break since the active Sample cannot be in a well mroe than once
+                            //break since the active Sample cannot be in a well more than once
                             break;
                         }
                     }
@@ -539,5 +602,31 @@ public class SessionState : MonoBehaviour
         var newAction = new LabAction(action, source, target);
         Steps[ActiveStep].actions.Add(newAction);
         actionAddedStream.OnNext(newAction);
+    }
+
+    static void AddPipetteAction(string plateID, string wellID)
+    {
+        //add action to session state
+        string sourceID = "";
+        string sourceSubID = "";
+        foreach (var material in Materials)
+        {
+            if (material is TubeRack5mL)
+            {
+                foreach (var tube in material.GetTubes())
+                {
+                    if (tube.Value == ActiveSample)
+                    {
+                        sourceID = material.id.ToString();
+                        sourceSubID = tube.Key;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        var source = new LabAction.Source(sourceID, sourceSubID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName, SessionState.ActiveTool.volume, "μL");
+        var target = new LabAction.Target(plateID, wellID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName);
+        SessionState.AddActionToCurrentStep(LabAction.ActionType.Pipette, source, target);
     }
 }

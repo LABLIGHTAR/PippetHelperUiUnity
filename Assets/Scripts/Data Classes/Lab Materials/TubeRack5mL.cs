@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 public class TubeRack5mL : LabMaterial
 {
@@ -9,6 +10,20 @@ public class TubeRack5mL : LabMaterial
     public TubeRack5mL(int id, string name) : base(id, name)
     {
         tubes = new Dictionary<string, Sample>();
+    }
+
+    public override bool ContainsSample(Sample sample)
+    {
+        if(tubes.ContainsValue(sample))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public override List<Sample> GetSampleList()
+    {
+        return tubes.Values.ToList();
     }
 
     public override void AddNewTube(Sample sample)

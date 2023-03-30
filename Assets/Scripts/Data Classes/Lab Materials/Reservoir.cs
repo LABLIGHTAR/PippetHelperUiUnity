@@ -11,6 +11,22 @@ public class Reservoir : LabMaterial
         sample = newSample;
     }
 
+    public override bool ContainsSample(Sample sampleIn)
+    {
+        if(sample == sampleIn)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public override List<Sample> GetSampleList()
+    {
+        List<Sample> list = new List<Sample>();
+        list.Add(sample);
+        return list;
+    }
+
     public override string GetNameAsSource(string subID)
     {
         return sample.sampleName;

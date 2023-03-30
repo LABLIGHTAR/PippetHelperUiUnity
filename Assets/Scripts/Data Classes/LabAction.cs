@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,5 +56,14 @@ public class LabAction
         type = action;
         source = sourceMat;
         target = targetMat;
+    }
+
+    public string GetActionString()
+    {
+
+        string sourceName = SessionState.Materials[int.Parse(source.matID)].GetNameAsSource(source.matSubID);
+        string targetName = SessionState.Materials[int.Parse(target.matID)].GetNameAsTarget(target.matSubID);
+
+        return type.ToString() + " " + source.volume + "μl" + " of " + sourceName + " into " + targetName;
     }
 }

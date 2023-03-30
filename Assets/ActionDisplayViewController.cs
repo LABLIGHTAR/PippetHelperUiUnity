@@ -16,20 +16,18 @@ public class ActionDisplayViewController : MonoBehaviour
             //create sample entry in list
             GameObject newActionItem = Instantiate(ActionItemPrefab) as GameObject;
             newActionItem.transform.SetParent(ContentParent, false);
-
-            Debug.Log(action.source.matID);
-            Debug.Log(action.target.matID);
-
-            string sourceName = SessionState.Materials[int.Parse(action.source.matID)].GetNameAsSource(action.source.matSubID);
-            string targetName = SessionState.Materials[int.Parse(action.target.matID)].GetNameAsTarget(action.target.matSubID);
-
-            newActionItem.GetComponent<ActionItemViewController>().InitActionItem(action.type.ToString() + " " + action.source.volume + "μl" + " from " + sourceName + " to " + targetName);
+            newActionItem.GetComponent<ActionItemViewController>().InitActionItem(action.GetActionString());
         });
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        SessionState.actionRemovedStream.Subscribe(action =>
+        {
+            foreach (Transform child in ContentParent)
+            {
+                if (child.GetComponent<ActionItemViewController>().actionText.text == action.GetActionString())
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+        });
     }
 }

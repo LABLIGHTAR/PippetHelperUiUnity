@@ -30,4 +30,28 @@ public class Well
         Samples = new Dictionary<Sample, float>();
         groups = new List<SampleGroup>();
     }
+
+    public bool IsStartOfGroup(int groupID)
+    {
+        foreach (SampleGroup group in groups)
+        {
+            if (group.groupId == groupID && group.isStart)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool IsEndOfGroup(int groupID)
+    {
+        foreach (SampleGroup group in groups)
+        {
+            if (group.groupId == groupID && group.isEnd)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
