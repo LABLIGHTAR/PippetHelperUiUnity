@@ -29,5 +29,20 @@ public class ActionDisplayViewController : MonoBehaviour
                 }
             }
         });
+
+        SessionState.stepStream.Subscribe(stepNum =>
+        {
+            foreach (Transform child in ContentParent)
+            {
+                Destroy(child.gameObject);
+            }
+            foreach (LabAction action in SessionState.Steps[SessionState.ActiveStep].actions)
+            {
+                //create sample entry in list
+                GameObject newActionItem = Instantiate(ActionItemPrefab) as GameObject;
+                newActionItem.transform.SetParent(ContentParent, false);
+                newActionItem.GetComponent<ActionItemViewController>().InitActionItem(action.GetActionString());
+            }
+        });
     }
 }

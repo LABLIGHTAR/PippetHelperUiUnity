@@ -41,5 +41,23 @@ public class SampleDisplayViewController : MonoBehaviour
                 newSampleForm.GetComponent<NewSampleFormController>().EditSample(newSample.sampleName, newSample.abreviation, newSample.colorName);
             });
         });
+
+        ProcedureLoader.procedureStream.Subscribe(_ =>
+        {
+            foreach (Sample sample in SessionState.AvailableSamples)
+            {
+                //create sample entry in list
+                GameObject newSampleSwatch = Instantiate(SampleSwatchPrefab) as GameObject;
+                newSampleSwatch.transform.SetParent(ContentParent, false);
+                newSampleSwatch.GetComponent<SampleSwatchViewController>().InitSampleItem(sample.sampleName, sample.abreviation, sample.color);
+
+                //set edit button event
+                newSampleSwatch.GetComponent<SampleSwatchViewController>().editButton.onClick.AddListener(delegate
+                {
+                    //open edit form
+                    newSampleForm.GetComponent<NewSampleFormController>().EditSample(sample.sampleName, sample.abreviation, sample.colorName);
+                });
+            }
+        });
     }
 }

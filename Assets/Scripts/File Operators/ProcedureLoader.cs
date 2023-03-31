@@ -41,7 +41,7 @@ public class ProcedureLoader : MonoBehaviour
 
         if (fileName.Count() > 0)
         {
-            //StartCoroutine(LoadProcedure(fileName[0]));
+            StartCoroutine(LoadProcedure(fileName[0]));
         }
         else
         {
@@ -50,7 +50,7 @@ public class ProcedureLoader : MonoBehaviour
     }
 
     ///loads procedure from csv (async to ensure all objects in scene are instantiated fully before loading)
-    /*IEnumerator LoadProcedure(string fileName)
+    IEnumerator LoadProcedure(string fileName)
     {
         yield return new WaitForEndOfFrame();
 
@@ -61,112 +61,196 @@ public class ProcedureLoader : MonoBehaviour
         //read the file until the end of file is reached
         while ((currentLine = sr.ReadLine()) != null)
         {
+            //parse materials
             if (currentLine.Contains("material"))
             {
                 lineCells = currentLine.Split(',');
 
-                //cells go: start code, material name, material orientation, material id
+                //cells go: [0]start code, [1]material name, [2]material orientation,
+                //[3]material_id:material_subID, [4]contents, [5]contentColorHex:contentColorName
                 string materialName = lineCells[1];
-                int numWells = int.Parse(Regex.Match(lineCells[1], @"\d+").Value);
-                int materialID = int.Parse(lineCells[3]);
 
+                int numWells = 0; 
                 if(materialName.Contains("wellplate"))
                 {
+                    numWells = int.Parse(Regex.Match(lineCells[1], @"\d+").Value);
+                }
+                
+                string orientation = lineCells[2];
+                
+                int materialID;
+                string materialSubID = "";
+                if (lineCells[3].Contains(":"))
+                {
+                    string[] IDs = lineCells[3].Split(":");
+                    materialID = int.Parse(IDs[0]);
+                    materialSubID = IDs[1];
+                }
+                else
+                {
+                    materialID = int.Parse(lineCells[3]);
+                }
+
+                string contentsName = "";
+                string contentsAbrev = "";
+                Color contentsColor = Color.white;
+                string contentsColorName = ""; 
+                if (lineCells.Length > 4)
+                {
+                    string[] contents = lineCells[4].Split(":");
+                    contentsName = contents[0];
+                    contentsAbrev = contents[1];
+
+                    string[] color = lineCells[5].Split(":");
+                    ColorUtility.TryParseHtmlString(color[0], out contentsColor);
+                    contentsColorName = color[1];
+                }
+                
+                //add materials to session state
+                if (materialName.Contains("wellplate"))
+                {
                     SessionState.Materials.Add(new Wellplate(materialID, materialName, numWells));
-                }    
+                }
+                else if(materialName.Contains("tuberack5ml"))
+                {
+                    if(materialSubID != "" && materialSubID == "0")
+                    {
+                        var newTubeRack = new TubeRack5mL(materialID, materialName);
+                        SessionState.Materials.Add(newTubeRack);
+                        if (contentsColor != Color.white && contentsColorName != "")
+                        {
+                            Sample newSample = new Sample(contentsName, contentsAbrev, contentsColorName, contentsColor);
+                            newTubeRack.AddNewSample(newSample);
+                        }
+                    }
+                    else if(materialSubID != "" && materialSubID != "0")
+                    {
+                        var tubeRack = SessionState.Materials[materialID];
+                        if (contentsColor != Color.white && contentsColorName != "")
+                        {
+                            Sample newSample = new Sample(contentsName, contentsAbrev, contentsColorName, contentsColor);
+                            tubeRack.AddNewSample(newSample);
+                        }
+                    }
+                }
+                else if(materialName.Contains("reservoir"))
+                {
+                    var newReservoir = new Reservoir(materialID, materialName);
+                    SessionState.Materials.Add(newReservoir);
+                    if (contentsColor != Color.white && contentsColorName != "")
+                    {
+                        Sample newSample = new Sample(contentsName, contentsAbrev, contentsColorName, contentsColor);
+                        newReservoir.AddNewSample(newSample);
+                    }
+                }
             }
+
+            //parse step
             else if (currentLine.Contains("step"))
             {
                 SessionState.AddNewStep();
-                SessionState.SetActiveStep(SessionState.Steps.Count - 1);
             }
+
+            //parse actions
             else if (currentLine.Contains("action"))
             {
                 lineCells = currentLine.Split(',');
+                //cells go: [0]action code, [1]SourceID:SourceSubID, [2]SourceHex:SourceColorName,
+                //[3]SampleVolume, [4]SampleUnits, [5]targetID:targetSubID, [6]TargetHex:TargetColorName
+                
+                LabAction.ActionType actionType;
+                Enum.TryParse<LabAction.ActionType>(lineCells[0].Split(":")[1], out actionType);
+                
+                string[] sourceIDs = lineCells[1].Split(':');
+                string sourceID = sourceIDs[0];
+                string sourceSubID = sourceIDs[1];
+                
+                Color sourceColor;
+                string sourceColorName;
+                string[] sourceColors = lineCells[2].Split(':');
+                ColorUtility.TryParseHtmlString(sourceColors[0], out sourceColor);
+                sourceColorName = sourceColors[1];
 
-                //cell 0 will always be blank
-                //cells go: "", action code, materialID, "wellID","#Hex","ColorName","SampleName:SampleAbreviation", "SampleVolume"
-                int materialID = Int32.Parse(lineCells[2]);
-                string wellId = lineCells[3];
-                Color color;
-                ColorUtility.TryParseHtmlString(lineCells[4], out color);
-                string colorName = lineCells[5];
-                string[] nameAbrev = lineCells[6].Split(":");
-                string SampleName = nameAbrev[0];
-                string SampleAbbreviation = nameAbrev[1];
-                float SampleVolume = float.Parse(lineCells[7], CultureInfo.InvariantCulture.NumberFormat);
+                float volume = float.Parse(lineCells[3], CultureInfo.InvariantCulture.NumberFormat);
 
-                //add Sample to sessionState
-                Sample newSample = new Sample(SampleName, SampleAbbreviation, colorName, color);
-                SessionState.AddNewSample(newSample.sampleName, newSample.abreviation, newSample.colorName, newSample.color);
-
-                //set new Sample as active  
-;               SessionState.ActiveSample = SessionState.AvailableSamples.Where(sample => sample.sampleName == SampleName).FirstOrDefault();
-
-                //set tool volume
-                SessionState.ActiveTool.volume = SampleVolume;
-
-                //if the well id has a colon this is a multichannel
-                if(wellId.Contains(':'))
+                string[] targetIDs;
+                string targetID = "";
+                string targetSubID = "";
+                if (lineCells[5].Contains(":"))
                 {
+                    targetIDs = lineCells[5].Split(':');
+                    targetID = targetIDs[0];
+                    targetSubID = targetIDs[1];
+                }
+                else
+                {
+                    targetID = lineCells[5];
+                }
+
+                Color targetColor;
+                string targetColorName;
+                string[] targetColors = lineCells[6].Split(':');
+                ColorUtility.TryParseHtmlString(targetColors[0], out targetColor);
+                targetColorName = targetColors[1];
+                
+                //set actions sample as active  
+                SessionState.ActiveSample = SessionState.AvailableSamples.Where(sample => sample.color == sourceColor).FirstOrDefault();
+                //set active tool to match action
+                if(targetSubID != "" && targetSubID.Contains("-"))
+                {
+                    string[] wellGroup = targetSubID.Split('-');
                     int numChannels;
-                    string activeWellId;
-                    
-                    //get the first and last well of the groups
-                    string[] wellGroup = wellId.Split(':');
-
-                    activeWellId = wellGroup[0];
-
-                    //fill well group horizontal
-                    if (wellGroup[0][0] == wellGroup[1][0])
+                    string activeWellId = wellGroup[0];
+                    if(wellGroup[0][0] == wellGroup[1][0])
                     {
                         numChannels = GetNumberChannels(wellGroup, true);
-                        
-                        while(numChannels > 0)
+                        SessionState.ActiveTool = new Tool("multichannel", numChannels, "row", volume);
+                        while (numChannels > 0)
                         {
                             if (activeWellId == wellGroup[0])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, true, false);
+                                SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
                             }
-                            else if(activeWellId == wellGroup[1])
+                            else if (activeWellId == wellGroup[1])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, false, true);
+                                SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
                             }
                             else
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, false, false);
+                                SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
                             }
                             numChannels--;
                             activeWellId = GetNextWellHorizontal(activeWellId);
                         }
                     }
-                    //fill well group vertical
                     else
                     {
                         numChannels = GetNumberChannels(wellGroup, false);
+                        SessionState.ActiveTool = new Tool("multichannel", numChannels, "column", volume);
                         while (numChannels > 0)
                         {
                             if (activeWellId == wellGroup[0])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, true, false);
+                                SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
                             }
                             else if (activeWellId == wellGroup[1])
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, false, true);
+                                SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
                             }
                             else
                             {
-                                SessionState.AddActiveSampleToWell(activeWellId, materialID, true, false, false);    
+                                SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
                             }
                             numChannels--;
                             activeWellId = GetNextWellVertical(activeWellId);
-                        };
+                        }
                     }
+                    
                 }
-                //else its a single well
                 else
                 {
-                    SessionState.AddActiveSampleToWell(wellId, materialID, false, false, false);
+                    SessionState.ActiveTool = new Tool("pipette", 1, "row", volume);
+                    SessionState.AddActiveSampleToWell(targetSubID, int.Parse(targetID), false, false, false);
                 }
             }
         }
@@ -176,11 +260,11 @@ public class ProcedureLoader : MonoBehaviour
         SessionState.ActiveSample = null;
         procedureStream.OnNext(true);
 
-        if(fileName != null)
+        if (fileName != null)
         {
             SessionState.ProcedureName = Path.GetFileNameWithoutExtension(fileName);
         }
-    }*/
+    }
 
     //returns number of channels from well group identifier
     int GetNumberChannels(string[] wellGroup, bool isHorizontal)

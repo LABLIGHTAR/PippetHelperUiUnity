@@ -267,6 +267,7 @@ public class SessionState : MonoBehaviour
     //adds new step to protocol and navigates ui to new step
     public static void AddNewStep()
     {
+        Debug.Log("adding new step");
         Steps.Add(new Step());
         ActiveStep = Steps.Count - 1;
         newStepStream.OnNext(SessionState.ActiveStep);
@@ -428,6 +429,7 @@ public class SessionState : MonoBehaviour
     //adds active sample to passed well
     public static bool AddActiveSampleToWell(string wellName, int plateId, bool inGroup, bool isStart, bool isEnd)
     {
+        Debug.Log("Adding sample to well in step " + ActiveStep);
         if(Steps[ActiveStep].materials[plateId].ContainsWell(wellName))
         {
             if(!Steps[ActiveStep].materials[plateId].GetWell(wellName).Samples.ContainsKey(ActiveSample))
@@ -482,8 +484,25 @@ public class SessionState : MonoBehaviour
                 //if this is the last well in the group increment the group id for the next group
                 if (isEnd)
                 {
+                    //Add group action
+                    string multichannelTargetID = "";
+                    foreach (var well in Steps[ActiveStep].materials[plateId].GetWells())
+                    {
+                        if (well.Value.IsStartOfGroup(GroupId))
+                        {
+                            multichannelTargetID = well.Value.id;
+                        }
+                    }
+                    multichannelTargetID = multichannelTargetID + "-" + wellName;
+                    AddPipetteAction(plateId.ToString(), multichannelTargetID);
+
                     GroupId++;
                 }
+            }
+            else
+            {
+                //add single action
+                AddPipetteAction(plateId.ToString(), wellName);
             }
             return true;
         }
@@ -592,6 +611,7 @@ public class SessionState : MonoBehaviour
 
     public static void AddActionToCurrentStep(LabAction.ActionType action, LabAction.Source source, LabAction.Target target)
     {
+        Debug.Log("Adding action to step " + ActiveStep);
         var newAction = new LabAction(action, source, target);
         Steps[ActiveStep].actions.Add(newAction);
         actionAddedStream.OnNext(newAction);
@@ -618,8 +638,8 @@ public class SessionState : MonoBehaviour
                 }
             }
         }
-        var source = new LabAction.Source(sourceID, sourceSubID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName, SessionState.ActiveTool.volume, "μL");
-        var target = new LabAction.Target(plateID, wellID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName);
-        SessionState.AddActionToCurrentStep(LabAction.ActionType.pipette, source, target);
+        var source = new LabAction.Source(sourceID, sourceSubID, ActiveSample.color, ActiveSample.colorName, ActiveTool.volume, "μL");
+        var target = new LabAction.Target(plateID, wellID, ActiveSample.color, ActiveSample.colorName);
+        AddActionToCurrentStep(LabAction.ActionType.pipette, source, target);
     }
 }

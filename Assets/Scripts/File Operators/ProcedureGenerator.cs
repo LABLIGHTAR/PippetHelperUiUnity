@@ -69,7 +69,7 @@ public class ProcedureGenerator : MonoBehaviour
                 foreach(var sample in samples)
                 {
                     string matID = material.id + ":" + samples.IndexOf(sample);
-                    sw.WriteLine("material" + delimiter + material.materialName + delimiter + "horizontal" + delimiter + matID + delimiter + sample.sampleName + ":" + sample.abreviation);
+                    sw.WriteLine("material" + delimiter + material.materialName + delimiter + "horizontal" + delimiter + matID + delimiter + sample.sampleName + ":" + sample.abreviation + delimiter + Color32ToHex(sample.color) + ":" + sample.colorName);
                 }
             }
             else
