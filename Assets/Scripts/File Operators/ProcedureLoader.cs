@@ -155,41 +155,41 @@ public class ProcedureLoader : MonoBehaviour
             else if (currentLine.Contains("action"))
             {
                 lineCells = currentLine.Split(',');
-                //cells go: [0]action code, [1]SourceID:SourceSubID, [2]SourceHex:SourceColorName,
-                //[3]SampleVolume, [4]SampleUnits, [5]targetID:targetSubID, [6]TargetHex:TargetColorName
+                //cells go: [0]blank, [1]action code, [2]SourceID:SourceSubID, [3]SourceHex:SourceColorName,
+                //[4]SampleVolume, [5]SampleUnits, [6]targetID:targetSubID, [7]TargetHex:TargetColorName
                 
                 LabAction.ActionType actionType;
-                Enum.TryParse<LabAction.ActionType>(lineCells[0].Split(":")[1], out actionType);
+                Enum.TryParse<LabAction.ActionType>(lineCells[1].Split(":")[1], out actionType);
                 
-                string[] sourceIDs = lineCells[1].Split(':');
+                string[] sourceIDs = lineCells[2].Split(':');
                 string sourceID = sourceIDs[0];
                 string sourceSubID = sourceIDs[1];
                 
                 Color sourceColor;
                 string sourceColorName;
-                string[] sourceColors = lineCells[2].Split(':');
+                string[] sourceColors = lineCells[3].Split(':');
                 ColorUtility.TryParseHtmlString(sourceColors[0], out sourceColor);
                 sourceColorName = sourceColors[1];
 
-                float volume = float.Parse(lineCells[3], CultureInfo.InvariantCulture.NumberFormat);
+                float volume = float.Parse(lineCells[4], CultureInfo.InvariantCulture.NumberFormat);
 
                 string[] targetIDs;
                 string targetID = "";
                 string targetSubID = "";
-                if (lineCells[5].Contains(":"))
+                if (lineCells[6].Contains(":"))
                 {
-                    targetIDs = lineCells[5].Split(':');
+                    targetIDs = lineCells[6].Split(':');
                     targetID = targetIDs[0];
                     targetSubID = targetIDs[1];
                 }
                 else
                 {
-                    targetID = lineCells[5];
+                    targetID = lineCells[6];
                 }
 
                 Color targetColor;
                 string targetColorName;
-                string[] targetColors = lineCells[6].Split(':');
+                string[] targetColors = lineCells[7].Split(':');
                 ColorUtility.TryParseHtmlString(targetColors[0], out targetColor);
                 targetColorName = targetColors[1];
                 

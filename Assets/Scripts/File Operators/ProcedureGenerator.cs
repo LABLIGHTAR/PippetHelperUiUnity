@@ -85,7 +85,7 @@ public class ProcedureGenerator : MonoBehaviour
 
             foreach (var action in step.actions)
             {
-                sw.WriteLine("action:" + action.type.ToString() + delimiter + action.source.matID + ":" + action.source.matSubID + delimiter + Color32ToHex(action.source.color) + ":" + action.source.colorName + delimiter + action.source.volume + delimiter + "μL" + delimiter + action.target.matID + ":" + action.target.matSubID + delimiter + Color32ToHex(action.target.color) + ":" + action.target.colorName);
+                sw.WriteLine(delimiter + "action:" + action.type.ToString() + delimiter + action.source.matID + ":" + action.source.matSubID + delimiter + Color32ToHex(action.source.color) + ":" + action.source.colorName + delimiter + action.source.volume + delimiter + "μL" + delimiter + action.target.matID + ":" + action.target.matSubID + delimiter + Color32ToHex(action.target.color) + ":" + action.target.colorName);
             }
             
             //write step end code

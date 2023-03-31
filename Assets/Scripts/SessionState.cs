@@ -267,7 +267,6 @@ public class SessionState : MonoBehaviour
     //adds new step to protocol and navigates ui to new step
     public static void AddNewStep()
     {
-        Debug.Log("adding new step");
         Steps.Add(new Step());
         ActiveStep = Steps.Count - 1;
         newStepStream.OnNext(SessionState.ActiveStep);
@@ -429,7 +428,6 @@ public class SessionState : MonoBehaviour
     //adds active sample to passed well
     public static bool AddActiveSampleToWell(string wellName, int plateId, bool inGroup, bool isStart, bool isEnd)
     {
-        Debug.Log("Adding sample to well in step " + ActiveStep);
         if(Steps[ActiveStep].materials[plateId].ContainsWell(wellName))
         {
             if(!Steps[ActiveStep].materials[plateId].GetWell(wellName).Samples.ContainsKey(ActiveSample))
@@ -611,7 +609,6 @@ public class SessionState : MonoBehaviour
 
     public static void AddActionToCurrentStep(LabAction.ActionType action, LabAction.Source source, LabAction.Target target)
     {
-        Debug.Log("Adding action to step " + ActiveStep);
         var newAction = new LabAction(action, source, target);
         Steps[ActiveStep].actions.Add(newAction);
         actionAddedStream.OnNext(newAction);
