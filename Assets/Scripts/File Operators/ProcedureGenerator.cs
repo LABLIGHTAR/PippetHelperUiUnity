@@ -74,7 +74,7 @@ public class ProcedureGenerator : MonoBehaviour
             }
             else
             {
-                sw.WriteLine("material" + delimiter + material.materialName + delimiter + "horizontal" + delimiter + material.id);
+                sw.WriteLine("material" + delimiter + material.materialName + delimiter + "horizontal" + delimiter + material.id + delimiter);
             }
         }
 

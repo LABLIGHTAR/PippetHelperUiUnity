@@ -93,13 +93,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 106239830094725473}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 15
   m_Viewport: {fileID: 7594731280819358411}
   m_HorizontalScrollbar: {fileID: 1857432669602463671}
   m_VerticalScrollbar: {fileID: 6635625662925390512}

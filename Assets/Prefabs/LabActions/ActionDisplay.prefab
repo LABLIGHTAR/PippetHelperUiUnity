@@ -263,7 +263,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ActionItemPrefab: {fileID: 5534971558747723985, guid: d5f60d8d13e128d41ae64e2a5b48a5fe, type: 3}
+  ActionSlotPrefab: {fileID: 1950138394201358118, guid: cce609d4bd5ccae459410c53c40aea05, type: 3}
   ContentParent: {fileID: 7385906015571702973}
+  canvas: {fileID: 0}
 --- !u!1 &1354549450822533624
 GameObject:
   m_ObjectHideFlags: 0
@@ -930,13 +932,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 7385906015571702973}
-  m_Horizontal: 1
+  m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 15
   m_Viewport: {fileID: 1052880445929176855}
   m_HorizontalScrollbar: {fileID: 9097165554963516011}
   m_VerticalScrollbar: {fileID: 4318679989529311084}

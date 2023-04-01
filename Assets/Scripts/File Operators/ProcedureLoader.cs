@@ -95,7 +95,7 @@ public class ProcedureLoader : MonoBehaviour
                 string contentsAbrev = "";
                 Color contentsColor = Color.white;
                 string contentsColorName = ""; 
-                if (lineCells.Length > 4)
+                if (lineCells.Length > 5)
                 {
                     string[] contents = lineCells[4].Split(":");
                     contentsName = contents[0];

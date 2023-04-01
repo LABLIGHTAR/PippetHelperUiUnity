@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 1016730131695104313}
   - component: {fileID: 6097211425493908717}
   - component: {fileID: 497694454862557822}
+  - component: {fileID: -6288756489976731316}
   m_Layer: 0
   m_Name: ActionItem
   m_TagString: Untagged
@@ -172,7 +173,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -11.0578}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 280, y: 47.1156}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1016730131695104313
@@ -225,4 +226,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aab28835d9a34b45904129a36766539, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
   actionText: {fileID: 7975895815905096128}
+--- !u!225 &-6288756489976731316
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5534971558747723985}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
