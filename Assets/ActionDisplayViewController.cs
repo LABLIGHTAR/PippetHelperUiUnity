@@ -6,7 +6,7 @@ using UniRx;
 public class ActionDisplayViewController : MonoBehaviour
 {
     public GameObject ActionItemPrefab;
-    public GameObject ActionSlotPrefab;
+    //public GameObject ActionSlotPrefab;
     public Transform ContentParent;
     public Canvas canvas;
 
@@ -15,12 +15,12 @@ public class ActionDisplayViewController : MonoBehaviour
     {
         SessionState.actionAddedStream.Subscribe(action =>
         {
-            //creat action slot
+/*            //creat action slot
             GameObject newActionSlot = Instantiate(ActionSlotPrefab) as GameObject;
-            newActionSlot.transform.SetParent(ContentParent, false);
+            newActionSlot.transform.SetParent(ContentParent, false);*/
             //create sample entry in list
             GameObject newActionItem = Instantiate(ActionItemPrefab) as GameObject;
-            newActionItem.transform.SetParent(newActionSlot.transform, false);
+            newActionItem.transform.SetParent(ContentParent, false);
             newActionItem.GetComponent<ActionItemViewController>().InitActionItem(action.GetActionString());
             newActionItem.GetComponent<ActionItemViewController>().canvas = canvas;
         });
@@ -44,12 +44,12 @@ public class ActionDisplayViewController : MonoBehaviour
             }
             foreach (LabAction action in SessionState.Steps[SessionState.ActiveStep].actions)
             {
-                //creat action slot
+/*                //creat action slot
                 GameObject newActionSlot = Instantiate(ActionSlotPrefab) as GameObject;
-                newActionSlot.transform.SetParent(ContentParent, false);
+                newActionSlot.transform.SetParent(ContentParent, false);*/
                 //create sample entry in list
                 GameObject newActionItem = Instantiate(ActionItemPrefab) as GameObject;
-                newActionItem.transform.SetParent(newActionSlot.transform, false);
+                newActionItem.transform.SetParent(ContentParent, false);
                 newActionItem.GetComponent<ActionItemViewController>().InitActionItem(action.GetActionString());
                 newActionItem.GetComponent<ActionItemViewController>().canvas = canvas;
             }

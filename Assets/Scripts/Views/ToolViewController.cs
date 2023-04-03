@@ -7,6 +7,9 @@ using UniRx;
 
 public class ToolViewController : MonoBehaviour
 {
+    public TMP_Dropdown actionTypeDropdown;
+    public TextMeshProUGUI actionTypeText;
+
     public GameObject micropipette;
     public Image pipetteIndicator;
     public TMP_InputField pipetteVolumeText;
@@ -69,6 +72,22 @@ public class ToolViewController : MonoBehaviour
             {
                 multichannelIndicator.color = SessionState.ActiveSample.color;
             }
+        }
+    }
+
+    public void SelectActionType()
+    {
+        switch(actionTypeText.text)
+        {
+            case ("Pipette"):
+                SessionState.ActiveActionType = LabAction.ActionType.pipette;
+                break;
+            case ("Plate Transfer"):
+                SessionState.ActiveActionType = LabAction.ActionType.transfer;
+                break;
+            case ("Serial Dilution"):
+                SessionState.ActiveActionType = LabAction.ActionType.dilution;
+                break;
         }
     }
 

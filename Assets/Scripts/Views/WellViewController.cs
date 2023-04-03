@@ -86,13 +86,20 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (!SessionState.FormActive && !SessionState.SelectionActive && SessionState.ActiveTool != null)
         {
-            if (SessionState.ActiveTool.name == "micropipette")
+            if(SessionState.ActiveActionType == LabAction.ActionType.pipette)
             {
-                ActivateHighlight(1);
+                if (SessionState.ActiveTool.name == "micropipette")
+                {
+                    ActivateHighlight(1);
+                }
+                else if (SessionState.ActiveTool.name == "multichannel")
+                {
+                    ActivateHighlight(SessionState.ActiveTool.numChannels);
+                }
             }
-            else if (SessionState.ActiveTool.name == "multichannel")
+            else if(SessionState.ActiveActionType == LabAction.ActionType.transfer)
             {
-                ActivateHighlight(SessionState.ActiveTool.numChannels);
+                OnSelected();
             }
             SessionState.SetFocusedWell(wellId, plateId);
         }
@@ -103,13 +110,20 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (!SessionState.FormActive && !SessionState.SelectionActive && SessionState.ActiveTool != null)
         {
-            if (SessionState.ActiveTool.name == "micropipette")
+            if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
             {
-                DeactivateHighlight(0);
+                if (SessionState.ActiveTool.name == "micropipette")
+                {
+                    DeactivateHighlight(0);
+                }
+                else if (SessionState.ActiveTool.name == "multichannel")
+                {
+                    DeactivateHighlight(0);
+                }
             }
-            else if (SessionState.ActiveTool.name == "multichannel")
+            else if (SessionState.ActiveActionType == LabAction.ActionType.transfer)
             {
-                DeactivateHighlight(0);
+                OnDeselected();
             }
         }
     }
@@ -119,11 +133,21 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (!SessionState.FormActive && !SessionState.SelectionActive)
         {
-            if (eventData.button == PointerEventData.InputButton.Right)
+            if(SessionState.ActiveActionType == LabAction.ActionType.pipette)
             {
-                if (!SessionState.FormActive & SessionState.RemoveActiveSampleFromWell(wellId, plateId, SessionState.Steps[SessionState.ActiveStep]))
+                if (eventData.button == PointerEventData.InputButton.Right)
                 {
-                    UpdateVisualState();
+                    if (SessionState.RemoveActiveSampleFromWell(wellId, plateId, SessionState.Steps[SessionState.ActiveStep]))
+                    {
+                        UpdateVisualState();
+                    }
+                }
+            }
+            else if(SessionState.ActiveActionType == LabAction.ActionType.transfer)
+            {
+                if (eventData.button == PointerEventData.InputButton.Left)
+                {
+                    SessionState.SetSelectedWell(wellId, plateId);
                 }
             }
             if (SessionState.Steps[SessionState.ActiveStep].materials[plateId].ContainsWell(wellId))

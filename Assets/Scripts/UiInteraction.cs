@@ -16,7 +16,8 @@ public class UiInteraction : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HandleSelectionInput();
+        if (SessionState.ActiveActionType == LabAction.ActionType.pipette && !SessionState.FormActive)
+            HandleSelectionInput();
     }
 
     void HandleSelectionInput()

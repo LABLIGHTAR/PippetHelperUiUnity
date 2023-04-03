@@ -1102,7 +1102,10 @@ MonoBehaviour:
   newStepButton: {fileID: 9037315905446444120}
   removeStepButton: {fileID: 291986467610787354}
   stepDisplay: {fileID: 8157733650766796310}
-  procedureName: {fileID: 0}
+  StepSelectionPanel: {fileID: 0}
+  pipetteButton: {fileID: 0}
+  transferButton: {fileID: 0}
+  dilutionButton: {fileID: 0}
 --- !u!114 &3264518827958122615
 MonoBehaviour:
   m_ObjectHideFlags: 0

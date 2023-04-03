@@ -146,8 +146,8 @@ GameObject:
   - component: {fileID: 4106121657328945507}
   - component: {fileID: 1016730131695104313}
   - component: {fileID: 6097211425493908717}
-  - component: {fileID: 497694454862557822}
   - component: {fileID: -6288756489976731316}
+  - component: {fileID: -1014873737305005912}
   m_Layer: 0
   m_Name: ActionItem
   m_TagString: Untagged
@@ -214,7 +214,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &497694454862557822
+--- !u!225 &-6288756489976731316
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5534971558747723985}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &-1014873737305005912
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -228,15 +240,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canvas: {fileID: 0}
   actionText: {fileID: 7975895815905096128}
---- !u!225 &-6288756489976731316
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5534971558747723985}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0

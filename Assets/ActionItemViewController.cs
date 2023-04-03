@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class ActionItemViewController : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IInitializePotentialDragHandler
+public class ActionItemViewController : MonoBehaviour/*, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IInitializePotentialDragHandler */
 {
     public Canvas canvas;
     public TextMeshProUGUI actionText;
@@ -18,7 +18,7 @@ public class ActionItemViewController : MonoBehaviour, IPointerDownHandler, IBeg
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
     }
-
+/*
     public void OnBeginDrag(PointerEventData eventData)
     {
         Debug.Log("OnBeginDrag");
@@ -53,7 +53,7 @@ public class ActionItemViewController : MonoBehaviour, IPointerDownHandler, IBeg
     public void ResetPosition()
     {
         rectTransform.anchoredPosition = startingPosition;
-    }
+    }*/
 
     public void InitActionItem(string text)
     {
