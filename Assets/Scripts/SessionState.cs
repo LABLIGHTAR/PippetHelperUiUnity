@@ -358,10 +358,6 @@ public class SessionState : MonoBehaviour
             reservoir.AddNewSample(newSample);
             materials.Add(reservoir);
         }
-        foreach(var material in Materials)
-        {
-            Debug.Log(material.id + " " + material.materialName);
-        }
     }
 
     //removes sample from available samples list

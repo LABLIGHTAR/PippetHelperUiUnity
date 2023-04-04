@@ -352,12 +352,18 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void OnSelected()
     {
         SelectionSprite.gameObject.SetActive(true);
-        ActivateHighlight(1);
+        if(SessionState.ActiveActionType == LabAction.ActionType.pipette)
+        {
+            ActivateHighlight(1);
+        }
     }
 
     public void OnDeselected()
     {
         SelectionSprite.gameObject.SetActive(false);
-        DeactivateHighlight(1);
+        if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
+        {
+            DeactivateHighlight(1);
+        }
     }
 }
