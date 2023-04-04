@@ -71,6 +71,10 @@ public class LabAction
         {
             return type.ToString() + " " + source.volume + "μl" + " from " + sourceName + " into " + targetName;
         }
+        else if (type == ActionType.dilution)
+        {
+            return "perform a serial " + type.ToString() + " with a factor of " + source.volume + " from " + sourceName + " into " + targetName;
+        }
         else
         {
             Debug.LogWarning("Undefined Action Type");

@@ -97,7 +97,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     ActivateHighlight(SessionState.ActiveTool.numChannels);
                 }
             }
-            else if(SessionState.ActiveActionType == LabAction.ActionType.transfer)
+            else if(SessionState.ActiveActionType == LabAction.ActionType.transfer || SessionState.ActiveActionType == LabAction.ActionType.dilution)
             {
                 OnSelected();
             }
@@ -121,7 +121,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     DeactivateHighlight(0);
                 }
             }
-            else if (SessionState.ActiveActionType == LabAction.ActionType.transfer)
+            else if (SessionState.ActiveActionType == LabAction.ActionType.transfer || SessionState.ActiveActionType == LabAction.ActionType.dilution)
             {
                 OnDeselected();
             }
@@ -143,7 +143,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     }
                 }
             }
-            else if(SessionState.ActiveActionType == LabAction.ActionType.transfer)
+            else if(SessionState.ActiveActionType == LabAction.ActionType.transfer || SessionState.ActiveActionType == LabAction.ActionType.dilution)
             {
                 if (eventData.button == PointerEventData.InputButton.Left)
                 {

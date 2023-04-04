@@ -705,4 +705,22 @@ public class SessionState : MonoBehaviour
         var target = new LabAction.Target(targetWell.plateId.ToString(), targetWell.id, Color.green, "Green");
         AddActionToCurrentStep(LabAction.ActionType.transfer, source, target);
     }
+
+    public static void AddDilutionAction(Well sourceWell, Well targetWell, float dilutionFactor)
+    {
+        var source = new LabAction.Source(sourceWell.plateId.ToString(), sourceWell.id, Color.red, "Red", dilutionFactor, "μL");
+        var target = new LabAction.Target(targetWell.plateId.ToString(), targetWell.id, Color.green, "Green");
+        AddActionToCurrentStep(LabAction.ActionType.dilution, source, target);
+    }
+
+    public static void AddDilutionActionStart(Sample sourceSample, Well targetWell, float dilutionFactor)
+    {
+        var sourceMaterial = Materials.Where(material => material.ContainsSample(sourceSample)).FirstOrDefault();
+        var sampleList = sourceMaterial.GetSampleList();
+        var sampleID = sampleList.IndexOf(sourceSample);
+
+        var source = new LabAction.Source(sourceMaterial.id.ToString(), sampleID.ToString(), Color.red, "Red", dilutionFactor, "μL");
+        var target = new LabAction.Target(targetWell.plateId.ToString(), targetWell.id, Color.green, "Green");
+        AddActionToCurrentStep(LabAction.ActionType.dilution, source, target);
+    }
 }
