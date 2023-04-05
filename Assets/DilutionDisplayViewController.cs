@@ -75,14 +75,19 @@ public class DilutionDisplayViewController : MonoBehaviour
         PopulateSampleDropdown();
     }
 
-    void CreateDilutionItems()
+    void DestroyDilutionItems()
     {
-        numDilutions = numDilutionsDropdown.value + 1;
-
         foreach (Transform dilutionItem in dilutionView.transform)
         {
             Destroy(dilutionItem.gameObject);
         }
+    }
+
+    void CreateDilutionItems()
+    {
+        DestroyDilutionItems();
+
+        numDilutions = numDilutionsDropdown.value + 1;
 
         for (int i = 0; i <= numDilutions; i++)
         {
@@ -183,8 +188,6 @@ public class DilutionDisplayViewController : MonoBehaviour
 
     public bool SolventNameValid()
     {
-        string solventName;
-
         if (!(SolventNameInput.text.Length > 1))
         {
             solventError.gameObject.SetActive(true);
@@ -261,11 +264,9 @@ public class DilutionDisplayViewController : MonoBehaviour
         initialVolumeInput.text = "";
         SolventNameInput.text = "";
         numDilutionsDropdown.value = 1;
+        selectingWells = false;
 
-        foreach (Transform child in dilutionView.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        DestroyDilutionItems();
     }
 }
 
