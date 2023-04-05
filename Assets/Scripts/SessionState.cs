@@ -30,6 +30,7 @@ public class SessionState : MonoBehaviour
 
     private static List<Step> steps;
     private static int activeStep;
+    private static Step currentStep;
 
     private static List<Sample> availableSamples;
     private static Sample activeSample;
@@ -126,6 +127,14 @@ public class SessionState : MonoBehaviour
         get
         {
             return activeStep;
+        }
+    }
+
+    public static Step CurrentStep
+    {
+        get
+        {
+            return Steps[ActiveStep];
         }
     }
 
@@ -309,13 +318,13 @@ public class SessionState : MonoBehaviour
     {
         Steps.Add(new Step());
         ActiveStep = Steps.Count - 1;
-        newStepStream.OnNext(SessionState.ActiveStep);
+        newStepStream.OnNext(ActiveStep);
     }
 
     //deletes the active step
     public static void RemoveCurrentStep()
     {
-        Steps.Remove(Steps[ActiveStep]);
+        Steps.Remove(CurrentStep);
     }
 
     //adds new Sample to the available Samples list
@@ -449,30 +458,30 @@ public class SessionState : MonoBehaviour
     //sets the focused well
     public static void SetFocusedWell(string wellId, int plateId)
     {
-        if (!Steps[ActiveStep].materials[plateId].ContainsWell(wellId))
+        if (!CurrentStep.materials[plateId].ContainsWell(wellId))
         {
             //if the well does not exist create it
-            Steps[ActiveStep].materials[plateId].AddWell(wellId, new Well(wellId, plateId));
-            FocusedWell = Steps[ActiveStep].materials[plateId].GetWell(wellId);
+            CurrentStep.materials[plateId].AddWell(wellId, new Well(wellId, plateId));
+            FocusedWell = CurrentStep.materials[plateId].GetWell(wellId);
         }
         else
         {
-            FocusedWell = Steps[ActiveStep].materials[plateId].GetWell(wellId);
+            FocusedWell = CurrentStep.materials[plateId].GetWell(wellId);
         }
     }
 
     //sets the focused well
     public static void SetSelectedWell(string wellId, int plateId)
     {
-        if (!Steps[ActiveStep].materials[plateId].ContainsWell(wellId))
+        if (!CurrentStep.materials[plateId].ContainsWell(wellId))
         {
             //if the well does not exist create it
-            Steps[ActiveStep].materials[plateId].AddWell(wellId, new Well(wellId, plateId));
-            SelectedWell = Steps[ActiveStep].materials[plateId].GetWell(wellId);
+            CurrentStep.materials[plateId].AddWell(wellId, new Well(wellId, plateId));
+            SelectedWell = CurrentStep.materials[plateId].GetWell(wellId);
         }
         else
         {
-            SelectedWell = Steps[ActiveStep].materials[plateId].GetWell(wellId);
+            SelectedWell = CurrentStep.materials[plateId].GetWell(wellId);
         }
     }
 
@@ -481,22 +490,22 @@ public class SessionState : MonoBehaviour
     {
         if(ActiveActionType == LabAction.ActionType.pipette)
         {
-            if (Steps[ActiveStep].materials[plateId].ContainsWell(wellName))
+            if (CurrentStep.materials[plateId].ContainsWell(wellName))
             {
-                if (!Steps[ActiveStep].materials[plateId].GetWell(wellName).Samples.ContainsKey(ActiveSample))
+                if (!CurrentStep.materials[plateId].GetWell(wellName).Samples.ContainsKey(ActiveSample))
                 {
                     //if the well exists and does not already have the active Sample add it
-                    Steps[ActiveStep].materials[plateId].GetWell(wellName).Samples.Add(ActiveSample, ActiveTool.volume);
+                    CurrentStep.materials[plateId].GetWell(wellName).Samples.Add(ActiveSample, ActiveTool.volume);
                     //if this Sample is grouped add it to the group list
                     if (inGroup)
                     {
-                        Steps[ActiveStep].materials[plateId].GetWell(wellName).groups.Add(new Well.SampleGroup(GroupId, isStart, isEnd, ActiveSample));
+                        CurrentStep.materials[plateId].GetWell(wellName).groups.Add(new Well.SampleGroup(GroupId, isStart, isEnd, ActiveSample));
                         //if this is the last well in the group increment the group id for the next group
                         if (isEnd)
                         {
                             //Add group action
                             string multichannelTargetID = "";
-                            foreach (var well in Steps[ActiveStep].materials[plateId].GetWells())
+                            foreach (var well in CurrentStep.materials[plateId].GetWells())
                             {
                                 if (well.Value.IsStartOfGroup(GroupId))
                                 {
@@ -525,19 +534,19 @@ public class SessionState : MonoBehaviour
             else
             {
                 //if the well does not exist create it
-                Steps[ActiveStep].materials[plateId].AddWell(wellName, new Well(wellName, plateId));
+                CurrentStep.materials[plateId].AddWell(wellName, new Well(wellName, plateId));
                 //add the active Sample to the new well
-                Steps[ActiveStep].materials[plateId].GetWell(wellName).Samples.Add(ActiveSample, ActiveTool.volume);
+                CurrentStep.materials[plateId].GetWell(wellName).Samples.Add(ActiveSample, ActiveTool.volume);
                 //if this Sample is grouped add it to the group list
                 if (inGroup)
                 {
-                    Steps[ActiveStep].materials[plateId].GetWell(wellName).groups.Add(new Well.SampleGroup(GroupId, isStart, isEnd, ActiveSample));
+                    CurrentStep.materials[plateId].GetWell(wellName).groups.Add(new Well.SampleGroup(GroupId, isStart, isEnd, ActiveSample));
                     //if this is the last well in the group increment the group id for the next group
                     if (isEnd)
                     {
                         //Add group action
                         string multichannelTargetID = "";
-                        foreach (var well in Steps[ActiveStep].materials[plateId].GetWells())
+                        foreach (var well in CurrentStep.materials[plateId].GetWells())
                         {
                             if (well.Value.IsStartOfGroup(GroupId))
                             {
@@ -645,7 +654,7 @@ public class SessionState : MonoBehaviour
     {
         List<Well.SampleGroup> groupsToRemove = new List<Well.SampleGroup>();
         //iterate through all wells
-        foreach (var well in Steps[ActiveStep].materials[plateId].GetWells())
+        foreach (var well in CurrentStep.materials[plateId].GetWells())
         {
             //iterate through each well group
             foreach(Well.SampleGroup group in well.Value.groups)
@@ -669,7 +678,7 @@ public class SessionState : MonoBehaviour
     public static void AddActionToCurrentStep(LabAction.ActionType action, LabAction.Source source, LabAction.Target target)
     {
         var newAction = new LabAction(action, source, target);
-        Steps[ActiveStep].actions.Add(newAction);
+        CurrentStep.actions.Add(newAction);
         actionAddedStream.OnNext(newAction);
     }
 
