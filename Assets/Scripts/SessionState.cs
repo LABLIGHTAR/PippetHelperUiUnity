@@ -324,7 +324,7 @@ public class SessionState : MonoBehaviour
         Sample newSample = new Sample(name, abreviation, colorName, color);
 
         //return if the Sample already exists
-        if(AvailableSamples.Contains(newSample))
+        if (AvailableSamples.Contains(newSample))
         {
             Debug.LogWarning("Sample already exists");
             return;

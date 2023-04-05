@@ -16,7 +16,7 @@ public class SubstanceLoader : MonoBehaviour
     void Start()
     {
         loadSubstancesButton.onClick.AddListener(ShowConfirmation);
-        //yesButton.onClick.AddListener(LoadSubstances);
+        yesButton.onClick.AddListener(LoadSubstances);
         noButton.onClick.AddListener(delegate { savePanel.SetActive(false); });
     }
 
@@ -25,7 +25,7 @@ public class SubstanceLoader : MonoBehaviour
         savePanel.SetActive(true);
     }
 
-   /* void LoadSubstances()
+    void LoadSubstances()
     {
         savePanel.SetActive(false);
 
@@ -34,7 +34,7 @@ public class SubstanceLoader : MonoBehaviour
         };
 
         string[] fileName = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, true); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
-        
+
         if (!(fileName.Count() > 0))
         {
             return;
@@ -47,14 +47,21 @@ public class SubstanceLoader : MonoBehaviour
         string[] lineCells;
 
         //clear session state substances
-        SessionState.AvailableSamples.Clear();
+        foreach(LabMaterial material in SessionState.Materials)
+        {
+            if(material.GetSampleList() != null)
+            {
+                SessionState.Materials.Remove(material);
+            }    
+        }
         //clear substances from UI
-        foreach (Transform child in substanceList) {
+        foreach (Transform child in substanceList)
+        {
             Destroy(child.gameObject);
         }
-        foreach(Step step in SessionState.Steps)
+        foreach (Step step in SessionState.Steps)
         {
-            foreach(Wellplate plate in step.materials)
+            foreach (Wellplate plate in step.materials)
             {
                 foreach (var well in plate.wells)
                 {
@@ -69,16 +76,25 @@ public class SubstanceLoader : MonoBehaviour
 
             lineCells = currentLine.Split(',');
 
-            //line goes: "sampleName","SampleAbreviation","ColorName","#ColorHex"
+            //line goes: "sampleName","SampleAbreviation","ColorName","#ColorHex", "vesselName"
             string sampleName = lineCells[0];
             string sampleAbbreviation = lineCells[1];
             string sampleColorName = lineCells[2];
             Color sampleColor;
             ColorUtility.TryParseHtmlString(lineCells[3], out sampleColor);
+            string vesselType = lineCells[4];
+
+            if(vesselType == "tuberack5ml")
+            {
+                vesselType = "5mL Tube";
+            }
+            else if(vesselType == "reservoir")
+            {
+                vesselType = "Reservoir";
+            }    
 
             //add Sample to sessionState
-            SessionState.AddNewSample(sampleName, sampleAbbreviation, sampleColorName, sampleColor);
+            SessionState.AddNewSample(sampleName, sampleAbbreviation, sampleColorName, sampleColor, vesselType);
         }
-        ProcedureLoader.procedureStream.OnNext(true);
-    }*/
+    }
 }

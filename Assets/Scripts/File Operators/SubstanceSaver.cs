@@ -41,9 +41,15 @@ public class SubstanceSaver : MonoBehaviour
 
         StreamWriter sw = new StreamWriter(filePath);
 
-        foreach (Sample sample in SessionState.AvailableSamples)
+        foreach (LabMaterial material in SessionState.Materials)
         {
-            sw.WriteLine(sample.sampleName + delimiter + sample.abreviation + delimiter + sample.colorName + delimiter + Color32ToHex(sample.color));
+            if (material.GetSampleList() != null)
+            {
+                foreach (Sample sample in material.GetSampleList())
+                {
+                    sw.WriteLine(sample.sampleName + delimiter + sample.abreviation + delimiter + sample.colorName + delimiter + Color32ToHex(sample.color) + delimiter + material.materialName);
+                }
+            }
         }
 
         sw.Close();
