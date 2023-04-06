@@ -62,10 +62,6 @@ public class NewSampleFormController : MonoBehaviour
     {
         if(Keyboard.current.tabKey.isPressed && ((Time.time - tabDelay) > tabDownTime))
         {
-            tabDownTime = Time.time;
-            inputSelected++;
-            inputSelected = inputSelected > 1 ? 0 : inputSelected;
-
             SelectInputField();
         }
         if(Keyboard.current.enterKey.wasPressedThisFrame)
@@ -76,7 +72,11 @@ public class NewSampleFormController : MonoBehaviour
 
     void SelectInputField()
     {
-        switch(inputSelected)
+        tabDownTime = Time.time;
+        inputSelected++;
+        inputSelected = inputSelected > 1 ? 0 : inputSelected;
+
+        switch (inputSelected)
         {
             case 0: nameText.Select();
                 break;

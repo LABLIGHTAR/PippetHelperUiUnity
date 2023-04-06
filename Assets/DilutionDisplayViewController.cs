@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 using UniRx;
 
@@ -36,6 +37,10 @@ public class DilutionDisplayViewController : MonoBehaviour
 
     private int dilutionFactor;
     private int numDilutions;
+
+    private int inputSelected;
+    private float tabDelay = 0.2f;
+    private float tabDownTime = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -74,6 +79,38 @@ public class DilutionDisplayViewController : MonoBehaviour
     {
         PopulateSampleDropdown();
     }
+
+    void Update()
+    {
+        if (Keyboard.current.tabKey.isPressed && ((Time.time - tabDelay) > tabDownTime))
+        {
+            SelectInputField();
+        }
+    }
+
+    void SelectInputField()
+    {
+        tabDownTime = Time.time;
+        inputSelected++;
+        inputSelected = inputSelected > 2 ? 0 : inputSelected;
+
+        switch (inputSelected)
+        {
+            case 0:
+                initialVolumeInput.Select();
+                break;
+            case 1:
+                SolventNameInput.Select();
+                break;
+            case 2:
+                dilutionFactorInput.Select();
+                break;
+        }
+    }
+
+    public void VolumeSelected () => inputSelected = 0;
+    public void SolventSelected() => inputSelected = 1;
+    public void DilutionSelected() => inputSelected = 2;
 
     void DestroyDilutionItems()
     {
