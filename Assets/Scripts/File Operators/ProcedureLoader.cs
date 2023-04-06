@@ -58,7 +58,6 @@ public class ProcedureLoader : MonoBehaviour
 
         StreamReader sr = new StreamReader(fileName);
         string currentLine;
-        string[] lineCells;
 
         //read the file until the end of file is reached
         while ((currentLine = sr.ReadLine()) != null)

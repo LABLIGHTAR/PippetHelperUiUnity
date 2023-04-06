@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UniRx;
 
 public class ActionDisplayViewController : MonoBehaviour
@@ -15,14 +16,7 @@ public class ActionDisplayViewController : MonoBehaviour
     {
         SessionState.actionAddedStream.Subscribe(action =>
         {
-/*            //creat action slot
-            GameObject newActionSlot = Instantiate(ActionSlotPrefab) as GameObject;
-            newActionSlot.transform.SetParent(ContentParent, false);*/
-            //create sample entry in list
-            GameObject newActionItem = Instantiate(ActionItemPrefab) as GameObject;
-            newActionItem.transform.SetParent(ContentParent, false);
-            newActionItem.GetComponent<ActionItemViewController>().InitActionItem(action.GetActionString());
-            newActionItem.GetComponent<ActionItemViewController>().canvas = canvas;
+           CreateActionItem(action);
         });
 
         SessionState.actionRemovedStream.Subscribe(action =>
@@ -44,15 +38,30 @@ public class ActionDisplayViewController : MonoBehaviour
             }
             foreach (LabAction action in SessionState.Steps[SessionState.ActiveStep].actions)
             {
-/*                //creat action slot
-                GameObject newActionSlot = Instantiate(ActionSlotPrefab) as GameObject;
-                newActionSlot.transform.SetParent(ContentParent, false);*/
-                //create sample entry in list
-                GameObject newActionItem = Instantiate(ActionItemPrefab) as GameObject;
-                newActionItem.transform.SetParent(ContentParent, false);
-                newActionItem.GetComponent<ActionItemViewController>().InitActionItem(action.GetActionString());
-                newActionItem.GetComponent<ActionItemViewController>().canvas = canvas;
+
+                CreateActionItem(action);
             }
         });
+    }
+
+    void CreateActionItem(LabAction action)
+    {
+        GameObject newActionItem = Instantiate(ActionItemPrefab) as GameObject;
+        newActionItem.transform.SetParent(ContentParent, false);
+        newActionItem.GetComponent<ActionItemViewController>().InitActionItem(action.GetActionString());
+        newActionItem.GetComponent<ActionItemViewController>().canvas = canvas;
+
+        switch (action.type)
+        {
+            case LabAction.ActionType.pipette:
+                newActionItem.GetComponent<Image>().color = new Color32(102, 178, 255, 255);
+                break;
+            case LabAction.ActionType.transfer:
+                newActionItem.GetComponent<Image>().color = new Color32(255, 102, 102, 255);
+                break;
+            case LabAction.ActionType.dilution:
+                newActionItem.GetComponent<Image>().color = new Color32(102, 255, 78, 255);
+                break;
+        }
     }
 }
