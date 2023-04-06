@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class SettingsPanelViewController : MonoBehaviour
 {
@@ -37,6 +38,14 @@ public class SettingsPanelViewController : MonoBehaviour
         //init player prefs
         if (!PlayerPrefs.HasKey("Fullscreen")) PlayerPrefs.SetInt("FullScreen", 1);
         if (!PlayerPrefs.HasKey("Tutorial")) PlayerPrefs.SetInt("Tutorial", 1);
+    }
+
+    void Update()
+    {
+        if(Keyboard.current.escapeKey.wasPressedThisFrame && !SessionState.FormActive)
+        {
+            OpenSettingsPanel();
+        }
     }
 
     public void OpenSettingsPanel()
