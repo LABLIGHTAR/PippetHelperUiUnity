@@ -32,11 +32,11 @@ public class DilutionDisplayViewController : MonoBehaviour
 
     public Button confirmButton;
 
-    private bool selectingWells;
-    private List<Well> selectedWells;
-
     private int dilutionFactor;
     private int numDilutions;
+
+    private bool selectingWells;
+    private List<Well> selectedWells;
 
     private int inputSelected;
     private float tabDelay = 0.2f;

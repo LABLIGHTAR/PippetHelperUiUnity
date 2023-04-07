@@ -84,7 +84,8 @@ public class ProcedureLoader : MonoBehaviour
         //parse materials
         if (currentLine.Contains("material"))
         {
-            ParseMaterial(currentLine);
+            MaterialFields material = ParseMaterial(currentLine);
+            AddMaterialToSession(material);
         }
 
         //parse step
@@ -100,86 +101,115 @@ public class ProcedureLoader : MonoBehaviour
         }
     }
 
-    void ParseMaterial(string currentLine)
+    struct MaterialFields
     {
+        public string name;
+        public int numWells;
+        public string orientation;
+        public int id;
+        public string subId;
+        public string contentsName;
+        public string contentsAbrev;
+        public Color contentsColor;
+        public string contentsColorName;
+    };
+
+    MaterialFields ParseMaterial(string currentLine)
+    {
+        MaterialFields material;
+
         string[] lineCells = currentLine.Split(',');
 
         //cells go: [0]start code, [1]material name, [2]material orientation,
         //[3]material_id:material_subID, [4]contents, [5]contentColorHex:contentColorName
-        string materialName = lineCells[1];
+        material.name = lineCells[1];
 
-        int numWells = 0;
-        if (materialName.Contains("wellplate"))
+        material.numWells = 0;
+        if(material.name.Contains("wellplate"))
         {
-            numWells = int.Parse(Regex.Match(lineCells[1], @"\d+").Value);
+            material.numWells = int.Parse(Regex.Match(lineCells[1], @"\d+").Value);
         }
 
-        string orientation = lineCells[2];
+        material.orientation = lineCells[2];
 
-        int materialID;
-        string materialSubID = "";
+        material.subId = "";
         if (lineCells[3].Contains(":"))
         {
             string[] IDs = lineCells[3].Split(":");
-            materialID = int.Parse(IDs[0]);
-            materialSubID = IDs[1];
+            material.id = int.Parse(IDs[0]);
+            material.subId = IDs[1];
         }
         else
         {
-            materialID = int.Parse(lineCells[3]);
+            material.id = int.Parse(lineCells[3]);
         }
 
-        string contentsName = "";
-        string contentsAbrev = "";
-        Color contentsColor = Color.white;
-        string contentsColorName = "";
+        material.contentsName = "";
+        material.contentsAbrev = "";
+        material.contentsColor = Color.white;
+        material.contentsColorName = "";
         if (lineCells.Length > 5)
         {
             string[] contents = lineCells[4].Split(":");
-            contentsName = contents[0];
-            contentsAbrev = contents[1];
+            material.contentsName = contents[0];
+            material.contentsAbrev = contents[1];
 
             string[] color = lineCells[5].Split(":");
-            ColorUtility.TryParseHtmlString(color[0], out contentsColor);
-            contentsColorName = color[1];
+            ColorUtility.TryParseHtmlString(color[0], out material.contentsColor);
+            material.contentsColorName = color[1];
         }
 
+        return material;
+    }
+
+    void AddMaterialToSession(MaterialFields material)
+    {
         //add materials to session state
-        if (materialName.Contains("wellplate"))
+        if (material.name.Contains("wellplate"))
         {
-            SessionState.Materials.Add(new Wellplate(materialID, materialName, numWells));
+            SessionState.Materials.Add(new Wellplate(material.id, material.name, material.numWells));
         }
-        else if (materialName.Contains("tuberack5ml"))
+        else if (material.name.Contains("tuberack5ml"))
         {
-            if (materialSubID != "" && materialSubID == "0")
+            AddTubeRack5mL(material);
+        }
+        else if (material.name.Contains("reservoir"))
+        {
+            AddReservoir(material);
+        }
+    }
+
+    void AddTubeRack5mL(MaterialFields material)
+    {
+        if (material.subId != "" && material.subId == "0")
+        {
+            var newTubeRack = new TubeRack5mL(material.id, material.name);
+            SessionState.Materials.Add(newTubeRack);
+            if (material.contentsColor != Color.white && material.contentsColorName != "")
             {
-                var newTubeRack = new TubeRack5mL(materialID, materialName);
-                SessionState.Materials.Add(newTubeRack);
-                if (contentsColor != Color.white && contentsColorName != "")
-                {
-                    Sample newSample = new Sample(contentsName, contentsAbrev, contentsColorName, contentsColor);
-                    newTubeRack.AddNewSample(newSample);
-                }
-            }
-            else if (materialSubID != "" && materialSubID != "0")
-            {
-                var tubeRack = SessionState.Materials[materialID];
-                if (contentsColor != Color.white && contentsColorName != "")
-                {
-                    Sample newSample = new Sample(contentsName, contentsAbrev, contentsColorName, contentsColor);
-                    tubeRack.AddNewSample(newSample);
-                }
+                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor);
+                newTubeRack.AddNewSample(newSample);
             }
         }
-        else if (materialName.Contains("reservoir"))
+        else if (material.subId != "" && material.subId != "0")
         {
-            var newReservoir = new Reservoir(materialID, materialName);
-            SessionState.Materials.Add(newReservoir);
-            if (contentsColor != Color.white && contentsColorName != "")
+            var tubeRack = SessionState.Materials[material.id];
+            if (material.contentsColor != Color.white && material.contentsColorName != "")
             {
-                Sample newSample = new Sample(contentsName, contentsAbrev, contentsColorName, contentsColor);
-                newReservoir.AddNewSample(newSample);
+                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor);
+                tubeRack.AddNewSample(newSample);
             }
+        }
+    }
+
+    void AddReservoir(MaterialFields material)
+    {
+        var newReservoir = new Reservoir(material.id, material.name);
+        SessionState.Materials.Add(newReservoir);
+        if (material.contentsColor != Color.white && material.contentsColorName != "")
+        {
+            Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor);
+            newReservoir.AddNewSample(newSample);
         }
     }
 

@@ -29,6 +29,7 @@ public class PlateDisplayController : MonoBehaviour
         {
             if (SessionState.Materials[i] is Wellplate)
             {
+                plateSlots[i].SetActive(true);
                 if (((Wellplate)SessionState.Materials[i]).numWells == 96)
                 {
                     var newPlateDisplay = Instantiate(wellplate96Prefab, plateSlots[i].transform);
