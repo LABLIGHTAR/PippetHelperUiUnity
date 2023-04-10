@@ -5,6 +5,7 @@ using UniRx;
 
 public class SelectedWellViewController : MonoBehaviour
 {
+    public bool isSourceDisplay;
     public Well selectedWell;
 
     public GameObject wellDisplay;
@@ -28,25 +29,28 @@ public class SelectedWellViewController : MonoBehaviour
     public TextMeshProUGUI sampleThreeVolumeText;
     public Image sampleThreeBG;
 
-    public bool selecting;
-    public bool wellSelected;
-
     // Start is called before the first frame update
     void Start()
     {
         SessionState.focusedWellStream.Subscribe(well =>
-        {   
-            if(selecting && !wellSelected)
+        {
+            if (isSourceDisplay && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource)
+                UpdateVisualState(well);
+            else if(!isSourceDisplay && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
                 UpdateVisualState(well);
         });
+
         SessionState.selectedWellStream.Subscribe(well =>
         {
-            if(selecting)
+            if(isSourceDisplay && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource)
             {
                 UpdateVisualState(well);
                 selectedWell = well;
-                wellSelected = true;
-                selecting = false;
+            }
+            else if(!isSourceDisplay && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
+            {
+                UpdateVisualState(well);
+                selectedWell = well;
             }
         });
     }
@@ -56,10 +60,9 @@ public class SelectedWellViewController : MonoBehaviour
         sampleOneDisplay.SetActive(false);
         sampleTwoDisplay.SetActive(false);
         sampleThreeDisplay.SetActive(false);
+        selectedWell = null;
         wellIdText.text = "";
         wellVolumeText.text = "";
-        wellSelected = false;
-        selectedWell = null;
     }
 
     void UpdateVisualState(Well well)

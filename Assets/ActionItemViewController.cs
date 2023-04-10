@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class ActionItemViewController : MonoBehaviour/*, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IInitializePotentialDragHandler */
+public class ActionItemViewController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler/*, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IInitializePotentialDragHandler */
 {
+    LabAction associatedAction;
     public Canvas canvas;
     public TextMeshProUGUI actionText;
     private RectTransform rectTransform;
@@ -55,8 +56,26 @@ public class ActionItemViewController : MonoBehaviour/*, IPointerDownHandler, IB
         rectTransform.anchoredPosition = startingPosition;
     }*/
 
-    public void InitActionItem(string text)
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        actionText.text = text;
+        Debug.Log("Enter");
+        SessionState.SetFocusedAction(associatedAction);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        SessionState.SetFocusedAction(null);
+        Debug.Log("Exit");
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Debug.Log("Down");
+    }
+
+    public void InitActionItem(LabAction action)
+    {
+        associatedAction = action;
+        actionText.text = action.GetActionString();
     }
 }

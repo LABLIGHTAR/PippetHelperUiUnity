@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 using TMPro;
 
 public class TransferDisplayViewController : MonoBehaviour
@@ -10,9 +11,7 @@ public class TransferDisplayViewController : MonoBehaviour
     public GameObject sourceWellDisplay;
     public GameObject targetWellDisplay;
 
-    public TextMeshProUGUI volumeText;
-    public TextMeshProUGUI volumeErrorText;
-
+    public Button clearSelectionsButton;
     public Button confirmButton;
 
     public TextMeshProUGUI instructionText;
@@ -24,73 +23,54 @@ public class TransferDisplayViewController : MonoBehaviour
     void Start()
     {
         source = sourceWellDisplay.GetComponent<SelectedWellViewController>();
+        source.isSourceDisplay = true;
         target = targetWellDisplay.GetComponent<SelectedWellViewController>();
-        instructionText.text = "Select a source";
-        source.selecting = true;
-        target.selecting = false;
-        confirmButton.enabled = false;
+        target.isSourceDisplay = false;
+        ResetUI();
 
+        clearSelectionsButton.onClick.AddListener(ResetUI);
         confirmButton.onClick.AddListener(SubmitTransferAction);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(!source.selecting && !target.wellSelected)
+        if (source.selectedWell == null)
         {
-            target.selecting = true;
+            SessionState.ActiveActionStatus = LabAction.ActionStatus.selectingSource;
+            instructionText.text = "Select a source";
+        }
+        else if(target.selectedWell == null)
+        {
+            SessionState.ActiveActionStatus = LabAction.ActionStatus.selectingTarget;
             instructionText.text = "Select a target";
         }
-        if(source.wellSelected && target.wellSelected)
+        else if(source.selectedWell != null && target.selectedWell != null)
         {
-            instructionText.text = "Enter the volume to be transfered";
-            if(VolumeValid())
-            {
-                confirmButton.enabled = true;
-            }
+            SessionState.ActiveActionStatus = LabAction.ActionStatus.awaitingSubmission;
+            instructionText.text = "Confirm transfer";
+            confirmButton.enabled = true;
         }
     }
 
-    private bool VolumeValid()
+    private void ResetUI()
     {
-        if (!(volumeText.text.Length > 0))
-        {
-            volumeErrorText.gameObject.SetActive(true);
-            volumeErrorText.text = "Volume cannot be empty*";
-            return false;
-        }
-        if (!float.TryParse(volumeText.text.Substring(0, volumeText.text.Length - 1), out _))
-        {
-            volumeErrorText.gameObject.SetActive(true);
-            volumeErrorText.text = "Please do not include units*";
-            return false;
-        }
-
-        float volume = float.Parse(volumeText.text.Substring(0, volumeText.text.Length - 1), CultureInfo.InvariantCulture.NumberFormat);
-
-        if (volume < 0)
-        {
-            volumeErrorText.gameObject.SetActive(true);
-            volumeErrorText.text = "Please enter a positive number*";
-            return false;
-        }
-
-        volumeErrorText.gameObject.SetActive(false);
-        return true;
+        SessionState.ActiveActionStatus = LabAction.ActionStatus.submitted;
+        SessionState.ActiveActionStatus = LabAction.ActionStatus.selectingSource;
+        instructionText.text = "Select a source";
+        source.ClearDisplay();
+        target.ClearDisplay();
+        confirmButton.enabled = false;
     }
 
     private void SubmitTransferAction()
     {
-        float volume = float.Parse(volumeText.text.Substring(0, volumeText.text.Length - 1), CultureInfo.InvariantCulture.NumberFormat);
-
-        SessionState.AddTransferAction(source.selectedWell, target.selectedWell, volume);
-
-        //clear UI
-        instructionText.text = "Select a source";
-        source.ClearDisplay();
-        target.ClearDisplay();
-        source.selecting = true;
-        target.selecting = false;
-        confirmButton.enabled = false;
+        if(SessionState.ActiveActionStatus == LabAction.ActionStatus.awaitingSubmission)
+        {
+            SessionState.AddTransferAction(source.selectedWell, target.selectedWell, SessionState.ActiveTool.volume);
+            SessionState.ActiveActionStatus = LabAction.ActionStatus.submitted;
+            //clear UI
+            ResetUI();
+        }
     }
 }

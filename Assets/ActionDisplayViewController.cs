@@ -48,7 +48,7 @@ public class ActionDisplayViewController : MonoBehaviour
     {
         GameObject newActionItem = Instantiate(ActionItemPrefab) as GameObject;
         newActionItem.transform.SetParent(ContentParent, false);
-        newActionItem.GetComponent<ActionItemViewController>().InitActionItem(action.GetActionString());
+        newActionItem.GetComponent<ActionItemViewController>().InitActionItem(action);
         newActionItem.GetComponent<ActionItemViewController>().canvas = canvas;
 
         switch (action.type)

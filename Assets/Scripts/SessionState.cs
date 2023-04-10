@@ -41,7 +41,10 @@ public class SessionState : MonoBehaviour
     private static List<string> usedColors;
 
     private static Tool activeTool;
+
     private static LabAction.ActionType activeActionType;
+    private static LabAction.ActionStatus activeActionStatus;
+    private static LabAction focusedAction;
 
     private static Well focusedWell;
     private static Well selectedWell;
@@ -65,6 +68,8 @@ public class SessionState : MonoBehaviour
     public static Subject<LabAction> actionAddedStream = new Subject<LabAction>();
     public static Subject<LabAction> actionRemovedStream = new Subject<LabAction>();
     public static Subject<LabAction.ActionType> actionTypeStream = new Subject<LabAction.ActionType>();
+    public static Subject<LabAction.ActionStatus> actionStatusStream = new Subject<LabAction.ActionStatus>();
+    public static Subject<LabAction> focusedActionStream = new Subject<LabAction>();
 
     //getters and setters
     #region
@@ -282,6 +287,38 @@ public class SessionState : MonoBehaviour
         get
         {
             return activeActionType;
+        }
+    }
+
+    public static LabAction.ActionStatus ActiveActionStatus
+    {
+        set
+        {
+            if(activeActionStatus != value)
+            {
+                activeActionStatus = value;
+                actionStatusStream.OnNext(activeActionStatus);
+            }
+        }
+        get
+        {
+            return activeActionStatus;
+        }
+    }
+
+    public static LabAction FocusedAction
+    {
+        set
+        {
+            if (focusedAction != value)
+            {
+                focusedAction = value;
+                focusedActionStream.OnNext(focusedAction);
+            }
+        }
+        get
+        {
+            return focusedAction;
         }
     }
 
@@ -731,5 +768,10 @@ public class SessionState : MonoBehaviour
         var source = new LabAction.Source(sourceMaterial.id.ToString(), sampleID.ToString(), Color.red, "Red", dilutionFactor, "μL");
         var target = new LabAction.Target(targetWell.plateId.ToString(), targetWell.id, Color.green, "Green");
         AddActionToCurrentStep(LabAction.ActionType.dilution, source, target);
+    }
+
+    public static void SetFocusedAction(LabAction action)
+    {
+        FocusedAction = action;
     }
 }

@@ -15,6 +15,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     public WellViewController NextInCol;
 
     public SpriteRenderer SelectionSprite;
+    private bool selected;
 
     private int SampleCount;
 
@@ -66,6 +67,33 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                 }
             }
         });
+
+        SessionState.actionStatusStream.Subscribe(status =>
+        {
+            switch(status)
+            {
+                case LabAction.ActionStatus.selectingSource:
+                    if (!selected)
+                        SelectionSprite.color = Color.red;
+                    break;
+                case LabAction.ActionStatus.selectingTarget:
+                    if (!selected)
+                        SelectionSprite.color = Color.green;
+                    break;
+                case LabAction.ActionStatus.submitted:
+                    selected = false;
+                    OnDeselected();
+                    break;
+            }
+        });
+
+        SessionState.focusedActionStream.Subscribe(action => 
+        {
+            if (action != null)
+                HighlightAction(action);
+            else
+                OnDeselected();
+        });
     }
 
 
@@ -78,7 +106,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 ActivateHighlight(SessionState.ActiveTool.numChannels);
             }
-            else if(SessionState.ActiveActionType == LabAction.ActionType.transfer || SessionState.ActiveActionType == LabAction.ActionType.dilution)
+            else if((SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource || SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget))
             {
                 OnSelected();
             }
@@ -95,7 +123,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 DeactivateHighlight(0);
             }
-            else if (SessionState.ActiveActionType == LabAction.ActionType.transfer || SessionState.ActiveActionType == LabAction.ActionType.dilution)
+            else if(SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource || SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
             {
                 OnDeselected();
             }
@@ -114,15 +142,23 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     if (SessionState.RemoveActiveSampleFromWell(wellId, plateId, SessionState.CurrentStep))
                     {
                         UpdateVisualState();
-                    }
+                    } 
                 }
             }
-            else if(SessionState.ActiveActionType == LabAction.ActionType.transfer || SessionState.ActiveActionType == LabAction.ActionType.dilution)
+            else if(SessionState.ActiveActionType == LabAction.ActionType.transfer)
             {
                 if (eventData.button == PointerEventData.InputButton.Left)
                 {
                     SessionState.SetSelectedWell(wellId, plateId);
+                    selected = true;
+                    OnSelected();
                 }
+            }
+            else if(SessionState.ActiveActionType == LabAction.ActionType.dilution && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
+            {
+                SessionState.SetSelectedWell(wellId, plateId);
+                selected = true;
+                OnSelected();
             }
             if (SessionState.CurrentStep.materials[plateId].ContainsWell(wellId))
             {
@@ -321,15 +357,52 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         if(SessionState.ActiveActionType == LabAction.ActionType.pipette)
         {
             ActivateHighlight(1);
+            SelectionSprite.color = Color.blue;
+            SelectionSprite.gameObject.SetActive(true);
+        }
+        else
+        {
+            if(SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource) 
+            {
+                SelectionSprite.color = Color.red;
+            }
+            else if(SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
+            {
+                SelectionSprite.color = Color.green;
+            }
+            SelectionSprite.gameObject.SetActive(true);
         }
     }
 
     public void OnDeselected()
     {
-        SelectionSprite.gameObject.SetActive(false);
         if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
         {
+            SelectionSprite.color = Color.blue;
+            SelectionSprite.gameObject.SetActive(false);
             DeactivateHighlight(1);
+        }
+        else
+        {
+            if(!selected)
+            {
+                SelectionSprite.color = Color.blue;
+                SelectionSprite.gameObject.SetActive(false);
+            }    
+        }
+    }
+
+    private void HighlightAction(LabAction action)
+    {
+        if(plateId.ToString() == action.source.matID && wellId == action.source.matSubID)
+        {
+            this.SelectionSprite.color = action.source.color;
+            this.SelectionSprite.gameObject.SetActive(true);
+        }
+        else if(plateId.ToString() == action.target.matID && wellId == action.target.matSubID)
+        {
+            this.SelectionSprite.color = action.target.color;
+            this.SelectionSprite.gameObject.SetActive(true);
         }
     }
 }

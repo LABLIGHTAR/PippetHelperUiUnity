@@ -11,6 +11,14 @@ public class LabAction
         dilution
     }
 
+    public enum ActionStatus
+    {
+        selectingSource,
+        selectingTarget,
+        awaitingSubmission,
+        submitted
+    }
+
     public struct Source
     {
         public string matID;
