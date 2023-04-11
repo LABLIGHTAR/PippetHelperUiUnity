@@ -241,6 +241,18 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         numChannels--;
 
+        if(maxRowNum == 12)
+        {
+            AddMultichannel96(numChannels);
+        }
+        else
+        {
+            AddMultichannel384(numChannels);
+        }
+    }
+
+    void AddMultichannel96(int numChannels)
+    {
         //if there are more channels to add call this method on the next well in the orientation
         if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null)
         {
@@ -249,6 +261,19 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null)
         {
             NextInCol.AddSampleMultichannel(numChannels);
+        }
+    }
+
+    void AddMultichannel384(int numChannels)
+    {
+        //if there are more channels to add call this method on the next well in the orientation
+        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null && NextInRow.NextInRow != null)
+        {
+            NextInRow.NextInRow.AddSampleMultichannel(numChannels);
+        }
+        else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null && NextInCol.NextInCol != null)
+        {
+            NextInCol.NextInCol.AddSampleMultichannel(numChannels);
         }
     }
 
@@ -293,22 +318,17 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         numChannels--;
 
-        //if there are more channels to add call this method on the next well in the orientation
-        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null)
+        if(maxRowNum == 12)
         {
-            //if we cannot activate the highlight in the next well deactivate all highlights
-            if (!NextInRow.ActivateHighlight(numChannels))
+            if (!Highlight96(numChannels))
             {
-                DeactivateHighlight(SessionState.ActiveTool.numChannels);
                 return false;
             }
         }
-        else if(numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null)
+        else
         {
-            //if we cannot activate the highlight in the next well deactivate all highlights
-            if (!NextInCol.ActivateHighlight(numChannels))
+            if(!Highlight384(numChannels))
             {
-                DeactivateHighlight(SessionState.ActiveTool.numChannels);
                 return false;
             }
         }
@@ -331,6 +351,54 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         return false;
     }
 
+    bool Highlight384(int numChannels)
+    {
+        //if there are more channels to add call this method on the next well in the orientation
+        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null && NextInRow.NextInRow != null)
+        {
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInRow.NextInRow.ActivateHighlight(numChannels))
+            {
+                DeactivateHighlight(SessionState.ActiveTool.numChannels);
+                return false;
+            }
+        }
+        else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null && NextInCol.NextInCol != null)
+        {
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInCol.NextInCol.ActivateHighlight(numChannels))
+            {
+                DeactivateHighlight(SessionState.ActiveTool.numChannels);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool Highlight96(int numChannels)
+    {
+        //if there are more channels to add call this method on the next well in the orientation
+        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null)
+        {
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInRow.ActivateHighlight(numChannels))
+            {
+                DeactivateHighlight(SessionState.ActiveTool.numChannels);
+                return false;
+            }
+        }
+        else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null)
+        {
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInCol.ActivateHighlight(numChannels))
+            {
+                DeactivateHighlight(SessionState.ActiveTool.numChannels);
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     void DeactivateHighlight(int numChannels)
     {
@@ -341,6 +409,18 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         numChannels++;
 
+        if(maxRowNum == 12)
+        {
+            UnHighlight96(numChannels);
+        }
+        else
+        {
+            UnHighlight384(numChannels);
+        }
+    }
+
+    void UnHighlight96(int numChannels)
+    {
         //if we have more channels to deactivate make recursive calls
         if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Row" && NextInRow != null)
         {
@@ -349,6 +429,19 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         else if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Column" && NextInCol != null)
         {
             NextInCol.DeactivateHighlight(numChannels);
+        }
+    }
+
+    void UnHighlight384(int numChannels)
+    {
+        //if we have more channels to deactivate make recursive calls
+        if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Row" && NextInRow != null && NextInRow.NextInRow != null)
+        {
+            NextInRow.NextInRow.DeactivateHighlight(numChannels);
+        }
+        else if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Column" && NextInCol != null && NextInCol.NextInCol != null)
+        {
+            NextInCol.NextInCol.DeactivateHighlight(numChannels);
         }
     }
 
