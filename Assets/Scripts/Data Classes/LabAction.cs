@@ -73,15 +73,15 @@ public class LabAction
 
         if (type == ActionType.pipette)
         {
-            return type.ToString() + " " + source.volume + "μl" + " of " + sourceName + " into " + targetName + " of plate " + target.matID;
+            return "Load " + source.volume + "μl" + " of " + sourceName + " into " + targetName + " of plate " + target.matID;
         }
         else if (type == ActionType.transfer)
         {
-            return type.ToString() + " " + source.volume + "μl" + " from " + sourceName + " of plate " + source.matID + " into " + targetName + " of plate " + target.matID;
+            return "Transfer " + source.volume + "μl" + " from " + sourceName + " of plate " + source.matID + " into " + targetName + " of plate " + target.matID;
         }
         else if (type == ActionType.dilution)
         {
-            return "perform a serial " + type.ToString() + " with a factor of " + source.volume + " from " + sourceName + " into " + targetName + " of plate " + target.matID;
+            return "Perform a serial " + type.ToString() + " with a factor of " + source.volume + " from " + sourceName + " into " + targetName + " of plate " + target.matID;
         }
         else
         {
