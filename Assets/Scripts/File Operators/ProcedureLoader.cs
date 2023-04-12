@@ -328,7 +328,7 @@ public class ProcedureLoader : MonoBehaviour
             {
                 SessionState.CurrentStep.materials[int.Parse(targetID)].AddWell(targetSubID, new Well(targetSubID, int.Parse(targetID)));
             }
-            SessionState.AddTransferAction(SessionState.CurrentStep.materials[int.Parse(sourceID)].GetWell(sourceSubID), SessionState.CurrentStep.materials[int.Parse(targetID)].GetWell(targetSubID), volume);
+            SessionState.AddTransferAction(sourceID, sourceSubID, targetID, targetSubID, volume);
         }
         else if (actionType == LabAction.ActionType.dilution)
         {

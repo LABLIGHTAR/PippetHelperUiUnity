@@ -35,17 +35,17 @@ public class TransferDisplayViewController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (source.selectedWell == null)
+        if (source.selectedWells == null)
         {
             SessionState.ActiveActionStatus = LabAction.ActionStatus.selectingSource;
             instructionText.text = "Select a source";
         }
-        else if(target.selectedWell == null)
+        else if(target.selectedWells == null)
         {
             SessionState.ActiveActionStatus = LabAction.ActionStatus.selectingTarget;
             instructionText.text = "Select a target";
         }
-        else if(source.selectedWell != null && target.selectedWell != null)
+        else if(source.selectedWells != null && target.selectedWells != null)
         {
             SessionState.ActiveActionStatus = LabAction.ActionStatus.awaitingSubmission;
             instructionText.text = "Confirm transfer";
@@ -67,7 +67,7 @@ public class TransferDisplayViewController : MonoBehaviour
     {
         if(SessionState.ActiveActionStatus == LabAction.ActionStatus.awaitingSubmission)
         {
-            SessionState.AddTransferAction(source.selectedWell, target.selectedWell, SessionState.ActiveTool.volume);
+            SessionState.AddTransferAction(source.plateId, source.wellText.text, target.plateId, target.wellText.text, SessionState.ActiveTool.volume);
             SessionState.ActiveActionStatus = LabAction.ActionStatus.submitted;
             //clear UI
             ResetUI();

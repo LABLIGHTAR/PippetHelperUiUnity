@@ -51,7 +51,7 @@ public class DilutionDisplayViewController : MonoBehaviour
 
         numDilutionsDropdown.onValueChanged.AddListener(delegate { CreateDilutionItems();  });
 
-        SessionState.selectedWellStream.Subscribe(well => SelectWell(well));
+        SessionState.selectedWellsStream.Subscribe(wells => SelectWell(wells));
 
         clearSelectionsButton.onClick.AddListener(CreateDilutionItems);
 
@@ -258,7 +258,7 @@ public class DilutionDisplayViewController : MonoBehaviour
         return false;
     }
 
-    void SelectWell(Well well)
+    void SelectWell(List<Well> wells)
     {
         if (selectedWells.Count <= numDilutions)
         {
@@ -266,9 +266,9 @@ public class DilutionDisplayViewController : MonoBehaviour
             {
                 int itemNum = selectedWells.Count;
                 var dilutionItem = dilutionView.GetChild(itemNum).GetComponent<DilutionItemViewController>();
-                selectedWells.Add(well);
+                selectedWells.Add(wells[0]);
 
-                dilutionItem.wellText.text = well.id;
+                dilutionItem.wellText.text = wells[0].id;
 
                 string concentration;
                 if (itemNum == 0)

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UniRx;
@@ -6,110 +7,48 @@ using UniRx;
 public class SelectedWellViewController : MonoBehaviour
 {
     public bool isSourceDisplay;
-    public Well selectedWell;
+    public List<Well> selectedWells;
+    public string plateId;
 
-    public GameObject wellDisplay;
-    public GameObject wellVolumeDisplay;
-    public TextMeshProUGUI wellIdText;
-    public TextMeshProUGUI wellVolumeText;
-    public TextMeshProUGUI wellGroupText;
-
-    public GameObject sampleOneDisplay;
-    public TextMeshProUGUI sampleOneNameText;
-    public TextMeshProUGUI sampleOneVolumeText;
-    public Image sampleOneBG;
-
-    public GameObject sampleTwoDisplay;
-    public TextMeshProUGUI sampleTwoNameText;
-    public TextMeshProUGUI sampleTwoVolumeText;
-    public Image sampleTwoBG;
-
-    public GameObject sampleThreeDisplay;
-    public TextMeshProUGUI sampleThreeNameText;
-    public TextMeshProUGUI sampleThreeVolumeText;
-    public Image sampleThreeBG;
+    public TextMeshProUGUI plateText;
+    public TextMeshProUGUI wellText;
 
     // Start is called before the first frame update
     void Start()
     {
-        SessionState.focusedWellStream.Subscribe(well =>
-        {
-            if (isSourceDisplay && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource)
-                UpdateVisualState(well);
-            else if(!isSourceDisplay && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
-                UpdateVisualState(well);
-        });
-
-        SessionState.selectedWellStream.Subscribe(well =>
+        SessionState.selectedWellsStream.Subscribe(wells =>
         {
             if(isSourceDisplay && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource)
             {
-                UpdateVisualState(well);
-                selectedWell = well;
+                UpdateVisualState(wells);
+                selectedWells = wells;
             }
             else if(!isSourceDisplay && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
             {
-                UpdateVisualState(well);
-                selectedWell = well;
+                UpdateVisualState(wells);
+                selectedWells = wells;
             }
         });
     }
 
     public void ClearDisplay()
     {
-        sampleOneDisplay.SetActive(false);
-        sampleTwoDisplay.SetActive(false);
-        sampleThreeDisplay.SetActive(false);
-        selectedWell = null;
-        wellIdText.text = "";
-        wellVolumeText.text = "";
+        selectedWells = null;
+        plateText.text = "";
+        wellText.text = "";
     }
 
-    void UpdateVisualState(Well well)
+    void UpdateVisualState(List<Well> wells)
     {
-        sampleOneDisplay.SetActive(false);
-        sampleTwoDisplay.SetActive(false);
-        sampleThreeDisplay.SetActive(false);
-
-        float wellVolume = 0f;
-
-        int index = -1;
-
-        foreach (var sample in well.Samples)
+        if(wells.Count == 1)
         {
-            index++;
-
-            if (index == 0)
-            {
-                sampleOneNameText.text = sample.Key.sampleName;
-                sampleOneBG.color = sample.Key.color;
-                sampleOneVolumeText.text = sample.Value.ToString() + " μL";
-                wellVolume += sample.Value;
-                sampleOneDisplay.SetActive(true);
-            }
-            else if (index == 1)
-            {
-                sampleTwoNameText.text = sample.Key.sampleName;
-                sampleTwoBG.color = sample.Key.color;
-                sampleTwoVolumeText.text = sample.Value.ToString() + " μL";
-                wellVolume += sample.Value;
-                sampleTwoDisplay.SetActive(true);
-            }
-            else if (index == 3)
-            {
-                sampleThreeNameText.text = sample.Key.sampleName;
-                sampleThreeBG.color = sample.Key.color;
-                sampleThreeVolumeText.text = sample.Value.ToString() + " μL";
-                wellVolume += sample.Value;
-                sampleThreeDisplay.SetActive(true);
-            }
+            wellText.text = wells[0].id;
         }
-
-        //update well display
-        wellIdText.text = well.id;
-        wellVolumeText.text = wellVolume.ToString() + " μL";
-
-        wellDisplay.SetActive(true);
-        wellVolumeDisplay.SetActive(true);
+        else
+        {
+            wellText.text = wells[0].id + "-" + wells[wells.Count - 1].id;
+        }
+        plateId = wells[0].plateId.ToString();
+        plateText.text = "Plate " + plateId;
     }
 }

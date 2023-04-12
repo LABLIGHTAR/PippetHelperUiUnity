@@ -20,6 +20,7 @@ public class Well
 
     public int plateId;
     public string id;
+    public bool selected;
     public Dictionary<Sample, float> Samples;
     public List<SampleGroup> groups;
 

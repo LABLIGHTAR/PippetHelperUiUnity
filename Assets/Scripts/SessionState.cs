@@ -47,7 +47,7 @@ public class SessionState : MonoBehaviour
     private static LabAction focusedAction;
 
     private static Well focusedWell;
-    private static Well selectedWell;
+    private static List<Well> selectedWells;
 
     private static int groupId;
 
@@ -62,7 +62,7 @@ public class SessionState : MonoBehaviour
     public static Subject<string> SampleRemovedStream = new Subject<string>();
     
     public static Subject<Well> focusedWellStream = new Subject<Well>();
-    public static Subject<Well> selectedWellStream = new Subject<Well>();
+    public static Subject<List<Well>> selectedWellsStream = new Subject<List<Well>>();
 
 
     public static Subject<LabAction> actionAddedStream = new Subject<LabAction>();
@@ -198,19 +198,19 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    public static Well SelectedWell
+    public static List<Well> SelectedWells
     {
         set
         {
-            if (selectedWell != value)
+            if (selectedWells != value)
             {
-                selectedWell = value;
+                selectedWells = value;
             }
-            selectedWellStream.OnNext(selectedWell);
+            selectedWellsStream.OnNext(selectedWells);
         }
         get
         {
-            return focusedWell;
+            return selectedWells;
         }
     }
 
@@ -508,18 +508,19 @@ public class SessionState : MonoBehaviour
     }
 
     //sets the focused well
-    public static void SetSelectedWell(string wellId, int plateId)
+    public static void SetSelectedWells(int plateId)
     {
-        if (!CurrentStep.materials[plateId].ContainsWell(wellId))
+        List<Well> selectedWells = new List<Well>();
+
+        foreach(var well in CurrentStep.materials[plateId].GetWells())
         {
-            //if the well does not exist create it
-            CurrentStep.materials[plateId].AddWell(wellId, new Well(wellId, plateId));
-            SelectedWell = CurrentStep.materials[plateId].GetWell(wellId);
+            if(well.Value.selected)
+            {
+                Debug.Log(well.Value.id);
+                selectedWells.Add(well.Value);
+            }
         }
-        else
-        {
-            SelectedWell = CurrentStep.materials[plateId].GetWell(wellId);
-        }
+        SelectedWells = selectedWells;
     }
 
     //adds active sample to passed well
@@ -745,10 +746,10 @@ public class SessionState : MonoBehaviour
         AddActionToCurrentStep(LabAction.ActionType.pipette, source, target);
     }
 
-    public static void AddTransferAction(Well sourceWell, Well targetWell, float volume)
+    public static void AddTransferAction(string sourcePlateId, string souceWellId, string targetPlateId, string targetWellId, float volume)
     {
-        var source = new LabAction.Source(sourceWell.plateId.ToString(), sourceWell.id, Color.red, "Red", volume, "μL");
-        var target = new LabAction.Target(targetWell.plateId.ToString(), targetWell.id, Color.green, "Green");
+        var source = new LabAction.Source(sourcePlateId, souceWellId, Color.red, "Red", volume, "μL");
+        var target = new LabAction.Target(targetPlateId, targetWellId, Color.green, "Green");
         AddActionToCurrentStep(LabAction.ActionType.transfer, source, target);
     }
 

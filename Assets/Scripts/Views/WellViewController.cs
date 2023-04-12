@@ -15,7 +15,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     public WellViewController NextInCol;
 
     public SpriteRenderer SelectionSprite;
-    private bool selected;
+    public bool selected;
 
     private int SampleCount;
 
@@ -82,7 +82,8 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     break;
                 case LabAction.ActionStatus.submitted:
                     selected = false;
-                    OnDeselected();
+                    SessionState.CurrentStep.materials[plateId].GetWell(wellId).selected = false;
+                    OnDeselected(SessionState.ActiveTool.numChannels);
                     break;
             }
         });
@@ -92,7 +93,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             if (action != null)
                 HighlightAction(action);
             else
-                OnDeselected();
+                OnDeselected(SessionState.ActiveTool.numChannels);
         });
     }
 
@@ -108,7 +109,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
             else if((SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource || SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget))
             {
-                OnSelected();
+                OnSelected(SessionState.ActiveTool.numChannels);
             }
             SessionState.SetFocusedWell(wellId, plateId);
         }
@@ -125,7 +126,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
             else if(SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource || SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
             {
-                OnDeselected();
+                OnDeselected(SessionState.ActiveTool.numChannels);
             }
         }
     }
@@ -149,16 +150,19 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 if (eventData.button == PointerEventData.InputButton.Left)
                 {
-                    SessionState.SetSelectedWell(wellId, plateId);
-                    selected = true;
-                    OnSelected();
+                    if(OnSelected(SessionState.ActiveTool.numChannels))
+                    {
+                        OnSelectedAndClicked(SessionState.ActiveTool.numChannels);
+                        SessionState.SetSelectedWells(plateId);
+                    }
                 }
             }
             else if(SessionState.ActiveActionType == LabAction.ActionType.dilution && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
             {
-                SessionState.SetSelectedWell(wellId, plateId);
                 selected = true;
-                OnSelected();
+                SessionState.CurrentStep.materials[plateId].GetWell(wellId).selected = true;
+                OnSelected(SessionState.ActiveTool.numChannels);
+                SessionState.SetSelectedWells(plateId);
             }
             if (SessionState.CurrentStep.materials[plateId].ContainsWell(wellId))
             {
@@ -351,30 +355,6 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         return false;
     }
 
-    bool Highlight384(int numChannels)
-    {
-        //if there are more channels to add call this method on the next well in the orientation
-        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null && NextInRow.NextInRow != null)
-        {
-            //if we cannot activate the highlight in the next well deactivate all highlights
-            if (!NextInRow.NextInRow.ActivateHighlight(numChannels))
-            {
-                DeactivateHighlight(SessionState.ActiveTool.numChannels);
-                return false;
-            }
-        }
-        else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null && NextInCol.NextInCol != null)
-        {
-            //if we cannot activate the highlight in the next well deactivate all highlights
-            if (!NextInCol.NextInCol.ActivateHighlight(numChannels))
-            {
-                DeactivateHighlight(SessionState.ActiveTool.numChannels);
-                return false;
-            }
-        }
-        return true;
-    }
-
     bool Highlight96(int numChannels)
     {
         //if there are more channels to add call this method on the next well in the orientation
@@ -399,6 +379,29 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         return true;
     }
 
+    bool Highlight384(int numChannels)
+    {
+        //if there are more channels to add call this method on the next well in the orientation
+        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null && NextInRow.NextInRow != null)
+        {
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInRow.NextInRow.ActivateHighlight(numChannels))
+            {
+                DeactivateHighlight(SessionState.ActiveTool.numChannels);
+                return false;
+            }
+        }
+        else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null && NextInCol.NextInCol != null)
+        {
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInCol.NextInCol.ActivateHighlight(numChannels))
+            {
+                DeactivateHighlight(SessionState.ActiveTool.numChannels);
+                return false;
+            }
+        }
+        return true;
+    }
 
     void DeactivateHighlight(int numChannels)
     {
@@ -445,29 +448,130 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
     }
 
-    public void OnSelected()
+    public bool OnSelected(int numChannels)
     {
         if(SessionState.ActiveActionType == LabAction.ActionType.pipette)
         {
             ActivateHighlight(1);
             SelectionSprite.color = Color.blue;
             SelectionSprite.gameObject.SetActive(true);
+            return true;
         }
         else
         {
-            if(SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource) 
+            numChannels--;
+
+            if (maxRowNum == 12)
+            {
+                if (!Select96(numChannels))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!Select384(numChannels))
+                {
+                    return false;
+                }
+            }
+
+            if (SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource && !selected) 
             {
                 SelectionSprite.color = Color.red;
             }
-            else if(SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
+            else if(SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget && !selected)
             {
                 SelectionSprite.color = Color.green;
             }
             SelectionSprite.gameObject.SetActive(true);
+            return true;
         }
     }
 
-    public void OnDeselected()
+    bool Select96(int numChannels)
+    {
+        //if there are more channels to add call this method on the next well in the orientation
+        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null)
+        {
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInRow.OnSelected(numChannels))
+            {
+                OnDeselected(SessionState.ActiveTool.numChannels);
+                return false;
+            }
+        }
+        else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null)
+        {
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInCol.OnSelected(numChannels))
+            {
+                OnDeselected(SessionState.ActiveTool.numChannels);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool Select384(int numChannels)
+    {
+        //if there are more channels to add call this method on the next well in the orientation
+        if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null && NextInRow.NextInRow != null)
+        {
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInRow.NextInRow.OnSelected(numChannels))
+            {
+                OnDeselected(SessionState.ActiveTool.numChannels);
+                return false;
+            }
+        }
+        else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null && NextInCol.NextInCol != null)
+        {
+            //if we cannot activate the highlight in the next well deactivate all highlights
+            if (!NextInCol.NextInCol.OnSelected(numChannels))
+            {
+                OnDeselected(SessionState.ActiveTool.numChannels);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void OnSelectedAndClicked(int numChannels)
+    {
+        selected = true;
+        SessionState.CurrentStep.materials[plateId].GetWell(wellId).selected = true;
+
+        numChannels--;
+
+        if(numChannels > 0)
+        {
+            if (maxRowNum == 12)
+            {
+                if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null)
+                {
+                    NextInRow.OnSelectedAndClicked(numChannels);
+                }
+                else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null)
+                {
+                    NextInCol.OnSelectedAndClicked(numChannels);
+                }
+            }
+            else
+            {
+                if (numChannels > 0 && SessionState.ActiveTool.orientation == "Row" && NextInRow != null && NextInRow.NextInRow != null)
+                {
+                    NextInRow.NextInRow.OnSelectedAndClicked(numChannels);
+                }
+                else if (numChannels > 0 && SessionState.ActiveTool.orientation == "Column" && NextInCol != null && NextInCol.NextInCol != null)
+                {
+                    NextInCol.NextInCol.OnSelectedAndClicked(numChannels);
+                }
+            }
+        }
+    }
+
+    public void OnDeselected(int numChannels)
     {
         if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
         {
@@ -481,7 +585,44 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 SelectionSprite.color = Color.blue;
                 SelectionSprite.gameObject.SetActive(false);
+                
+                numChannels++;
+
+                if (maxRowNum == 12)
+                {
+                    DeSelect96(numChannels);
+                }
+                else
+                {
+                    DeSelect384(numChannels);
+                }
             }    
+        }
+    }
+
+    void DeSelect96(int numChannels)
+    {
+        //if we have more channels to deactivate make recursive calls
+        if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Row" && NextInRow != null)
+        {
+            NextInRow.OnDeselected(numChannels);
+        }
+        else if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Column" && NextInCol != null)
+        {
+            NextInCol.OnDeselected(numChannels);
+        }
+    }
+
+    void DeSelect384(int numChannels)
+    {
+        //if we have more channels to deactivate make recursive calls
+        if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Row" && NextInRow != null && NextInRow.NextInRow != null)
+        {
+            NextInRow.NextInRow.OnDeselected(numChannels);
+        }
+        else if (numChannels != SessionState.ActiveTool.numChannels && SessionState.ActiveTool.orientation == "Column" && NextInCol != null && NextInCol.NextInCol != null)
+        {
+            NextInCol.NextInCol.OnDeselected(numChannels);
         }
     }
 
