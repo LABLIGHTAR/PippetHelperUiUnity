@@ -5,6 +5,7 @@ using UniRx;
 
 public class MainCanvasViewController : MonoBehaviour
 {
+    public GameObject ActionDisplay;
     public GameObject SampleDisplay;
     public GameObject TransferDisplay;
     public GameObject DilutionDisplay;
@@ -12,6 +13,7 @@ public class MainCanvasViewController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        MaterialViewController.materialsSelectedStream.Subscribe(_ => ActionDisplay.SetActive(true));
         SessionState.actionTypeStream.Subscribe(actionType =>
         {
             switch (actionType)
@@ -33,11 +35,5 @@ public class MainCanvasViewController : MonoBehaviour
                     break;
             }
         });
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

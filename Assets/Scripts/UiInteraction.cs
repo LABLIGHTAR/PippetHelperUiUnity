@@ -56,7 +56,7 @@ public class UiInteraction : MonoBehaviour
                     if (SessionState.ActiveTool.name == "micropipette")
                     {
                         //add active sample to well single
-                        if (SessionState.AddActiveSampleToWell(well.name, well.plateId, false, false, false))
+                        if (SessionState.CurrentStep.AddActiveSampleToWell(well.name, well.plateId, false, false, false))
                         {
                             well.UpdateVisualState();
                         }

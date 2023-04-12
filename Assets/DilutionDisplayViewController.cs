@@ -299,11 +299,11 @@ public class DilutionDisplayViewController : MonoBehaviour
                 if (i == 0)
                 {
                     Sample sample = SessionState.AvailableSamples.Where(s => s.sampleName == sampleDropdown.captionText.text).FirstOrDefault();
-                    SessionState.AddDilutionActionStart(sample, selectedWells[i], float.Parse(dilutionFactorInput.text));
+                    SessionState.CurrentStep.AddDilutionActionStart(sample, selectedWells[i], float.Parse(dilutionFactorInput.text));
                 }
                 else
                 {
-                    SessionState.AddDilutionAction(selectedWells[i - 1], selectedWells[i], float.Parse(dilutionFactorInput.text));
+                    SessionState.CurrentStep.AddDilutionAction(selectedWells[i - 1], selectedWells[i], float.Parse(dilutionFactorInput.text));
                 }
             }
             SessionState.ActiveActionStatus = LabAction.ActionStatus.submitted;

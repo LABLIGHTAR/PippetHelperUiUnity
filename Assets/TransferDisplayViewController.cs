@@ -67,7 +67,7 @@ public class TransferDisplayViewController : MonoBehaviour
     {
         if(SessionState.ActiveActionStatus == LabAction.ActionStatus.awaitingSubmission)
         {
-            SessionState.AddTransferAction(source.plateId, source.wellText.text, target.plateId, target.wellText.text, SessionState.ActiveTool.volume);
+            SessionState.CurrentStep.AddTransferAction(source.plateId, source.wellText.text, target.plateId, target.wellText.text, SessionState.ActiveTool.volume);
             SessionState.ActiveActionStatus = LabAction.ActionStatus.submitted;
             //clear UI
             ResetUI();

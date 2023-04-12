@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,28 +8,15 @@ using UniRx;
 public class ActionDisplayViewController : MonoBehaviour
 {
     public GameObject ActionItemPrefab;
-    //public GameObject ActionSlotPrefab;
     public Transform ContentParent;
     public Canvas canvas;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        SessionState.actionAddedStream.Subscribe(action =>
-        {
-           CreateActionItem(action);
-        });
+    IDisposable actionAddedSubscription;
+    IDisposable actionRemovedSubscription;
 
-        SessionState.actionRemovedStream.Subscribe(action =>
-        {
-            foreach (Transform child in ContentParent)
-            {
-                if (child.GetComponent<ActionItemViewController>().actionText.text == action.GetActionString())
-                {
-                    Destroy(child.gameObject);
-                }
-            }
-        });
+    void Awake()
+    {
+        RenewStepSubscriptions();
 
         SessionState.stepStream.Subscribe(stepNum =>
         {
@@ -40,6 +28,33 @@ public class ActionDisplayViewController : MonoBehaviour
             {
 
                 CreateActionItem(action);
+            }
+
+            RenewStepSubscriptions();
+        });
+    }
+
+    void RenewStepSubscriptions()
+    {
+        if(actionAddedSubscription != null)
+            actionAddedSubscription.Dispose();
+        if(actionRemovedSubscription != null)
+            actionRemovedSubscription.Dispose();
+
+        actionAddedSubscription = SessionState.CurrentStep.actionAddedStream.Subscribe(action =>
+        {
+            CreateActionItem(action);
+        });
+
+        actionRemovedSubscription = SessionState.CurrentStep.actionRemovedStream.Subscribe(action =>
+        {
+            Debug.Log(action.type);
+            foreach (Transform child in ContentParent)
+            {
+                if (child.GetComponent<ActionItemViewController>().associatedAction == action)
+                {
+                    Destroy(child.gameObject);
+                }
             }
         });
     }

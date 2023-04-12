@@ -39,7 +39,7 @@ public class SelectionManager
     {
         foreach(WellViewController well in SelectedWells)
         {
-            SessionState.RemoveActiveSampleFromWell(well.name, well.plateId, SessionState.Steps[SessionState.ActiveStep]);
+            SessionState.CurrentStep.RemoveActiveSampleFromWell(well.name, well.plateId);
             well.OnDeselected(1);
         }
         SelectedWells.Clear();
@@ -53,7 +53,7 @@ public class SelectionManager
             well.OnDeselected(SessionState.ActiveTool.numChannels);
             if (SessionState.ActiveTool != null && SessionState.ActiveTool.name == "micropipette" && SessionState.ActiveSample != null)
             {
-                if (SessionState.AddActiveSampleToWell(well.name, well.plateId, false, false, false))
+                if (SessionState.CurrentStep.AddActiveSampleToWell(well.name, well.plateId, false, false, false))
                 {
                     well.UpdateVisualState();
                 }

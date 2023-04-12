@@ -273,15 +273,15 @@ public class ProcedureLoader : MonoBehaviour
                     {
                         if (activeWellId == wellGroup[0])
                         {
-                            SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
+                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
                         }
                         else if (activeWellId == wellGroup[1])
                         {
-                            SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
+                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
                         }
                         else
                         {
-                            SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
+                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
                         }
                         numChannels--;
                         activeWellId = GetNextWellHorizontal(activeWellId);
@@ -295,15 +295,15 @@ public class ProcedureLoader : MonoBehaviour
                     {
                         if (activeWellId == wellGroup[0])
                         {
-                            SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
+                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
                         }
                         else if (activeWellId == wellGroup[1])
                         {
-                            SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
+                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
                         }
                         else
                         {
-                            SessionState.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
+                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
                         }
                         numChannels--;
                         activeWellId = GetNextWellVertical(activeWellId);
@@ -314,7 +314,7 @@ public class ProcedureLoader : MonoBehaviour
             else
             {
                 SessionState.ActiveTool = new Tool("pipette", 1, "row", volume);
-                SessionState.AddActiveSampleToWell(targetSubID, int.Parse(targetID), false, false, false);
+                SessionState.CurrentStep.AddActiveSampleToWell(targetSubID, int.Parse(targetID), false, false, false);
             }
         }
         else if (actionType == LabAction.ActionType.transfer)
@@ -328,7 +328,7 @@ public class ProcedureLoader : MonoBehaviour
             {
                 SessionState.CurrentStep.materials[int.Parse(targetID)].AddWell(targetSubID, new Well(targetSubID, int.Parse(targetID)));
             }
-            SessionState.AddTransferAction(sourceID, sourceSubID, targetID, targetSubID, volume);
+            SessionState.CurrentStep.AddTransferAction(sourceID, sourceSubID, targetID, targetSubID, volume);
         }
         else if (actionType == LabAction.ActionType.dilution)
         {
@@ -336,12 +336,12 @@ public class ProcedureLoader : MonoBehaviour
             {
                 if (SessionState.CurrentStep.materials[int.Parse(targetID)].ContainsWell(targetSubID))
                 {
-                    SessionState.AddDilutionActionStart(SessionState.Materials[int.Parse(sourceID)].GetSampleList()[int.Parse(sourceSubID)], SessionState.Materials[int.Parse(targetID)].GetWell(targetSubID), volume);
+                    SessionState.CurrentStep.AddDilutionActionStart(SessionState.Materials[int.Parse(sourceID)].GetSampleList()[int.Parse(sourceSubID)], SessionState.Materials[int.Parse(targetID)].GetWell(targetSubID), volume);
                 }
                 else
                 {
                     SessionState.CurrentStep.materials[int.Parse(targetID)].AddWell(targetSubID, new Well(targetSubID, int.Parse(targetID)));
-                    SessionState.AddDilutionActionStart(SessionState.Materials[int.Parse(sourceID)].GetSampleList()[int.Parse(sourceSubID)], SessionState.CurrentStep.materials[int.Parse(targetID)].GetWell(targetSubID), volume);
+                    SessionState.CurrentStep.AddDilutionActionStart(SessionState.Materials[int.Parse(sourceID)].GetSampleList()[int.Parse(sourceSubID)], SessionState.CurrentStep.materials[int.Parse(targetID)].GetWell(targetSubID), volume);
                 }
                 startOfDilution = false;
             }
@@ -349,7 +349,7 @@ public class ProcedureLoader : MonoBehaviour
             {
                 if (SessionState.CurrentStep.materials[int.Parse(sourceID)].ContainsWell(sourceSubID) && SessionState.CurrentStep.materials[int.Parse(targetID)].ContainsWell(targetSubID))
                 {
-                    SessionState.AddDilutionAction(SessionState.Materials[int.Parse(sourceID)].GetWell(sourceSubID), SessionState.Materials[int.Parse(targetID)].GetWell(targetSubID), volume);
+                    SessionState.CurrentStep.AddDilutionAction(SessionState.Materials[int.Parse(sourceID)].GetWell(sourceSubID), SessionState.Materials[int.Parse(targetID)].GetWell(targetSubID), volume);
                 }
                 else
                 {
@@ -361,7 +361,7 @@ public class ProcedureLoader : MonoBehaviour
                     {
                         SessionState.CurrentStep.materials[int.Parse(targetID)].AddWell(targetSubID, new Well(targetSubID, int.Parse(targetID)));
                     }
-                    SessionState.AddDilutionAction(SessionState.CurrentStep.materials[int.Parse(sourceID)].GetWell(sourceSubID), SessionState.CurrentStep.materials[int.Parse(targetID)].GetWell(targetSubID), volume);
+                    SessionState.CurrentStep.AddDilutionAction(SessionState.CurrentStep.materials[int.Parse(sourceID)].GetWell(sourceSubID), SessionState.CurrentStep.materials[int.Parse(targetID)].GetWell(targetSubID), volume);
                 }
             }
         }

@@ -140,7 +140,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 if (eventData.button == PointerEventData.InputButton.Right)
                 {
-                    if (SessionState.RemoveActiveSampleFromWell(wellId, plateId, SessionState.CurrentStep))
+                    if (SessionState.CurrentStep.RemoveActiveSampleFromWell(wellId, plateId))
                     {
                         UpdateVisualState();
                     } 
@@ -238,7 +238,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         bool isEnd = (numChannels == 1);
 
         //add Sample to clicked well
-        if (SessionState.AddActiveSampleToWell(wellId, plateId, true, isStart, isEnd))
+        if (SessionState.CurrentStep.AddActiveSampleToWell(wellId, plateId, true, isStart, isEnd))
         {
             UpdateVisualState();
         }
