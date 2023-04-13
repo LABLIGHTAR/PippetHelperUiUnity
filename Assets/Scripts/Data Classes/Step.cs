@@ -19,10 +19,10 @@ public class Step
     {
         materials = new List<LabMaterial>();
         actions = new List<LabAction>();
-        AddMaterials();
+        AddWellplates();
     }
 
-    void AddMaterials()
+    void AddWellplates()
     {
         foreach (var material in SessionState.Materials)
         {
@@ -34,7 +34,6 @@ public class Step
         }
     }
 
-    //adds active sample to passed well
     public bool AddActiveSampleToWell(string wellName, int plateId, bool inGroup, bool isStart, bool isEnd)
     {
         if (SessionState.ActiveActionType == LabAction.ActionType.pipette)

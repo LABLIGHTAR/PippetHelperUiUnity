@@ -330,7 +330,6 @@ public class SessionState : MonoBehaviour
     }
     #endregion
 
-    //adds new step to protocol and navigates ui to new step
     public static void AddNewStep()
     {
         Steps.Add(new Step());
@@ -338,18 +337,15 @@ public class SessionState : MonoBehaviour
         newStepStream.OnNext(ActiveStep);
     }
 
-    //deletes the active step
     public static void RemoveCurrentStep()
     {
         Steps.Remove(CurrentStep);
     }
 
-    //adds new Sample to the available Samples list
     public static void AddNewSample(string name, string abreviation, string colorName, Color color, string vesselType)
     {
         Sample newSample = new Sample(name, abreviation, colorName, color);
 
-        //return if the Sample already exists
         if (AvailableSamples.Contains(newSample))
         {
             Debug.LogWarning("Sample already exists");
@@ -363,7 +359,6 @@ public class SessionState : MonoBehaviour
 
     static void AddSampleToMaterialsList(Sample newSample, string vesselType)
     {
-        //add sample to materials list
         if (vesselType == "5mL Tube")
         {
             var tubeRack = Materials.Where(mat => mat is TubeRack5mL).FirstOrDefault();
@@ -386,42 +381,43 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    //removes sample from available samples list
     public static void RemoveSample(string name)
     {
         Sample forRemoval = AvailableSamples.Where(sample => sample.sampleName == name).FirstOrDefault();
 
         if (forRemoval != null)
         {
-            //set the sample for removal to the active sample
             ActiveSample = forRemoval;
 
-            //remove this sample from all wells in every plate
-            foreach (Step step in Steps)
+            RemoveSampleFromAllWells(forRemoval);
+
+            ActiveSample = null;
+
+            UsedColors.Remove(forRemoval.colorName);
+
+            RemoveSampleFromMateralsList(forRemoval);
+        }
+    }
+
+    static void RemoveSampleFromAllWells(Sample forRemoval)
+    {
+        foreach (Step step in Steps)
+        {
+            foreach (var plate in step.materials)
             {
-                foreach (var plate in step.materials)
+                foreach (var well in plate.GetWells())
                 {
-                    foreach (var well in plate.GetWells())
+                    if (well.Value.Samples.ContainsKey(forRemoval))
                     {
-                        if (well.Value.Samples.ContainsKey(forRemoval))
-                        {
-                            step.RemoveActiveSampleFromWell(well.Key, well.Value.plateId);
-                        }
+                        step.RemoveActiveSampleFromWell(well.Key, well.Value.plateId);
                     }
                 }
             }
- 
-            ActiveSample = null;
-            //return this samples color to the available colors
-            UsedColors.Remove(forRemoval.colorName);
-            //remove this sample from the materials list
-            RemoveSampleFromMateralsList(forRemoval);
         }
     }
 
     static void RemoveSampleFromMateralsList(Sample forRemoval)
     {
-        //remove sample from materials list
         foreach (var material in Materials)
         {
             if (material is TubeRack5mL)
@@ -442,10 +438,10 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    //edits a sample in the available sample list
     public static void EditSample(string oldName, string newName, string newAbreviation, string newColorName, Color newColor)
     {
         Sample toEdit = AvailableSamples.Where(sample => sample.sampleName == oldName).FirstOrDefault();
+
         if (toEdit != null)
         {
             toEdit.sampleName = newName;
@@ -457,11 +453,11 @@ public class SessionState : MonoBehaviour
                 toEdit.color = newColor;
                 UsedColors.Add(newColorName);
             }
+
             editedSampleStream.OnNext((oldName, newName));
         }
     }
 
-    //sets the active sample
     public static void SetActiveSample(Sample selected)
     {
         if(AvailableSamples.Contains(selected))
@@ -472,12 +468,10 @@ public class SessionState : MonoBehaviour
         Debug.LogWarning("Selected sample is not available");
     }
 
-    //sets the focused well
     public static void SetFocusedWell(string wellId, int plateId)
     {
         if (!CurrentStep.materials[plateId].ContainsWell(wellId))
         {
-            //if the well does not exist create it
             CurrentStep.materials[plateId].AddWell(wellId, new Well(wellId, plateId));
             FocusedWell = CurrentStep.materials[plateId].GetWell(wellId);
         }
@@ -487,7 +481,6 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    //sets the focused well
     public static void SetSelectedWells(int plateId)
     {
         List<Well> selectedWells = new List<Well>();
@@ -496,7 +489,6 @@ public class SessionState : MonoBehaviour
         {
             if(well.Value.selected)
             {
-                Debug.Log(well.Value.id);
                 selectedWells.Add(well.Value);
             }
         }
