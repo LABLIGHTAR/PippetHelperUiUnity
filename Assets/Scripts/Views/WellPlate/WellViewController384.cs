@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UniRx;
 
-public class WellViewController96 : WellViewController
+public class WellViewController384 : WellViewController
 {
     public override WellViewController GetNextInRow()
     {
@@ -23,9 +23,9 @@ public class WellViewController96 : WellViewController
             wellNum = Int32.Parse(new string(chars));
         }
 
-        if(wellNum < maxRowNum)
+        if ((wellNum + 1) < maxRowNum)
         {
-            wellNum++;
+            wellNum += 2;
             nextWellId = new string(wellId[0] + wellNum.ToString());
             return transform.parent.Find(nextWellId).GetComponent<WellViewController>();
         }
@@ -36,10 +36,10 @@ public class WellViewController96 : WellViewController
     {
         string nextWellId;
 
-        char nextRowId = (char)(((int)wellId[0]) + 1);
+        char nextRowId = (char)(((int)wellId[0]) + 2);
         string columnNum = wellId.Substring(1);
 
-        if ((int)wellId[0] - 64 < maxColNum)
+        if (((int)wellId[0] + 1) - 64 < maxColNum)
         {
             nextWellId = new string(nextRowId.ToString() + columnNum);
             return transform.parent.Find(nextWellId).GetComponent<WellViewController>();

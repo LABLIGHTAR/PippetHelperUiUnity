@@ -182,8 +182,8 @@ MonoBehaviour:
   SelectionSprite: {fileID: 7442843060615348833}
   selected: 0
   SampleCount: 0
-  maxRowNum: 0
-  maxColNum: 0
+  maxRowNum: 12
+  maxColNum: 8
 --- !u!1 &5231572897205956832
 GameObject:
   m_ObjectHideFlags: 0
