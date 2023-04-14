@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UniRx;
@@ -34,65 +33,22 @@ public class Step
         }
     }
 
-    public bool AddActiveSampleToWell(string wellName, int plateId, bool inGroup, bool isStart, bool isEnd)
+    public bool TryAddActiveSampleToWell(string wellName, int plateId, bool inGroup, bool isStart, bool isEnd)
     {
         if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
         {
-            if (materials[plateId].ContainsWell(wellName))
+            if (!materials[plateId].ContainsWell(wellName))
             {
-                if (!materials[plateId].GetWell(wellName).Samples.ContainsKey(SessionState.ActiveSample))
-                {
-                    //if the well exists and does not already have the active Sample add it
-                    materials[plateId].GetWell(wellName).Samples.Add(SessionState.ActiveSample, SessionState.ActiveTool.volume);
-                    //if this Sample is grouped add it to the group list
-                    if (inGroup)
-                    {
-                        materials[plateId].GetWell(wellName).groups.Add(new Well.SampleGroup(GroupId, isStart, isEnd, SessionState.ActiveSample));
-                        //if this is the last well in the group increment the group id for the next group
-                        if (isEnd)
-                        {
-                            //Add group action
-                            string multichannelTargetID = "";
-                            foreach (var well in materials[plateId].GetWells())
-                            {
-                                if (well.Value.IsStartOfGroup(GroupId))
-                                {
-                                    multichannelTargetID = well.Value.id;
-                                }
-                            }
-                            multichannelTargetID = multichannelTargetID + "-" + wellName;
-                            AddPipetteAction(plateId.ToString(), multichannelTargetID);
-
-                            GroupId++;
-                        }
-                    }
-                    else
-                    {
-                        //add single action
-                        AddPipetteAction(plateId.ToString(), wellName);
-                    }
-                    return true;
-                }
-                else
-                {
-                    Debug.LogWarning("Well already contains the active Sample");
-                    return false;
-                }
-            }
-            else
-            {
-                //if the well does not exist create it
                 materials[plateId].AddWell(wellName, new Well(wellName, plateId));
-                //add the active Sample to the new well
-                materials[plateId].GetWell(wellName).Samples.Add(SessionState.ActiveSample, SessionState.ActiveTool.volume);
-                //if this Sample is grouped add it to the group list
+            }
+            if (!materials[plateId].GetWell(wellName).ContainsSample(SessionState.ActiveSample.color))
+            {
                 if (inGroup)
                 {
                     materials[plateId].GetWell(wellName).groups.Add(new Well.SampleGroup(GroupId, isStart, isEnd, SessionState.ActiveSample));
-                    //if this is the last well in the group increment the group id for the next group
+
                     if (isEnd)
                     {
-                        //Add group action
                         string multichannelTargetID = "";
                         foreach (var well in materials[plateId].GetWells())
                         {
@@ -101,6 +57,7 @@ public class Step
                                 multichannelTargetID = well.Value.id;
                             }
                         }
+
                         multichannelTargetID = multichannelTargetID + "-" + wellName;
                         AddPipetteAction(plateId.ToString(), multichannelTargetID);
 
@@ -109,74 +66,36 @@ public class Step
                 }
                 else
                 {
-                    //add single action
                     AddPipetteAction(plateId.ToString(), wellName);
                 }
                 return true;
+            }
+            else
+            {
+                Debug.LogWarning("Well already contains the active Sample");
+                return false;
             }
         }
         return false;
     }
 
-    //removes active sample from passed well at passed step
-    public bool RemoveActiveSampleFromWell(string wellName, int plateId)
+    public bool TryRemoveActiveSampleFromWell(string wellName, int plateId)
     {
         if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
         {
-            if (materials[plateId].ContainsWell(wellName))
+            if (!materials[plateId].ContainsWell(wellName))
             {
-                if (SessionState.ActiveSample != null && materials[plateId].GetWell(wellName).Samples.ContainsKey(SessionState.ActiveSample))
+                LabAction removalAction = actions.Where(a => a.source.color == SessionState.ActiveSample.color && a.target.matID == plateId.ToString() && a.target.matSubID == wellName).FirstOrDefault();
+                
+                if (SessionState.ActiveSample != null && removalAction != null)
                 {
-                    //if the well exists and has the active Sample remove it
-                    materials[plateId].GetWell(wellName).Samples.Remove(SessionState.ActiveSample);
-                    //remove the associated action
-                    LabAction removalAction = actions.Where(a => a.source.color == SessionState.ActiveSample.color && a.target.matID == plateId.ToString() && a.target.matSubID == wellName).FirstOrDefault();
-                    if (removalAction != null)
-                    {
-                        RemoveAction(removalAction);
-                    }
+                    RemoveAction(removalAction);
 
                     SessionState.SampleRemovedStream.OnNext(wellName);
 
-                    //if the Sample being removed is part of a group remove the group everywhere
                     if (materials[plateId].GetWell(wellName).groups != null)
                     {
-                        foreach (Well.SampleGroup group in materials[plateId].GetWell(wellName).groups)
-                        {
-                            if (group.Sample == SessionState.ActiveSample)
-                            {
-                                int IdForRemoval = group.groupId;
-
-                                //remove group action
-                                string multichannelTargetID = "";
-                                string groupStart = "";
-                                string groupEnd = "";
-                                foreach (var well in materials[plateId].GetWells())
-                                {
-                                    if (well.Value.IsStartOfGroup(IdForRemoval))
-                                    {
-                                        groupStart = well.Value.id;
-                                    }
-                                    else if (well.Value.IsEndOfGroup(IdForRemoval))
-                                    {
-                                        groupEnd = well.Value.id;
-                                    }
-                                }
-                                multichannelTargetID = groupStart + "-" + groupEnd;
-                                Debug.Log(multichannelTargetID);
-                                removalAction = actions.Where(a => a.source.color == SessionState.ActiveSample.color && a.target.matID == plateId.ToString() && a.target.matSubID == multichannelTargetID).FirstOrDefault();
-                                if (removalAction != null)
-                                {
-                                    Debug.Log("Removing Action");
-                                    RemoveAction(removalAction);
-                                }
-
-                                //go through each well and remove all Samples in this group
-                                RemoveAllSamplesInGroup(IdForRemoval, plateId);
-                                //break since the active Sample cannot be in a well more than once
-                                break;
-                            }
-                        }
+                        RemoveSampleGroup(wellName, plateId);
                     }
                     return true;
                 }
@@ -195,30 +114,92 @@ public class Step
         return false;
     }
 
-    //removes all samples in the passed sample group id
+    void RemoveSampleGroup(string wellName, int plateId)
+    {
+        foreach (Well.SampleGroup group in materials[plateId].GetWell(wellName).groups)
+        {
+            if (group.Sample == SessionState.ActiveSample)
+            {
+                int IdForRemoval = group.groupId;
+
+                string multichannelTargetID = "";
+                string groupStart = "";
+                string groupEnd = "";
+
+                foreach (var well in materials[plateId].GetWells())
+                {
+                    if (well.Value.IsStartOfGroup(IdForRemoval))
+                    {
+                        groupStart = well.Value.id;
+                    }
+                    else if (well.Value.IsEndOfGroup(IdForRemoval))
+                    {
+                        groupEnd = well.Value.id;
+                    }
+                }
+
+                multichannelTargetID = groupStart + "-" + groupEnd;
+                LabAction removalAction = actions.Where(a => a.source.color == SessionState.ActiveSample.color && a.target.matID == plateId.ToString() && a.target.matSubID == multichannelTargetID).FirstOrDefault();
+
+                if (removalAction != null)
+                {
+                    Debug.Log("Removing Action");
+                    RemoveAction(removalAction);
+                }
+
+                RemoveAllSamplesInGroup(IdForRemoval, plateId);
+                break;
+            }
+        }
+    }
+
     void RemoveAllSamplesInGroup(int removalID, int plateId)
     {
         List<Well.SampleGroup> groupsToRemove = new List<Well.SampleGroup>();
-        //iterate through all wells
+
         foreach (var well in materials[plateId].GetWells())
         {
-            //iterate through each well group
             foreach (Well.SampleGroup group in well.Value.groups)
             {
                 if (group.groupId == removalID)
                 {
-                    //add the group to a list for removal (cannot modify list in foreach loop)
                     groupsToRemove.Add(group);
-                    //remove the active Sample
-                    well.Value.Samples.Remove(SessionState.ActiveSample);
-                    //notify well
                     SessionState.SampleRemovedStream.OnNext(well.Key);
                 }
             }
-            //remove groups
             well.Value.groups.RemoveAll(item => groupsToRemove.Contains(item));
             groupsToRemove.Clear();
         }
+    }
+
+    public List<LabAction> GetActionsWithTargetWell(string plateId, string wellId)
+    {
+        List<LabAction> associatedActions = new List<LabAction>();
+
+        foreach(LabAction action in actions)
+        {
+            if(action.WellIsTarget(plateId, wellId))
+            {
+                associatedActions.Add(action);
+            }
+        }
+        
+        return associatedActions;
+    }
+
+    public List<LabAction> GetActionsWithSourceSample(Color sampleColor)
+    {
+        List<LabAction> associatedActions = new List<LabAction>();
+
+        foreach (LabAction action in actions)
+        {
+            if (action.SampleIsSource(sampleColor))
+            {
+                associatedActions.Add(action);
+            }
+        }
+
+        return associatedActions;
     }
 
     public void AddAction(LabAction.ActionType action, LabAction.Source source, LabAction.Target target)

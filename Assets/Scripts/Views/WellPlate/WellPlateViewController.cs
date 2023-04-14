@@ -17,7 +17,9 @@ public class WellPlateViewController : MonoBehaviour
     {
         foreach (Transform child in wells)
         {
-            if(SessionState.Steps[SessionState.ActiveStep].materials[id] is Wellplate)
+            child.GetComponent<WellViewController>().plateId = id;
+
+            if (SessionState.Steps[SessionState.ActiveStep].materials[id] is Wellplate)
             {
                 if (!SessionState.Steps[SessionState.ActiveStep].materials[id].ContainsWell(child.gameObject.name))
                 {

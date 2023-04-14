@@ -89,4 +89,22 @@ public class LabAction
             return "Undefined Action Type";
         }
     }
+
+    public bool WellIsTarget(string plateId, string wellId)
+    {
+        if(target.matID == plateId && target.matSubID == wellId)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public bool SampleIsSource(Color sampleColor)
+    {
+        if(source.color == sampleColor)
+        {
+            return true;
+        }
+        return false;
+    }
 }

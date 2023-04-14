@@ -273,15 +273,15 @@ public class ProcedureLoader : MonoBehaviour
                     {
                         if (activeWellId == wellGroup[0])
                         {
-                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
+                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
                         }
                         else if (activeWellId == wellGroup[1])
                         {
-                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
+                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
                         }
                         else
                         {
-                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
+                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
                         }
                         numChannels--;
                         activeWellId = GetNextWellHorizontal(activeWellId);
@@ -295,15 +295,15 @@ public class ProcedureLoader : MonoBehaviour
                     {
                         if (activeWellId == wellGroup[0])
                         {
-                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
+                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
                         }
                         else if (activeWellId == wellGroup[1])
                         {
-                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
+                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
                         }
                         else
                         {
-                            SessionState.CurrentStep.AddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
+                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
                         }
                         numChannels--;
                         activeWellId = GetNextWellVertical(activeWellId);
@@ -314,7 +314,7 @@ public class ProcedureLoader : MonoBehaviour
             else
             {
                 SessionState.ActiveTool = new Tool("pipette", 1, "row", volume);
-                SessionState.CurrentStep.AddActiveSampleToWell(targetSubID, int.Parse(targetID), false, false, false);
+                SessionState.CurrentStep.TryAddActiveSampleToWell(targetSubID, int.Parse(targetID), false, false, false);
             }
         }
         else if (actionType == LabAction.ActionType.transfer)

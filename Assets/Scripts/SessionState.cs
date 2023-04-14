@@ -407,9 +407,9 @@ public class SessionState : MonoBehaviour
             {
                 foreach (var well in plate.GetWells())
                 {
-                    if (well.Value.Samples.ContainsKey(forRemoval))
+                    if (well.Value.ContainsSample(forRemoval.color))
                     {
-                        step.RemoveActiveSampleFromWell(well.Key, well.Value.plateId);
+                        step.TryRemoveActiveSampleFromWell(well.Key, well.Value.plateId);
                     }
                 }
             }

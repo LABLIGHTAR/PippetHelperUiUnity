@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class Well
 {
@@ -21,14 +23,12 @@ public class Well
     public int plateId;
     public string id;
     public bool selected;
-    public Dictionary<Sample, float> Samples;
     public List<SampleGroup> groups;
 
     public Well(string wellId, int parentId)
     {
         id = wellId;
         plateId = parentId;
-        Samples = new Dictionary<Sample, float>();
         groups = new List<SampleGroup>();
     }
 
@@ -52,6 +52,18 @@ public class Well
             {
                 return true;
             }
+        }
+        return false;
+    }
+
+    public bool ContainsSample(Color sampleColor)
+    {
+        var actionsWithWellAsTarget = SessionState.CurrentStep.GetActionsWithTargetWell(id, plateId.ToString());
+        var actionsWithSampleAsSource = SessionState.CurrentStep.GetActionsWithSourceSample(sampleColor);
+
+        if (actionsWithWellAsTarget.Intersect(actionsWithSampleAsSource) != null)
+        {
+            return true;
         }
         return false;
     }
