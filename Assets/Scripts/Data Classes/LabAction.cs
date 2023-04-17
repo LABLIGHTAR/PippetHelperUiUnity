@@ -277,6 +277,20 @@ public class LabAction
         return false;
     }
 
+    public bool SourceIsWellplate()
+    {
+        if (SessionState.Materials[int.Parse(source.matID)] is Wellplate)
+            return true;
+        return false;
+    }
+
+    public bool TargetIsWellplate()
+    {
+        if (SessionState.Materials[int.Parse(target.matID)] is Wellplate)
+            return true;
+        return false;
+    }
+    
     public bool SampleIsSource(Sample sample)
     {
         if(source.color == sample.color)

@@ -216,8 +216,8 @@ public class ProcedureLoader : MonoBehaviour
     void ParseAction(string currentLine)
     {
         string[] lineCells = currentLine.Split(',');
-        //cells go: [0]blank, [1]action code, [2]SourceID:SourceSubID, [3]SourceHex:SourceColorName,
-        //[4]SampleVolume, [5]SampleUnits, [6]targetID:targetSubID, [7]TargetHex:TargetColorName
+        //cells go: [0]blank, [1]action code, [2]SourceID:SourceSubID;numchannels, [3]SourceHex:SourceColorName,
+        //[4]SampleVolume, [5]SampleUnits, [6]targetID:targetSubID;numchanels, [7]TargetHex:TargetColorName
 
         LabAction.ActionType actionType;
         Enum.TryParse<LabAction.ActionType>(lineCells[1].Split(":")[1], out actionType);
@@ -225,6 +225,12 @@ public class ProcedureLoader : MonoBehaviour
         string[] sourceIDs = lineCells[2].Split(':');
         string sourceID = sourceIDs[0];
         string sourceSubID = sourceIDs[1];
+        int numChannels = 1;
+        if(sourceSubID.Contains(";"))
+        {
+            numChannels = int.Parse(sourceSubID.Split(";")[1]);
+            sourceSubID = sourceSubID.Split(";")[0];
+        }
 
         Color sourceColor;
         string sourceColorName;
@@ -247,6 +253,11 @@ public class ProcedureLoader : MonoBehaviour
         {
             targetID = lineCells[6];
         }
+        if (targetSubID.Contains(";"))
+        {
+            numChannels = int.Parse(targetSubID.Split(";")[1]);
+            targetSubID = targetSubID.Split(";")[0];
+        }
 
         Color targetColor;
         string targetColorName;
@@ -263,11 +274,9 @@ public class ProcedureLoader : MonoBehaviour
             if (targetSubID != "" && targetSubID.Contains("-"))
             {
                 string[] wellGroup = targetSubID.Split('-');
-                int numChannels;
                 string activeWellId = wellGroup[0];
                 if (wellGroup[0][0] == wellGroup[1][0])
                 {
-                    numChannels = GetNumberChannels(wellGroup, true);
                     SessionState.ActiveTool = new Tool("multichannel", numChannels, "row", volume);
                     while (numChannels > 0)
                     {
