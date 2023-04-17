@@ -28,12 +28,11 @@ public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
             }
         });
 
-        SessionState.editedSampleStream.Subscribe(sampleNames =>
+        SessionState.editedSampleStream.Subscribe(samples =>
         {
-            //if the edited samples old name is equal to this displays sample name update this display
-            if (sampleNames.Item1 == sampleName.text)
+            if (samples.Item1.sampleName == sampleName.text)
             {
-                Sample editedSample = SessionState.AvailableSamples.Where(sample => sample.sampleName == sampleNames.Item2).FirstOrDefault();
+                Sample editedSample = SessionState.AvailableSamples.Where(sample => sample == samples.Item2).FirstOrDefault();
                 if (editedSample != null)
                 {
                     InitSampleItem(editedSample.sampleName, editedSample.abreviation, editedSample.color);

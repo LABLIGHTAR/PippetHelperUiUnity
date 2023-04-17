@@ -59,16 +59,7 @@ public class SubstanceLoader : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        foreach (Step step in SessionState.Steps)
-        {
-            foreach (Wellplate plate in step.materials)
-            {
-                foreach (var well in plate.wells)
-                {
-                    well.Value.Samples.Clear();
-                }
-            }
-        }
+       
 
         //read the file until the end of file is reached
         while ((currentLine = sr.ReadLine()) != null)

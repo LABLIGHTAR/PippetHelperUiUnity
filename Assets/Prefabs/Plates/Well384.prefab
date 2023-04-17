@@ -27,7 +27,7 @@ RectTransform:
   m_GameObject: {fileID: 5094399462071778557}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2941902053368670493}
@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -0.004, y: 0.016}
-  m_SizeDelta: {x: 1, y: 1}
+  m_SizeDelta: {x: 1.3, y: 1.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!331 &6075676895814426833
 SpriteMask:
@@ -108,13 +108,13 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 7
   m_Spacing: 0
-  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
+  m_ReverseArrangement: 1
 --- !u!1 &6398840303922507067
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,11 +212,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wellId: 
   plateId: 0
-  SampleIndicators:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  SampleIndicatorPrefab: {fileID: 0}
+  SampleIndicators: {fileID: 1631202759920874093}
+  SampleIndicatorPrefab: {fileID: 9221829536017641353, guid: faddfa10c2dccb14789ba79146792f3e, type: 3}
   NextInRow: {fileID: 0}
   NextInCol: {fileID: 0}
   SelectionSprite: {fileID: 8955129313645957523}

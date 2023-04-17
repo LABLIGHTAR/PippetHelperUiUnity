@@ -16,8 +16,6 @@ public class ActionDisplayViewController : MonoBehaviour
 
     void Awake()
     {
-        RenewStepSubscriptions();
-
         SessionState.stepStream.Subscribe(stepNum =>
         {
             foreach (Transform child in ContentParent)
@@ -32,6 +30,11 @@ public class ActionDisplayViewController : MonoBehaviour
 
             RenewStepSubscriptions();
         });
+
+        if(SessionState.Steps.Count > 0)
+        {
+            RenewStepSubscriptions();
+        }
     }
 
     void RenewStepSubscriptions()

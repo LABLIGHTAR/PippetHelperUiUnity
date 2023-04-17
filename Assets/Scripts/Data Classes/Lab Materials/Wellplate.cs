@@ -23,6 +23,10 @@ public class Wellplate : LabMaterial
 
     public override Well GetWell(string wellID)
     {
+        if(!ContainsWell(wellID))
+        {
+            AddWell(wellID, new Well(wellID, SessionState.CurrentStep.materials.IndexOf(this)));
+        }
         return wells[wellID];
     }
 

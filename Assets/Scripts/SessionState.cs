@@ -56,7 +56,7 @@ public class SessionState : MonoBehaviour
     
     public static Subject<Sample> activeSampleStream = new Subject<Sample>();
     public static Subject<Sample> newSampleStream = new Subject<Sample>();
-    public static Subject<(string, string)> editedSampleStream = new Subject<(string,string)>();
+    public static Subject<(Sample, Sample)> editedSampleStream = new Subject<(Sample,Sample)>();
     public static Subject<string> SampleRemovedStream = new Subject<string>();
     
     public static Subject<Well> focusedWellStream = new Subject<Well>();
@@ -407,7 +407,7 @@ public class SessionState : MonoBehaviour
             {
                 foreach (var well in plate.GetWells())
                 {
-                    if (well.Value.ContainsSample(forRemoval.color))
+                    if (well.Value.ContainsSample(forRemoval))
                     {
                         step.TryRemoveActiveSampleFromWell(well.Key, well.Value.plateId);
                     }
@@ -441,6 +441,7 @@ public class SessionState : MonoBehaviour
     public static void EditSample(string oldName, string newName, string newAbreviation, string newColorName, Color newColor)
     {
         Sample toEdit = AvailableSamples.Where(sample => sample.sampleName == oldName).FirstOrDefault();
+        Sample preEditCopy = new Sample(toEdit.sampleName, toEdit.abreviation, toEdit.colorName, toEdit.color);
 
         if (toEdit != null)
         {
@@ -454,7 +455,18 @@ public class SessionState : MonoBehaviour
                 UsedColors.Add(newColorName);
             }
 
-            editedSampleStream.OnNext((oldName, newName));
+            foreach(Step step in Steps)
+            {
+                foreach(LabAction action in step.actions)
+                {
+                    if(action.SampleIsSource(preEditCopy))
+                    {
+                        action.UpdateSourceSample(toEdit);
+                    }
+                }
+            }
+
+            editedSampleStream.OnNext((preEditCopy, toEdit));
         }
     }
 

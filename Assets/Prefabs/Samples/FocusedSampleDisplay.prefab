@@ -57,6 +57,8 @@ GameObject:
   - component: {fileID: 6588712143332635635}
   - component: {fileID: 6588712143332635645}
   - component: {fileID: 6588712143332635634}
+  - component: {fileID: 5333003315816719088}
+  - component: {fileID: 4474881784836582531}
   m_Layer: 5
   m_Name: FocusedSampleDisplay
   m_TagString: Untagged
@@ -124,6 +126,41 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &5333003315816719088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6588712143332635632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb69118ceed989548ac013309293adc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sampleName: {fileID: 6588712143953640773}
+  sampleVolume: {fileID: 2771718467661862114}
+  bgImage: {fileID: 6588712143332635634}
+--- !u!114 &4474881784836582531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6588712143332635632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: 37.5
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &6588712143953640827
 GameObject:
   m_ObjectHideFlags: 0

@@ -41,7 +41,8 @@ public class Step
             {
                 materials[plateId].AddWell(wellName, new Well(wellName, plateId));
             }
-            if (!materials[plateId].GetWell(wellName).ContainsSample(SessionState.ActiveSample.color))
+
+            if (materials[plateId].ContainsWell(wellName) && !materials[plateId].GetWell(wellName).ContainsSample(SessionState.ActiveSample))
             {
                 if (inGroup)
                 {
@@ -83,9 +84,9 @@ public class Step
     {
         if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
         {
-            if (!materials[plateId].ContainsWell(wellName))
+            if (materials[plateId].ContainsWell(wellName))
             {
-                LabAction removalAction = actions.Where(a => a.source.color == SessionState.ActiveSample.color && a.target.matID == plateId.ToString() && a.target.matSubID == wellName).FirstOrDefault();
+                LabAction removalAction = actions.Where(action => action.source.color == SessionState.ActiveSample.color && action.WellIsTarget(plateId.ToString(), wellName)).FirstOrDefault();
                 
                 if (SessionState.ActiveSample != null && removalAction != null)
                 {
@@ -172,13 +173,13 @@ public class Step
         }
     }
 
-    public List<LabAction> GetActionsWithTargetWell(string plateId, string wellId)
+    public List<LabAction> GetActionsWithTargetWell(Well well)
     {
         List<LabAction> associatedActions = new List<LabAction>();
 
         foreach(LabAction action in actions)
         {
-            if(action.WellIsTarget(plateId, wellId))
+            if(action.WellIsTarget(well.plateId.ToString(), well.id))
             {
                 associatedActions.Add(action);
             }
@@ -187,13 +188,13 @@ public class Step
         return associatedActions;
     }
 
-    public List<LabAction> GetActionsWithSourceSample(Color sampleColor)
+    public List<LabAction> GetActionsWithSourceSample(Sample sample)
     {
         List<LabAction> associatedActions = new List<LabAction>();
 
         foreach (LabAction action in actions)
         {
-            if (action.SampleIsSource(sampleColor))
+            if (action.SampleIsSource(sample))
             {
                 associatedActions.Add(action);
             }

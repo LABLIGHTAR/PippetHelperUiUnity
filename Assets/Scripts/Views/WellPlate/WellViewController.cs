@@ -25,6 +25,9 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     public int maxRowNum;
     public int maxColNum;
 
+        IDisposable actionAddedSubscription;
+    IDisposable actionRemovedSubscription;
+
     void Awake()
     {
         wellId = gameObject.name;
@@ -36,17 +39,20 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         
         SelectionManager.Instance.AvailableWells.Add(this);
         
-        SessionState.stepStream.Subscribe(_ => LoadVisualState());
+        SessionState.stepStream.Subscribe(_ => 
+        { 
+            LoadVisualState();
+            RenewStepSubscriptions();
+        });
 
-        SessionState.editedSampleStream.Subscribe(editedSample =>
+        SessionState.editedSampleStream.Subscribe(samples =>
         {
             if (SessionState.CurrentStep.materials[plateId].ContainsWell(wellId))
             {
-/*                //if this well contains the edited sample
-                if (SessionState.CurrentStep.materials[plateId].GetWell(wellId).Samples.Keys.Where(sample => sample.sampleName == editedSample.Item2).FirstOrDefault() != null)
+                if (SessionState.CurrentStep.materials[plateId].GetWell(wellId).ContainsSample(samples.Item2))
                 {
-                    UpdateSampleIndicator();
-                }*/
+                    UpdateSampleIndicator(samples.Item1.color, samples.Item2.color);
+                }
             }
         });
 
@@ -64,7 +70,8 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     break;
                 case LabAction.ActionStatus.submitted:
                     selected = false;
-                    SessionState.CurrentStep.materials[plateId].GetWell(wellId).selected = false;
+                    if(SessionState.CurrentStep.materials[plateId].ContainsWell(wellId))
+                        SessionState.CurrentStep.materials[plateId].GetWell(wellId).selected = false;
                     OnDeselected(SessionState.ActiveTool.numChannels);
                     break;
             }
@@ -78,9 +85,19 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                 OnDeselected(SessionState.ActiveTool.numChannels);
         });
 
-        SessionState.CurrentStep.actionAddedStream.Subscribe(action => 
-        { 
-            if(action.WellIsTarget(plateId.ToString(), wellId))
+        RenewStepSubscriptions();
+    }
+
+    void RenewStepSubscriptions()
+    {
+        if (actionAddedSubscription != null)
+            actionAddedSubscription.Dispose();
+        if (actionRemovedSubscription != null)
+            actionRemovedSubscription.Dispose();
+
+        SessionState.CurrentStep.actionAddedStream.Subscribe(action =>
+        {
+            if (action.WellIsTarget(plateId.ToString(), wellId))
             {
                 UpdateFromActionAdded(action);
             }
@@ -97,25 +114,20 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     private void UpdateFromActionAdded(LabAction action)
     {
-        Debug.Log("Updating from action added");
         if (action.type == LabAction.ActionType.pipette && action.WellIsTarget(plateId.ToString(), wellId))
         {
-            Debug.Log("adding indicator");
             AddSampleIndicator(action.source.color);
         }
     }
 
     private void UpdateFromActionRemoved(LabAction action)
     {
-        Debug.Log("Updating from action removed");
         if (action.type == LabAction.ActionType.pipette && action.WellIsTarget(plateId.ToString(), wellId))
         {
-            Debug.Log("removing indicator");
             RemoveSampleIndicator(action.source.color);
         }
     }
 
-    //called when step is changed
     public void LoadVisualState()
     {
         if (SessionState.Steps != null & SessionState.CurrentStep != null)
@@ -125,76 +137,6 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             SampleCount = 0;
             
             LoadSampleIndicators();
-        }
-    }
-
-    // Highlight and update focused well on hover
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        if (!SessionState.FormActive && !SessionState.SelectionActive && SessionState.ActiveTool != null)
-        {
-            if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
-            {
-                ActivateHighlight(SessionState.ActiveTool.numChannels);
-            }
-            else if ((SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource || SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget))
-            {
-                OnSelected(SessionState.ActiveTool.numChannels);
-            }
-            SessionState.SetFocusedWell(wellId, plateId);
-        }
-    }
-
-    //remove highlight on hover exit
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        if (!SessionState.FormActive && !SessionState.SelectionActive && SessionState.ActiveTool != null)
-        {
-            if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
-            {
-                DeactivateHighlight(0);
-            }
-            else if (SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource || SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
-            {
-                OnDeselected(SessionState.ActiveTool.numChannels);
-            }
-        }
-    }
-
-    //add sample to well and update focused well on click
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        if (!SessionState.FormActive && !SessionState.SelectionActive)
-        {
-            if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
-            {
-                if (eventData.button == PointerEventData.InputButton.Right)
-                {
-                    SessionState.CurrentStep.TryRemoveActiveSampleFromWell(wellId, plateId);
-                }
-            }
-            else if (SessionState.ActiveActionType == LabAction.ActionType.transfer)
-            {
-                if (eventData.button == PointerEventData.InputButton.Left)
-                {
-                    if (OnSelected(SessionState.ActiveTool.numChannels))
-                    {
-                        OnSelectedAndClicked(SessionState.ActiveTool.numChannels);
-                        SessionState.SetSelectedWells(plateId);
-                    }
-                }
-            }
-            else if (SessionState.ActiveActionType == LabAction.ActionType.dilution && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
-            {
-                selected = true;
-                SessionState.CurrentStep.materials[plateId].GetWell(wellId).selected = true;
-                OnSelected(SessionState.ActiveTool.numChannels);
-                SessionState.SetSelectedWells(plateId);
-            }
-            if (SessionState.CurrentStep.materials[plateId].ContainsWell(wellId))
-            {
-                SessionState.SetFocusedWell(wellId, plateId);
-            }
         }
     }
 
@@ -240,8 +182,8 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             if (indicator.GetComponent<SpriteRenderer>().color == sampleColor)
             {
                 Destroy(indicator.gameObject);
+                SampleCount--;
             }
-            SampleCount--;
         }
     }
 
@@ -269,10 +211,12 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void RemoveAllSampleIndicators()
     {
-        foreach(GameObject indicator in SampleIndicators)
+        foreach(Transform indicator in SampleIndicators)
         {
-            Destroy(indicator);
+            Destroy(indicator.gameObject);
         }
+
+        SampleCount = 0;
     }
 
     public virtual bool ActivateHighlight(int numChannels)
@@ -305,9 +249,9 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
         }
 
-        if (this.SampleCount < 3 && SessionState.ActiveSample != null)
+        if (SessionState.ActiveSample != null)
         {
-            if (SessionState.CurrentStep.materials[plateId].ContainsWell(wellId) && SessionState.CurrentStep.materials[plateId].GetWell(wellId).ContainsSample(SessionState.ActiveSample.color))
+            if (SessionState.CurrentStep.materials[plateId].ContainsWell(wellId) && SessionState.CurrentStep.materials[plateId].GetWell(wellId).ContainsSample(SessionState.ActiveSample))
             {
                 DeactivateHighlight(SessionState.ActiveTool.numChannels);
                 return false;
@@ -324,13 +268,14 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public virtual void DeactivateHighlight(int numChannels)
     {
-        if (this.SampleCount < 3 && SessionState.ActiveSample != null)
+        if (SampleCount != SampleIndicators.childCount && SessionState.ActiveSample != null)
         {
             foreach(Transform indicator in SampleIndicators)
             {
                 if(indicator.GetComponent<SpriteRenderer>().color == SessionState.ActiveSample.color)
                 {
                     Destroy(indicator.gameObject);
+                    break;
                 }
             }
         }
@@ -442,12 +387,12 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void HighlightAction(LabAction action)
     {
-        if (plateId.ToString() == action.source.matID && wellId == action.source.matSubID)
+        if (action.WellIsSource(plateId.ToString(), wellId))
         {
             this.SelectionSprite.color = action.source.color;
             this.SelectionSprite.gameObject.SetActive(true);
         }
-        else if (plateId.ToString() == action.target.matID && wellId == action.target.matSubID)
+        else if (action.WellIsTarget(plateId.ToString(), wellId))
         {
             this.SelectionSprite.color = action.target.color;
             this.SelectionSprite.gameObject.SetActive(true);
@@ -462,5 +407,73 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     public virtual WellViewController GetNextInCol()
     {
         return null;
+    }
+
+    //pointer events
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!SessionState.FormActive && !SessionState.SelectionActive && SessionState.ActiveTool != null)
+        {
+            if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
+            {
+                ActivateHighlight(SessionState.ActiveTool.numChannels);
+            }
+            else if ((SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource || SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget))
+            {
+                OnSelected(SessionState.ActiveTool.numChannels);
+            }
+            SessionState.SetFocusedWell(wellId, plateId);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (!SessionState.FormActive && !SessionState.SelectionActive && SessionState.ActiveTool != null)
+        {
+            if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
+            {
+                DeactivateHighlight(0);
+            }
+            else if (SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource || SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
+            {
+                OnDeselected(SessionState.ActiveTool.numChannels);
+            }
+        }
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (!SessionState.FormActive && !SessionState.SelectionActive)
+        {
+            if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
+            {
+                if (eventData.button == PointerEventData.InputButton.Right)
+                {
+                    SessionState.CurrentStep.TryRemoveActiveSampleFromWell(wellId, plateId);
+                }
+            }
+            else if (SessionState.ActiveActionType == LabAction.ActionType.transfer)
+            {
+                if (eventData.button == PointerEventData.InputButton.Left)
+                {
+                    if (OnSelected(SessionState.ActiveTool.numChannels))
+                    {
+                        OnSelectedAndClicked(SessionState.ActiveTool.numChannels);
+                        SessionState.SetSelectedWells(plateId);
+                    }
+                }
+            }
+            else if (SessionState.ActiveActionType == LabAction.ActionType.dilution && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
+            {
+                selected = true;
+                SessionState.CurrentStep.materials[plateId].GetWell(wellId).selected = true;
+                OnSelected(SessionState.ActiveTool.numChannels);
+                SessionState.SetSelectedWells(plateId);
+            }
+            if (SessionState.CurrentStep.materials[plateId].ContainsWell(wellId))
+            {
+                SessionState.SetFocusedWell(wellId, plateId);
+            }
+        }
     }
 }

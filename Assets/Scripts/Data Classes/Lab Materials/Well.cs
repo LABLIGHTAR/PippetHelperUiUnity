@@ -56,15 +56,29 @@ public class Well
         return false;
     }
 
-    public bool ContainsSample(Color sampleColor)
+    public bool ContainsSample(Sample sample)
     {
-        var actionsWithWellAsTarget = SessionState.CurrentStep.GetActionsWithTargetWell(id, plateId.ToString());
-        var actionsWithSampleAsSource = SessionState.CurrentStep.GetActionsWithSourceSample(sampleColor);
-
-        if (actionsWithWellAsTarget.Intersect(actionsWithSampleAsSource) != null)
-        {
+        if(GetSamples().Contains(sample))
             return true;
-        }
         return false;
+    }
+
+    public List<Sample> GetSamples()
+    {
+        List<Sample> samples = new List<Sample>();
+
+        foreach(LabAction action in SessionState.CurrentStep.actions)
+        {
+            if (action.WellIsTarget(plateId.ToString(), id) && action.type == LabAction.ActionType.pipette)
+            {
+                Sample sourceSample = action.TryGetSourceSample();
+                if (sourceSample != null)
+                {
+                    samples.Add(sourceSample);
+                }
+            }
+        }
+
+        return samples;
     }
 }

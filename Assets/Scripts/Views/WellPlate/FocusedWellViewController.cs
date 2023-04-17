@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 using TMPro;
 using UniRx;
 
@@ -11,20 +12,8 @@ public class FocusedWellViewController : MonoBehaviour
     public TextMeshProUGUI wellVolumeText;
     public TextMeshProUGUI wellGroupText;
 
-    public GameObject sampleOneDisplay;
-    public TextMeshProUGUI sampleOneNameText;
-    public TextMeshProUGUI sampleOneVolumeText;
-    public Image sampleOneBG;
-
-    public GameObject sampleTwoDisplay;
-    public TextMeshProUGUI sampleTwoNameText;
-    public TextMeshProUGUI sampleTwoVolumeText;
-    public Image sampleTwoBG;
-
-    public GameObject sampleThreeDisplay;
-    public TextMeshProUGUI sampleThreeNameText;
-    public TextMeshProUGUI sampleThreeVolumeText;
-    public Image sampleThreeBG;
+    public GameObject SampleItemPrefab;
+    public Transform ScrollViewContent;
 
     // Start is called before the first frame update
     void Start()
@@ -34,49 +23,33 @@ public class FocusedWellViewController : MonoBehaviour
 
     void UpdateVisualState(Well well)
     {
-        sampleOneDisplay.SetActive(false);
-        sampleTwoDisplay.SetActive(false);
-        sampleThreeDisplay.SetActive(false);
+        ClearSampleDisplays();
 
         float wellVolume = 0f;
-
-        int index = -1;
-
-        foreach(var sample in well.Samples)
+        
+        foreach(LabAction action in SessionState.CurrentStep.GetActionsWithTargetWell(well).Where(action => action.type == LabAction.ActionType.pipette))
         {
-            index++;
-
-            if(index == 0)
-            {
-                sampleOneNameText.text = sample.Key.sampleName;
-                sampleOneBG.color = sample.Key.color;
-                sampleOneVolumeText.text = sample.Value.ToString() + " μL";
-                wellVolume += sample.Value;
-                sampleOneDisplay.SetActive(true);
-            }
-            else if(index == 1)
-            {
-                sampleTwoNameText.text = sample.Key.sampleName;
-                sampleTwoBG.color = sample.Key.color;
-                sampleTwoVolumeText.text = sample.Value.ToString() + " μL";
-                wellVolume += sample.Value;
-                sampleTwoDisplay.SetActive(true);
-            }
-            else if(index == 3)
-            {
-                sampleThreeNameText.text = sample.Key.sampleName;
-                sampleThreeBG.color = sample.Key.color;
-                sampleThreeVolumeText.text = sample.Value.ToString() + " μL";
-                wellVolume += sample.Value;
-                sampleThreeDisplay.SetActive(true);
-            }
+            wellVolume += action.source.volume;
+            var newSampleItem = Instantiate(SampleItemPrefab, ScrollViewContent);
+            newSampleItem.GetComponent<FocusedSampleItemViewController>().InitItem(action);
         }
 
         //update well display
-        wellIdText.text = well.id;
-        wellVolumeText.text = wellVolume.ToString() + " μL";
+        if(well.id != null)
+        {
+            wellIdText.text = well.id;
+            wellVolumeText.text = wellVolume.ToString() + " μL";
 
-        wellDisplay.SetActive(true);
-        wellVolumeDisplay.SetActive(true);
+            wellDisplay.SetActive(true);
+            wellVolumeDisplay.SetActive(true);
+        }
+    }
+
+    void ClearSampleDisplays()
+    {
+        foreach(Transform child in ScrollViewContent)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }
