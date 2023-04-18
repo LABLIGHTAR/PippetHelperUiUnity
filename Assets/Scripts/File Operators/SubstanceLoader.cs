@@ -47,13 +47,8 @@ public class SubstanceLoader : MonoBehaviour
         string[] lineCells;
 
         //clear session state substances
-        foreach(LabMaterial material in SessionState.Materials)
-        {
-            if(material.GetSampleList() != null)
-            {
-                SessionState.Materials.Remove(material);
-            }    
-        }
+        SessionState.Materials = SessionState.Materials.Where(m => m.GetSampleList() == null).ToList();
+
         //clear substances from UI
         foreach (Transform child in substanceList)
         {
