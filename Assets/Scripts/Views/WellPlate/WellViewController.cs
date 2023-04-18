@@ -170,19 +170,33 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void AddSampleIndicator(Color sampleColor)
     {
-        var newIndicator = Instantiate(SampleIndicatorPrefab, SampleIndicators);
-        newIndicator.GetComponent<SpriteRenderer>().color = sampleColor;
         SampleCount++;
+        var newIndicator = Instantiate(SampleIndicatorPrefab, SampleIndicators);
+        newIndicator.transform.GetChild(0).GetComponent<SpriteRenderer>().color = sampleColor;
+        ResizeSampleIndicators();
     }
 
     public void RemoveSampleIndicator(Color sampleColor)
     {
         foreach(Transform indicator in SampleIndicators)
         {
-            if (indicator.GetComponent<SpriteRenderer>().color == sampleColor)
+            if (indicator.GetChild(0).GetComponent<SpriteRenderer>().color == sampleColor)
             {
                 Destroy(indicator.gameObject);
                 SampleCount--;
+                ResizeSampleIndicators();
+            }
+        }
+    }
+
+    private void ResizeSampleIndicators()
+    {
+        if(SampleCount > 0)
+        {
+            float yScale = 1f / (float)SampleCount;
+            foreach (Transform indicator in SampleIndicators)
+            {
+                indicator.GetComponent<SampleIndicatorViewController>().Resize(yScale);
             }
         }
     }
@@ -191,9 +205,9 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         foreach(Transform indicator in SampleIndicators)
         {
-            if (indicator.GetComponent<SpriteRenderer>().color == oldColor)
+            if (indicator.GetChild(0).GetComponent<SpriteRenderer>().color == oldColor)
             {
-                indicator.GetComponent<SpriteRenderer>().color = newColor;
+                indicator.GetChild(0).GetComponent<SpriteRenderer>().color = newColor;
             }
         }
     }
@@ -257,8 +271,8 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                 return false;
             }
 
-            var tempIndicator = Instantiate(SampleIndicatorPrefab, SampleIndicators);
-            tempIndicator.GetComponent<SpriteRenderer>().color = SessionState.ActiveSample.color;
+            AddSampleIndicator(SessionState.ActiveSample.color);
+            SampleCount--;
             return true;
         }
 
@@ -272,12 +286,13 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             foreach(Transform indicator in SampleIndicators)
             {
-                if(indicator.GetComponent<SpriteRenderer>().color == SessionState.ActiveSample.color)
+                if(indicator.GetChild(0).GetComponent<SpriteRenderer>().color == SessionState.ActiveSample.color)
                 {
                     Destroy(indicator.gameObject);
                     break;
                 }
             }
+            ResizeSampleIndicators();
         }
 
         numChannels++;

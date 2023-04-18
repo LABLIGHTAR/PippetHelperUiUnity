@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7131377914404569145}
   - component: {fileID: 4946018991616308392}
-  - component: {fileID: 8696239142111007829}
+  - component: {fileID: 6960238885865490674}
   m_Layer: 3
   m_Name: SampleIndicators
   m_TagString: Untagged
@@ -89,7 +89,7 @@ SpriteMask:
   m_BackSortingOrder: 0
   m_IsCustomRangeActive: 0
   m_SpriteSortPoint: 0
---- !u!114 &8696239142111007829
+--- !u!114 &6960238885865490674
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -108,9 +108,9 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 7
   m_Spacing: 0
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 1
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
@@ -203,7 +203,7 @@ MonoBehaviour:
   wellId: 
   plateId: 0
   SampleIndicators: {fileID: 7131377914404569145}
-  SampleIndicatorPrefab: {fileID: 2024336268774719844, guid: 5c5573ddcea3bad40b539043595a1af2, type: 3}
+  SampleIndicatorPrefab: {fileID: 2487488474005115996, guid: 725821ba0c303a54e9e032ad436483d5, type: 3}
   NextInRow: {fileID: 0}
   NextInCol: {fileID: 0}
   SelectionSprite: {fileID: 7442843060615348833}
