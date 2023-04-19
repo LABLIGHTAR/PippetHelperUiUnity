@@ -24,7 +24,6 @@ public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
             {
                 SessionState.RemoveSample(sampleName.text);
                 Destroy(gameObject);
-                Debug.Log(SessionState.AvailableSamples.Count);
             }
         });
 

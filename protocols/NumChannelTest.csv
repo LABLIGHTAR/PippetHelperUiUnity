@@ -1,0 +1,12 @@
+material,wellplate96,horizontal,0,
+material,wellplate384,horizontal,1,
+material,tuberack5ml,horizontal,2:0,Test1:T1,#A6FE00:Lime
+material,tuberack5ml,horizontal,2:1,Test2:T2,#FE0900:Red
+step
+,action:pipette,2:0,#A6FE00:Lime,10,μL,0:A1-H1;8,#A6FE00:Lime
+,action:pipette,2:0,#A6FE00:Lime,10,μL,1:A1-O1;8,#A6FE00:Lime
+,action:pipette,2:1,#FE0900:Red,10,μL,0:A1-A8;8,#FE0900:Red
+,action:pipette,2:1,#FE0900:Red,10,μL,1:A1-A15;8,#FE0900:Red
+,action:transfer,0:A1-H1;8,#FF0000:Red,10,μL,1:A1-O1;8,#00FF00:Green
+,action:transfer,1:A1-O1;8,#FF0000:Red,10,μL,0:A1-H1;8,#00FF00:Green
+end

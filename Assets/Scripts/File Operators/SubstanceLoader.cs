@@ -2,7 +2,6 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using SFB;//Copyright (c) 2017 Gökhan Gökçe Under MIT License
 
 public class SubstanceLoader : MonoBehaviour
 {
@@ -12,12 +11,25 @@ public class SubstanceLoader : MonoBehaviour
     public GameObject savePanel;
     public Transform substanceList;
 
+    private string folderPath;
+    private string[] fileNames;
+
     // Start is called before the first frame update
     void Start()
     {
         loadSubstancesButton.onClick.AddListener(ShowConfirmation);
         yesButton.onClick.AddListener(LoadSubstances);
         noButton.onClick.AddListener(delegate { savePanel.SetActive(false); });
+
+        //check if sample list folder exists
+        folderPath = Path.Combine(@Application.temporaryCachePath, "..", "sample_lists");
+
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
+
+        fileNames = Directory.GetFiles(folderPath, "*.csv", SearchOption.TopDirectoryOnly);
     }
 
     void ShowConfirmation()
@@ -29,18 +41,12 @@ public class SubstanceLoader : MonoBehaviour
     {
         savePanel.SetActive(false);
 
-        var extensionList = new[] {
-                new ExtensionFilter("Comma Seperated Variables", "csv"),
-        };
-
-        string[] fileName = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, true); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
-
-        if (!(fileName.Count() > 0))
+        if (!(fileNames.Count() > 0))
         {
             return;
         }
 
-        StreamReader sr = new StreamReader(fileName[0]);
+        StreamReader sr = new StreamReader(fileNames[0]);
 
         string currentLine;
 

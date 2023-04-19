@@ -242,9 +242,9 @@ public class Step
         AddAction(LabAction.ActionType.pipette, source, target);
     }
 
-    public void AddTransferAction(string sourcePlateId, string souceWellId, string targetPlateId, string targetWellId, float volume)
+    public void AddTransferAction(string sourcePlateId, string sourceWellId, string targetPlateId, string targetWellId, float volume)
     {
-        var source = new LabAction.Source(sourcePlateId, souceWellId, Color.red, "Red", volume, "μL");
+        var source = new LabAction.Source(sourcePlateId, sourceWellId, Color.red, "Red", volume, "μL");
         var target = new LabAction.Target(targetPlateId, targetWellId, Color.green, "Green");
         AddAction(LabAction.ActionType.transfer, source, target);
     }

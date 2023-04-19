@@ -5,49 +5,44 @@ using System;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using UniRx;
-using SFB;//Copyright (c) 2017 Gökhan Gökçe Under MIT License
 
 public class ProcedureLoader : MonoBehaviour
 {
     public static Subject<bool> procedureStream = new Subject<bool>();
     public static Subject<int> materialsLoadedStream = new Subject<int>();
 
+    public GameObject protocolSelectionMenu;
+    public Transform protocolList;
+    public GameObject protocolListItemPrefab;
+
+
     private string folderPath;
 
-    private string[] fileName;
+    private string[] fileNames;
 
     private bool startOfDilution = true;
 
     // Start is called before the first frame update
     void Start()
     {
-        var extensionList = new[] {
-                new ExtensionFilter("Comma Seperated Variables", "csv"),
-            };
 
-#if UNITY_STANDALONE && !UNITY_EDITOR
         //check if protocol folder exists
-        folderPath = Application.dataPath + "/../protocols";
+        folderPath = Path.Combine(@Application.temporaryCachePath, "..", "inflight_protocols");
+
         if (!Directory.Exists(folderPath))
         {
             Directory.CreateDirectory(folderPath);
         }
-        //open file
-        fileName = StandaloneFileBrowser.OpenFilePanel("Open File", folderPath, extensionList, true); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
-#endif
-#if UNITY_EDITOR
-        fileName = StandaloneFileBrowser.OpenFilePanel("Open File", "", extensionList, true); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
-#endif
 
+        fileNames = Directory.GetFiles(folderPath, "*.csv", SearchOption.TopDirectoryOnly);
 
-        if (fileName.Count() > 0)
+        foreach (string fileName in fileNames)
         {
-            StartCoroutine(LoadProcedure(fileName[0]));
-        }
-        else
-        {
-            Application.Quit();
+            var newListItem = Instantiate(protocolListItemPrefab, protocolList);
+            newListItem.GetComponent<ProtocolListItemViewController>().InitItem(Path.GetFileNameWithoutExtension(fileName), fileName);
+            newListItem.GetComponent<Button>().onClick.AddListener(delegate { StartCoroutine(LoadProcedure(fileName)); });
         }
     }
 
@@ -55,6 +50,8 @@ public class ProcedureLoader : MonoBehaviour
     IEnumerator LoadProcedure(string fileName)
     {
         yield return new WaitForEndOfFrame();
+
+        protocolSelectionMenu.SetActive(false);
 
         StreamReader sr = new StreamReader(fileName);
         string currentLine;
@@ -275,8 +272,12 @@ public class ProcedureLoader : MonoBehaviour
             {
                 string[] wellGroup = targetSubID.Split('-');
                 string activeWellId = wellGroup[0];
+
                 if (wellGroup[0][0] == wellGroup[1][0])
                 {
+                    int numWellsSpanned = GetNumWellsSpanned(wellGroup, true);
+                    int offset = (numWellsSpanned + 1) / numChannels;
+
                     SessionState.ActiveTool = new Tool("multichannel", numChannels, "row", volume);
                     while (numChannels > 0)
                     {
@@ -293,12 +294,14 @@ public class ProcedureLoader : MonoBehaviour
                             SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
                         }
                         numChannels--;
-                        activeWellId = GetNextWellHorizontal(activeWellId);
+                        activeWellId = GetNextWellHorizontal(activeWellId, offset);
                     }
                 }
                 else
                 {
-                    numChannels = GetNumberChannels(wellGroup, false);
+                    int numWellsSpanned = GetNumWellsSpanned(wellGroup, false);
+                    int offset = (numWellsSpanned + 1) / numChannels;
+
                     SessionState.ActiveTool = new Tool("multichannel", numChannels, "column", volume);
                     while (numChannels > 0)
                     {
@@ -315,7 +318,7 @@ public class ProcedureLoader : MonoBehaviour
                             SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
                         }
                         numChannels--;
-                        activeWellId = GetNextWellVertical(activeWellId);
+                        activeWellId = GetNextWellVertical(activeWellId, offset);
                     }
                 }
 
@@ -329,14 +332,6 @@ public class ProcedureLoader : MonoBehaviour
         else if (actionType == LabAction.ActionType.transfer)
         {
             startOfDilution = true;
-            if (!SessionState.CurrentStep.materials[int.Parse(sourceID)].ContainsWell(sourceSubID))
-            {
-                SessionState.CurrentStep.materials[int.Parse(sourceID)].AddWell(sourceSubID, new Well(targetSubID, int.Parse(sourceID)));
-            }
-            if (!SessionState.CurrentStep.materials[int.Parse(targetID)].ContainsWell(targetSubID))
-            {
-                SessionState.CurrentStep.materials[int.Parse(targetID)].AddWell(targetSubID, new Well(targetSubID, int.Parse(targetID)));
-            }
             SessionState.CurrentStep.AddTransferAction(sourceID, sourceSubID, targetID, targetSubID, volume);
         }
         else if (actionType == LabAction.ActionType.dilution)
@@ -377,7 +372,7 @@ public class ProcedureLoader : MonoBehaviour
     }
 
     //returns number of channels from well group identifier
-    int GetNumberChannels(string[] wellGroup, bool isHorizontal)
+    int GetNumWellsSpanned(string[] wellGroup, bool isHorizontal)
     {
         int startWellNumber;
         int endWellNumber;
@@ -413,7 +408,7 @@ public class ProcedureLoader : MonoBehaviour
     }
 
     //returns the well id of the well to right
-    string GetNextWellHorizontal(string currentWell)
+    string GetNextWellHorizontal(string currentWell, int offset)
     {
         int startWellNumber;
 
@@ -427,17 +422,17 @@ public class ProcedureLoader : MonoBehaviour
             startWellNumber = Int32.Parse(new string(chars));
         }
         
-        startWellNumber++;
+        startWellNumber += offset;
 
         return new string(currentWell[0] + startWellNumber.ToString());
     }
 
     //returns the id of the well below
-    string GetNextWellVertical(string currentWell)
+    string GetNextWellVertical(string currentWell, int offset)
     {
         string columnId = currentWell.Substring(1);
 
-        char nextRowId = (char)(((int)currentWell[0]) + 1);
+        char nextRowId = (char)(((int)currentWell[0]) + offset);
 
         return new string(nextRowId.ToString() + columnId);
     }

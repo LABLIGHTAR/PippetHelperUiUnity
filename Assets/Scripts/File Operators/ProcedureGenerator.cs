@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
-using SFB; //Copyright (c) 2017 Gökhan Gökçe Under MIT License
 
 public class ProcedureGenerator : MonoBehaviour
 {
@@ -23,39 +22,24 @@ public class ProcedureGenerator : MonoBehaviour
         generateProcedureButton.onClick.AddListener(GenerateProcedure);
 
         addedSamples = new List<Sample>();
-#if UNITY_STANDALONE && !UNITY_EDITOR
+
         //check if new protocol folder exists
         folderPath = Path.Combine(@Application.temporaryCachePath, "..", "new_protocols");
         if(!Directory.Exists(folderPath))
         {
             Directory.CreateDirectory(folderPath);
         }
-#endif
     }
 
     public void GenerateProcedure()
     {
-        var extensionList = new[] {
-                new ExtensionFilter("Comma Seperated Variables", "csv"),
-            };
-
         if(SessionState.ProcedureName != null)
         {
-#if UNITY_STANDALONE && !UNITY_EDITOR
-                filePath = StandaloneFileBrowser.SaveFilePanel("Save File", folderPath, SessionState.ProcedureName, extensionList); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
-#endif
-#if UNITY_EDITOR
-               filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", SessionState.ProcedureName, extensionList); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
-#endif
+            filePath = Path.Combine(folderPath, SessionState.ProcedureName + ".csv");
         }
         else
         {
-#if UNITY_STANDALONE && !UNITY_EDITOR
-                filePath = StandaloneFileBrowser.SaveFilePanel("Save File", folderPath, "", extensionList); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
-#endif
-#if UNITY_EDITOR
-                filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", extensionList); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
-#endif
+            return;
         }
 
         StreamWriter sw = new StreamWriter(filePath);

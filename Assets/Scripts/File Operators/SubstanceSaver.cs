@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
-using SFB; //Copyright (c) 2017 Gökhan Gökçe Under MIT License
 
 public class SubstanceSaver : MonoBehaviour
 {
     public Button saveSubstancesButton;
 
+    private string folderPath;
     private string filePath;
 
     private string delimiter = ",";
@@ -15,22 +15,20 @@ public class SubstanceSaver : MonoBehaviour
     void Start()
     {
         saveSubstancesButton.onClick.AddListener(SaveSubstances);
+
+        //check if sample list folder exists
+        folderPath = Path.Combine(@Application.temporaryCachePath, "..", "sample_lists");
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
     }
 
     public void SaveSubstances()
     {
-        var extensionList = new[] {
-                new ExtensionFilter("Comma Seperated Variables", "csv"),
-            };
-
         if (SessionState.ProcedureName != null)
         {
-            filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", SessionState.ProcedureName + "_Sample_List", extensionList); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
-            Debug.Log(filePath);
-        }
-        else
-        {
-            filePath = StandaloneFileBrowser.SaveFilePanel("Save File", "", "", extensionList); //Copyright (c) 2017 Gökhan Gökçe Under MIT License
+            filePath = Path.Combine(folderPath, SessionState.ProcedureName + "_Sample_List.csv");
             Debug.Log(filePath);
         }
 
