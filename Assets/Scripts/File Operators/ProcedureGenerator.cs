@@ -1,11 +1,15 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using TMPro;
 
 public class ProcedureGenerator : MonoBehaviour
 {
     public Button generateProcedureButton;
+
+    public TextMeshProUGUI saveMessage;
 
     private string folderPath;
     private string filePath;
@@ -19,7 +23,11 @@ public class ProcedureGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        generateProcedureButton.onClick.AddListener(GenerateProcedure);
+        generateProcedureButton.onClick.AddListener(delegate
+        {
+            GenerateProcedure();
+            StartCoroutine(ShowSaveMessage());
+        });
 
         addedSamples = new List<Sample>();
 
@@ -89,6 +97,20 @@ public class ProcedureGenerator : MonoBehaviour
         sw.Close();
 
         Debug.Log("CSV file written to: " + filePath);
+    }
+
+    private IEnumerator ShowSaveMessage()
+    {
+        saveMessage.gameObject.SetActive(true);
+
+        saveMessage.color = new Color(saveMessage.color.r, saveMessage.color.g, saveMessage.color.b, 1);
+        while (saveMessage.color.a > 0.0f)
+        {
+            saveMessage.color = new Color(saveMessage.color.r, saveMessage.color.g, saveMessage.color.b, saveMessage.color.a - (Time.deltaTime * 1f));
+            yield return null;
+        }
+
+        saveMessage.gameObject.SetActive(false);
     }
 
     string FindGroupEnd(int groupId, int plateId)
