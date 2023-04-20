@@ -10,10 +10,9 @@ public class MainCanvasViewController : MonoBehaviour
     public GameObject TransferDisplay;
     public GameObject DilutionDisplay;
   
-    // Start is called before the first frame update
-    void Start()
+
+    void Awake()
     {
-        MaterialViewController.materialsSelectedStream.Subscribe(_ => ActionDisplay.SetActive(true));
         SessionState.actionTypeStream.Subscribe(actionType =>
         {
             switch (actionType)

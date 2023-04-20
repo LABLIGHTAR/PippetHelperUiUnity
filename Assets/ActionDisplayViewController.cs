@@ -18,14 +18,17 @@ public class ActionDisplayViewController : MonoBehaviour
     {
         SessionState.stepStream.Subscribe(stepNum =>
         {
-            foreach (Transform child in ContentParent)
+            if(ContentParent != null)
             {
-                Destroy(child.gameObject);
-            }
-            foreach (LabAction action in SessionState.Steps[SessionState.ActiveStep].actions)
-            {
+                foreach (Transform child in ContentParent)
+                {
+                    Destroy(child.gameObject);
+                }
+                foreach (LabAction action in SessionState.Steps[SessionState.ActiveStep].actions)
+                {
 
-                CreateActionItem(action);
+                    CreateActionItem(action);
+                }
             }
 
             RenewStepSubscriptions();

@@ -7,6 +7,11 @@ public class SceneLoader : MonoBehaviour
     public Animator transition;
     public float transitionTime = 1f;
 
+    public void LoadMainMenuScene()
+    {
+        StartCoroutine(TransitionToMainMenu());
+    }
+
     public void LoadNewProcedureScene()
     {
         StartCoroutine(TransitionToNewProcedure());
@@ -17,6 +22,12 @@ public class SceneLoader : MonoBehaviour
         StartCoroutine(TransitionToExistingProcedure());
     }
 
+    IEnumerator TransitionToMainMenu()
+    {
+        transition.SetTrigger("Start");
+        yield return new WaitForSeconds(transitionTime);
+        SceneManager.LoadScene(0);
+    }
 
     IEnumerator TransitionToNewProcedure()
     {

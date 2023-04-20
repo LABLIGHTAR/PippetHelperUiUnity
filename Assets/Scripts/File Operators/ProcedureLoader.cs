@@ -13,6 +13,8 @@ public class ProcedureLoader : MonoBehaviour
     public static Subject<bool> procedureStream = new Subject<bool>();
     public static Subject<int> materialsLoadedStream = new Subject<int>();
 
+    public Button backButton;
+
     public GameObject protocolSelectionMenu;
     public Transform protocolList;
     public GameObject protocolListItemPrefab;
@@ -27,7 +29,6 @@ public class ProcedureLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
         //check if protocol folder exists
         folderPath = Path.Combine(@Application.temporaryCachePath, "..", "inflight_protocols");
 
@@ -41,8 +42,9 @@ public class ProcedureLoader : MonoBehaviour
         foreach (string fileName in fileNames)
         {
             var newListItem = Instantiate(protocolListItemPrefab, protocolList);
-            newListItem.GetComponent<ProtocolListItemViewController>().InitItem(Path.GetFileNameWithoutExtension(fileName), fileName);
-            newListItem.GetComponent<Button>().onClick.AddListener(delegate { StartCoroutine(LoadProcedure(fileName)); });
+            var newListItemVC = newListItem.GetComponent<ProtocolListItemViewController>();
+            newListItemVC.InitItem(Path.GetFileNameWithoutExtension(fileName), fileName);
+            newListItemVC.editButton.onClick.AddListener(delegate { StartCoroutine(LoadProcedure(fileName)); });
         }
     }
 
