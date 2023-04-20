@@ -6,7 +6,7 @@ using TMPro;
 
 public class MaterialDisplayViewController : MonoBehaviour
 {
-    public TextMeshProUGUI materialName;
+    public TextMeshProUGUI materialType;
     public Image materialImage;
     public Button editButton;
     public Button rotateButton;
@@ -18,9 +18,9 @@ public class MaterialDisplayViewController : MonoBehaviour
         trashButton.onClick.AddListener(DeleteMaterial);
     }
     
-    public void InitDisplay(string inputName, Sprite inputSprite)
+    public void InitDisplay(string inputType, Sprite inputSprite)
     {
-        materialName.text = inputName;
+        materialType.text = inputType;
         materialImage.sprite = inputSprite;
     }
 

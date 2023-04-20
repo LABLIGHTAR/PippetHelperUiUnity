@@ -80,26 +80,38 @@ public class MaterialViewController : MonoBehaviour
     void Add96WellPlate()
     {
         materialList.SetActive(false);
-        GameObject newMaterial = Instantiate(materialViewPrefab, this.transform);
 
-        newMaterial.GetComponent<MaterialDisplayViewController>().InitDisplay("96-Well Plate", sprite96);
-
-        SessionState.Materials.Add(new Wellplate(materialID, "wellplate96", 96));
+        LabMaterial newWellplate = new Wellplate(materialID, "wellplate96", 96);
+        SessionState.Materials.Add(newWellplate);
         materialID++;
-
         numMaterials++;
+
+        var newMaterialVC = Instantiate(materialViewPrefab, this.transform).GetComponent<MaterialDisplayViewController>();
+        newMaterialVC.InitDisplay("96-Well Plate", sprite96);
+        newMaterialVC.trashButton.onClick.AddListener(delegate
+        {
+            materialID = newWellplate.id;
+            SessionState.Materials.Remove(newWellplate);
+            numMaterials--;
+        });
     }
 
     void Add384WellPlate()
     {
         materialList.SetActive(false);
-        GameObject newMaterial = Instantiate(materialViewPrefab, this.transform);
 
-        newMaterial.GetComponent<MaterialDisplayViewController>().InitDisplay("384-Well Plate", sprite384);
-
-        SessionState.Materials.Add(new Wellplate(materialID, "wellplate384", 384));
+        LabMaterial newWellplate = new Wellplate(materialID, "wellplate384", 384);
+        SessionState.Materials.Add(newWellplate);
         materialID++;
-
         numMaterials++;
+
+        var newMaterialVC = Instantiate(materialViewPrefab, this.transform).GetComponent<MaterialDisplayViewController>();
+        newMaterialVC.InitDisplay("384-Well Plate", sprite384);
+        newMaterialVC.trashButton.onClick.AddListener(delegate
+        {
+            materialID = newWellplate.id;
+            SessionState.Materials.Remove(newWellplate);
+            numMaterials--;
+        });
     }
 }
