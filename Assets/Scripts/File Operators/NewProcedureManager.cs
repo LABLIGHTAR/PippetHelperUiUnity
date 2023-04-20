@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
@@ -5,16 +6,18 @@ using TMPro;
 
 public class NewProcedureManager : MonoBehaviour
 {
-    public TextMeshProUGUI inputText;
     public TMP_InputField input;
-
-    public GameObject inputError;
+    public TextMeshProUGUI inputText;
+    public TextMeshProUGUI inputError;
 
     public Button createProcedureButton;
+
+    private string procedureName;
 
     // Start is called before the first frame update
     void Start()
     {
+        inputError.text = "";
         createProcedureButton.onClick.AddListener(CreateProcedure);
         SessionState.FormActive = true;
 
@@ -27,24 +30,45 @@ public class NewProcedureManager : MonoBehaviour
 
     void Update()
     {
-        if(Keyboard.current.enterKey.wasPressedThisFrame)
+        if (Keyboard.current.enterKey.wasPressedThisFrame)
         {
             CreateProcedure();
         }
     }
-    
+
     void CreateProcedure()
     {
-        if (inputText.text.Length > 1)
+        procedureName = inputText.text.Substring(0, inputText.text.Length - 1);
+        Debug.Log(procedureName);
+        Debug.Log(procedureName.Length);
+
+        if (ProcedureNameValid())
         {
-            inputError.SetActive(false);
-            SessionState.ProcedureName = inputText.text.Substring(0, inputText.text.Length - 1);
+            SessionState.ProcedureName = procedureName;
             this.gameObject.SetActive(false);
             SessionState.FormActive = false;
         }
-        else
+    }
+
+    bool ProcedureNameValid()
+    {
+        if(string.IsNullOrEmpty(procedureName))
         {
-            inputError.SetActive(true);
+            inputError.text = "Protcol name empty*";
+            return false;
         }
+        if (procedureName.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
+        {
+            inputError.text = "Invalid character in protocol name*";
+            return false;
+        }
+        if (File.Exists(Path.Combine(@Application.temporaryCachePath, "..", "inflight_protocols", procedureName + ".csv")))
+        {
+            inputError.text = "A protocol with this name already exists*";
+            return false;
+        }
+
+        inputError.text = "";
+        return true;
     }
 }

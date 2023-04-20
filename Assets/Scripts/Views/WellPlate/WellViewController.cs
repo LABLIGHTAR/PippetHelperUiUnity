@@ -40,7 +40,8 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         ProcedureLoader.procedureStream.Subscribe(_ => LoadVisualState());
         
         SessionState.stepStream.Subscribe(_ => 
-        { 
+        {
+            SessionState.CurrentStep.materials[plateId].GetWell(wellId);
             LoadVisualState();
             RenewStepSubscriptions();
         });
