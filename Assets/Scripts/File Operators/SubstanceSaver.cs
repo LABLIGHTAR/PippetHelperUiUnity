@@ -26,6 +26,12 @@ public class SubstanceSaver : MonoBehaviour
 
     public void SaveSubstances()
     {
+        if(SessionState.AvailableSamples.Count <= 0)
+        {
+            Debug.LogWarning("Sample list empty, nothing to save...");
+            return;
+        }
+
         if (SessionState.ProcedureName != null)
         {
             filePath = Path.Combine(folderPath, SessionState.ProcedureName + "_Sample_List.csv");

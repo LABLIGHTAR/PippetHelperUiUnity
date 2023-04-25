@@ -30,16 +30,16 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3044375733497253611}
   - {fileID: 6952655605585299095}
   - {fileID: 3929889913080551505}
+  - {fileID: 3044375733497253611}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -844.3, y: -234.23999}
-  m_SizeDelta: {x: 200, y: 30}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6952655605631127093
 MonoBehaviour:
@@ -88,6 +88,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6952655605631127095}
     m_Modifications:
+    - target: {fileID: 189834746838317641, guid: fcaae2328798dc54097a5555ee0e12b9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 250260196673904438, guid: fcaae2328798dc54097a5555ee0e12b9, type: 3}
       propertyPath: m_Name
       value: LoadSubstances
@@ -102,7 +106,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 294678936695682577, guid: fcaae2328798dc54097a5555ee0e12b9, type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 294678936695682577, guid: fcaae2328798dc54097a5555ee0e12b9, type: 3}
       propertyPath: m_AnchorMax.x
@@ -193,6 +197,14 @@ PrefabInstance:
       value: -69.76057
       objectReference: {fileID: 0}
     - target: {fileID: 5225973531202154242, guid: fcaae2328798dc54097a5555ee0e12b9, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225973531202154242, guid: fcaae2328798dc54097a5555ee0e12b9, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225973531202154242, guid: fcaae2328798dc54097a5555ee0e12b9, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 844
       objectReference: {fileID: 0}
@@ -268,7 +280,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3324407817894354370, guid: caf88322da751114a8a4e781745b488f, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3324407817894354370, guid: caf88322da751114a8a4e781745b488f, type: 3}
       propertyPath: m_AnchorMax.x
@@ -382,7 +394,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6133858816155962920, guid: 08ed4fa1af9c0c448a70352e0efbed81, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6133858816155962920, guid: 08ed4fa1af9c0c448a70352e0efbed81, type: 3}
       propertyPath: m_AnchorMax.x

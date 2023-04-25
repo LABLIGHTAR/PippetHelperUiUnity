@@ -8,8 +8,12 @@ public class SubstanceLoader : MonoBehaviour
     public Button loadSubstancesButton;
     public Button yesButton;
     public Button noButton;
+    public Button backButton;
     public GameObject savePanel;
     public Transform substanceList;
+    public GameObject sampleListItemPrefab;
+    public GameObject savedSubstancesList;
+    public Transform savedSubstancesContent;
 
     private string folderPath;
     private string[] fileNames;
@@ -18,8 +22,36 @@ public class SubstanceLoader : MonoBehaviour
     void Start()
     {
         loadSubstancesButton.onClick.AddListener(ShowConfirmation);
-        yesButton.onClick.AddListener(LoadSubstances);
-        noButton.onClick.AddListener(delegate { savePanel.SetActive(false); });
+        yesButton.onClick.AddListener(LoadSavedSubstancesList);
+        noButton.onClick.AddListener(delegate 
+        { 
+            savePanel.SetActive(false);
+            SessionState.FormActive = false;
+        });
+        backButton.onClick.AddListener(delegate
+        {
+            savedSubstancesList.SetActive(false);
+            backButton.gameObject.SetActive(false);
+            SessionState.FormActive = false;
+        });
+    }
+
+    void ShowConfirmation()
+    {
+        savePanel.SetActive(true);
+        SessionState.FormActive = true;
+    }
+
+    void LoadSavedSubstancesList()
+    {
+        savePanel.SetActive(false);
+        savedSubstancesList.SetActive(true);
+        backButton.gameObject.SetActive(true);
+
+        foreach(Transform listItem in savedSubstancesContent)
+        {
+            Destroy(listItem.gameObject);
+        }
 
         //check if sample list folder exists
         folderPath = Path.Combine(@Application.temporaryCachePath, "..", "sample_lists");
@@ -30,37 +62,45 @@ public class SubstanceLoader : MonoBehaviour
         }
 
         fileNames = Directory.GetFiles(folderPath, "*.csv", SearchOption.TopDirectoryOnly);
-    }
 
-    void ShowConfirmation()
-    {
-        savePanel.SetActive(true);
-    }
-
-    void LoadSubstances()
-    {
-        savePanel.SetActive(false);
-
-        if (!(fileNames.Count() > 0))
+        if (fileNames.Count() <= 0)
         {
             return;
         }
 
-        StreamReader sr = new StreamReader(fileNames[0]);
+        foreach(string fileName in fileNames)
+        {
+            var newSampleListItem = Instantiate(sampleListItemPrefab, savedSubstancesContent);
+            var newSampleListItemVC = newSampleListItem.GetComponent<SampleListItemViewController>();
+
+            newSampleListItemVC.InitItem(fileName);
+            newSampleListItemVC.selectButton.onClick.AddListener(delegate { LoadSubstances(newSampleListItemVC.GetPath()); });
+        }
+    }
+
+    private void LoadSubstances(string filePath)
+    {
+        savedSubstancesList.SetActive(false);
+        SessionState.FormActive = false;
+
+        StreamReader sr = new StreamReader(filePath);
 
         string currentLine;
 
         string[] lineCells;
 
         //clear session state substances
-        SessionState.Materials = SessionState.Materials.Where(m => m.GetSampleList() == null).ToList();
+        foreach(Sample s in SessionState.AvailableSamples)
+        {
+            SessionState.RemoveSample(s.sampleName);
+        }
+        SessionState.Materials = SessionState.Materials.Where(m => m is Wellplate).ToList();
 
         //clear substances from UI
         foreach (Transform child in substanceList)
         {
             Destroy(child.gameObject);
         }
-       
 
         //read the file until the end of file is reached
         while ((currentLine = sr.ReadLine()) != null)
@@ -76,14 +116,14 @@ public class SubstanceLoader : MonoBehaviour
             ColorUtility.TryParseHtmlString(lineCells[3], out sampleColor);
             string vesselType = lineCells[4];
 
-            if(vesselType == "tuberack5ml")
+            if (vesselType == "tuberack5ml")
             {
                 vesselType = "5mL Tube";
             }
-            else if(vesselType == "reservoir")
+            else if (vesselType == "reservoir")
             {
                 vesselType = "Reservoir";
-            }    
+            }
 
             //add Sample to sessionState
             SessionState.AddNewSample(sampleName, sampleAbbreviation, sampleColorName, sampleColor, vesselType);

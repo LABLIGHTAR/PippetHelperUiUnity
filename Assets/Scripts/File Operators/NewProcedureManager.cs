@@ -39,8 +39,6 @@ public class NewProcedureManager : MonoBehaviour
     void CreateProcedure()
     {
         procedureName = inputText.text.Substring(0, inputText.text.Length - 1);
-        Debug.Log(procedureName);
-        Debug.Log(procedureName.Length);
 
         if (ProcedureNameValid())
         {

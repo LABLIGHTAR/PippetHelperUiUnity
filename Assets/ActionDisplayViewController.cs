@@ -34,7 +34,7 @@ public class ActionDisplayViewController : MonoBehaviour
             RenewStepSubscriptions();
         });
 
-        if(SessionState.Steps.Count > 0)
+        if(SessionState.Steps != null && SessionState.Steps.Count > 0)
         {
             RenewStepSubscriptions();
         }

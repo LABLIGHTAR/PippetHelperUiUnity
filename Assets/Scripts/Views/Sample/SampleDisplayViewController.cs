@@ -21,7 +21,7 @@ public class SampleDisplayViewController : MonoBehaviour
         SessionState.newSampleStream.Subscribe(newSample =>
         {
             AddSampleDisplay(newSample);
-        });
+        }).AddTo(this);
 
         ProcedureLoader.procedureStream.Subscribe(_ =>
         {
@@ -29,7 +29,7 @@ public class SampleDisplayViewController : MonoBehaviour
             {
                 AddSampleDisplay(sample);
             }
-        });
+        }).AddTo(this);
     }
 
     void Update()
