@@ -24,7 +24,7 @@ public class ToolViewController : MonoBehaviour
     void Start()
     {
        //subscribe to data stream
-        SessionState.activeSampleStream.Subscribe(_ => UpdateVisualState());
+        SessionState.activeSampleStream.Subscribe(_ => UpdateVisualState()).AddTo(this);
 
         //set default volume values
         pipetteVolumeText.text = "10";

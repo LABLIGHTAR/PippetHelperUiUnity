@@ -8,7 +8,6 @@ using UniRx;
 public class MaterialViewController : MonoBehaviour
 {
     public Button addMaterialButton;
-    public Button methodButton;
     
     public Button plate96Button;
     public Sprite sprite96;

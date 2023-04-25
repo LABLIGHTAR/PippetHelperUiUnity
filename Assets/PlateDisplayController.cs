@@ -15,12 +15,12 @@ public class PlateDisplayController : MonoBehaviour
         MaterialViewController.materialsSelectedStream.Subscribe(materialCount =>
         {
             AddWellplatesToScene(materialCount);
-        });
+        }).AddTo(this);
 
         ProcedureLoader.materialsLoadedStream.Subscribe(materialCount =>
         {
             AddWellplatesToScene(materialCount);
-        });
+        }).AddTo(this);
     }
 
     void AddWellplatesToScene(int materialCount)

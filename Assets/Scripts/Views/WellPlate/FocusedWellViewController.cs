@@ -18,7 +18,7 @@ public class FocusedWellViewController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SessionState.focusedWellStream.Subscribe(well => UpdateVisualState(well));
+        SessionState.focusedWellStream.Subscribe(well => UpdateVisualState(well)).AddTo(this);
     }
 
     void UpdateVisualState(Well well)
