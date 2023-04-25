@@ -287,12 +287,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settingsPanel: {fileID: 269885371361913298}
   savePanel: {fileID: 9126797691619273594}
+  quitDesktopButton: {fileID: 269885371900633490}
+  quitMenuButton: {fileID: 7678686772026996368}
   yesButton: {fileID: 1376422114998949597}
   noButton: {fileID: 2599411840868473536}
   closeButton: {fileID: 269885370677654359}
   fullscreenToggle: {fileID: 269885371781014057}
   tutorialToggle: {fileID: 4448062713369258412}
   generator: {fileID: 0}
+  sceneLoader: {fileID: 0}
 --- !u!1 &3674714021321153737
 GameObject:
   m_ObjectHideFlags: 0
@@ -1345,6 +1348,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &269885371900633490 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5745092988799958917, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
+  m_PrefabInstance: {fileID: 5477636030606876183}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4448062713369258412 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8196209967011526587, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
@@ -1354,5 +1368,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7678686772026996368 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2779939354483419271, guid: e82b402c25e2fcf47901e89accb76f0f, type: 3}
+  m_PrefabInstance: {fileID: 5477636030606876183}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

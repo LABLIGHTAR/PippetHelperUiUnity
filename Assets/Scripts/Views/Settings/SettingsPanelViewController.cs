@@ -6,6 +6,8 @@ public class SettingsPanelViewController : MonoBehaviour
 {
     public GameObject settingsPanel;
     public GameObject savePanel;
+    public Button quitDesktopButton;
+    public Button quitMenuButton;
     public Button yesButton;
     public Button noButton;
     public Button closeButton;
@@ -13,6 +15,9 @@ public class SettingsPanelViewController : MonoBehaviour
     public Toggle tutorialToggle;
 
     public ProcedureGenerator generator;
+    public SceneLoader sceneLoader;
+
+    private bool quitApp;
 
     void Start()
     {
@@ -22,17 +27,29 @@ public class SettingsPanelViewController : MonoBehaviour
             SessionState.FormActive = false;
         });
 
+        quitDesktopButton.onClick.AddListener(delegate
+        {
+            quitApp = true;
+            ActivateSavePanel();
+        });
+
+        quitMenuButton.onClick.AddListener(delegate
+        {
+            quitApp = false;
+            ActivateSavePanel();
+        });
+
         yesButton.onClick.AddListener(delegate
         {
             savePanel.SetActive(false);
             generator.GenerateProcedure();
-            Application.Quit();
+            Quit();
         });
 
         noButton.onClick.AddListener(delegate 
         {
             savePanel.SetActive(false);
-            Application.Quit(); 
+            Quit();
         });
 
         //init player prefs
@@ -83,8 +100,20 @@ public class SettingsPanelViewController : MonoBehaviour
         }
     }
 
-    public void ActivateSavePanel()
+    private void ActivateSavePanel()
     {
         savePanel.SetActive(true);
+    }
+
+    private void Quit()
+    {
+        if (quitApp)
+        {
+            Application.Quit();
+        }
+        else
+        {
+            sceneLoader.LoadMainMenuScene();
+        }
     }
 }

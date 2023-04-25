@@ -37,7 +37,7 @@ public class SampleSwatchViewController : MonoBehaviour, IPointerDownHandler
                     InitSampleItem(editedSample.sampleName, editedSample.abreviation, editedSample.color);
                 }
             }
-        });
+        }).AddTo(this);
     }
 
     public void OnPointerDown(PointerEventData eventData)

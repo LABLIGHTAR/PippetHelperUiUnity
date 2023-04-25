@@ -33,6 +33,6 @@ public class MainCanvasViewController : MonoBehaviour
                     DilutionDisplay.SetActive(true);
                     break;
             }
-        });
+        }).AddTo(this);
     }
 }
