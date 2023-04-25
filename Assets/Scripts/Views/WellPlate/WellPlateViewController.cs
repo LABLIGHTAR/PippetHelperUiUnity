@@ -10,7 +10,7 @@ public class WellPlateViewController : MonoBehaviour
     void Start()
     {
         AddWellsToDictionary();
-        SessionState.newStepStream.Subscribe(_ => AddWellsToDictionary());
+        SessionState.newStepStream.Subscribe(_ => AddWellsToDictionary()).AddTo(this);
     }
 
     void AddWellsToDictionary()

@@ -32,7 +32,7 @@ public class ActionDisplayViewController : MonoBehaviour
             }
 
             RenewStepSubscriptions();
-        });
+        }).AddTo(this);
 
         if(SessionState.Steps != null && SessionState.Steps.Count > 0)
         {
@@ -50,7 +50,7 @@ public class ActionDisplayViewController : MonoBehaviour
         actionAddedSubscription = SessionState.CurrentStep.actionAddedStream.Subscribe(action =>
         {
             CreateActionItem(action);
-        });
+        }).AddTo(this);
 
         actionRemovedSubscription = SessionState.CurrentStep.actionRemovedStream.Subscribe(action =>
         {
@@ -62,7 +62,7 @@ public class ActionDisplayViewController : MonoBehaviour
                     Destroy(child.gameObject);
                 }
             }
-        });
+        }).AddTo(this);
     }
 
     void CreateActionItem(LabAction action)

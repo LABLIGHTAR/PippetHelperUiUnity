@@ -37,14 +37,14 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         SelectionManager.Instance.AvailableWells.Add(this);
 
-        ProcedureLoader.procedureStream.Subscribe(_ => LoadVisualState());
+        ProcedureLoader.procedureStream.Subscribe(_ => LoadVisualState()).AddTo(this);
         
         SessionState.stepStream.Subscribe(_ => 
         {
             SessionState.CurrentStep.materials[plateId].GetWell(wellId);
             LoadVisualState();
             RenewStepSubscriptions();
-        });
+        }).AddTo(this);
 
         SessionState.editedSampleStream.Subscribe(samples =>
         {
@@ -52,7 +52,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 UpdateSampleIndicator(samples.Item1.color, samples.Item2.color);
             }
-        });
+        }).AddTo(this);
 
         SessionState.actionStatusStream.Subscribe(status =>
         {
@@ -72,7 +72,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     OnDeselected(SessionState.ActiveTool.numChannels);
                     break;
             }
-        });
+        }).AddTo(this);
 
         SessionState.focusedActionStream.Subscribe(action =>
         {
@@ -80,7 +80,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                 HighlightAction(action);
             else
                 OnDeselected(SessionState.ActiveTool.numChannels);
-        });
+        }).AddTo(this);
 
         RenewStepSubscriptions();
     }
@@ -98,7 +98,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 UpdateFromActionAdded(action);
             }
-        });
+        }).AddTo(this);
 
         SessionState.CurrentStep.actionRemovedStream.Subscribe(action =>
         {
@@ -106,7 +106,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 UpdateFromActionRemoved(action);
             }
-        });
+        }).AddTo(this);
     }
 
     private void UpdateFromActionAdded(LabAction action)
