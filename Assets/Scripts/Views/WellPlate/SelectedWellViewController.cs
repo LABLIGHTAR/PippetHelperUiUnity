@@ -28,7 +28,7 @@ public class SelectedWellViewController : MonoBehaviour
                 UpdateVisualState(wells);
                 selectedWells = wells;
             }
-        });
+        }).AddTo(this);
     }
 
     public void ClearDisplay()

@@ -23,12 +23,12 @@ public class ProgressionViewController : MonoBehaviour
         MaterialViewController.materialsSelectedStream.Subscribe(_ =>
         {
             SetMethod();
-        });
+        }).AddTo(this);
 
         ProcedureLoader.procedureStream.Subscribe(_ =>
         {
             SetMethod();
-        });
+        }).AddTo(this);
     }
 
    void SetMaterials()

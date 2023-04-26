@@ -49,9 +49,9 @@ public class DilutionDisplayViewController : MonoBehaviour
 
         CreateDilutionItems();
 
-        numDilutionsDropdown.onValueChanged.AddListener(delegate { CreateDilutionItems();  });
+        SessionState.selectedWellsStream.Subscribe(wells => SelectWell(wells)).AddTo(this);
 
-        SessionState.selectedWellsStream.Subscribe(wells => SelectWell(wells));
+        numDilutionsDropdown.onValueChanged.AddListener(delegate { CreateDilutionItems();  });
 
         clearSelectionsButton.onClick.AddListener(CreateDilutionItems);
 

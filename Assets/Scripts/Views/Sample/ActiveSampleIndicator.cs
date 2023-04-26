@@ -9,7 +9,7 @@ public class ActiveSampleIndicator : MonoBehaviour
     {
         indicator.enabled = false;
 
-        SessionState.activeSampleStream.Subscribe(Sample => UpdateIndicatorColor(Sample.color));
+        SessionState.activeSampleStream.Subscribe(Sample => UpdateIndicatorColor(Sample.color)).AddTo(this);
     }
 
     // Update is called once per frame

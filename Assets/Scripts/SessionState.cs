@@ -21,7 +21,7 @@ public class SessionState : MonoBehaviour
     void Start()
     {
         //after materials are chosen create step 1
-        MaterialViewController.materialsSelectedStream.Subscribe(_ => AddNewStep());
+        MaterialViewController.materialsSelectedStream.Subscribe(_ => AddNewStep()).AddTo(this);
     }
 
     //state variables
