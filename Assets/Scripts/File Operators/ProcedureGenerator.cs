@@ -78,12 +78,12 @@ public class ProcedureGenerator : MonoBehaviour
             foreach (var action in step.actions)
             {
                 string actionString = delimiter + "action:" + action.type.ToString() + delimiter + action.source.matID + ":" + action.source.matSubID;
-                if (action.SourceIsWellplate())
+                if (action.SourceIsWellplate() && action.numChannels > 1)
                 {
                     actionString += ";" + action.numChannels;
                 }
                 actionString += delimiter + Color32ToHex(action.source.color) + ":" + action.source.colorName + delimiter + action.source.volume + delimiter + "μL" + delimiter + action.target.matID + ":" + action.target.matSubID;
-                if(action.TargetIsWellplate())
+                if(action.TargetIsWellplate() && action.numChannels > 1)
                 {
                     actionString += ";" + action.numChannels;
                 }
