@@ -56,6 +56,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         SessionState.actionStatusStream.Subscribe(status =>
         {
+            Debug.Log(status);
             switch (status)
             {
                 case LabAction.ActionStatus.selectingSource:
@@ -337,13 +338,13 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             if (SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource && !selected)
             {
                 SelectionSprite.color = Color.red;
+                SelectionSprite.gameObject.SetActive(true);
             }
             else if (SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget && !selected)
             {
                 SelectionSprite.color = Color.green;
+                SelectionSprite.gameObject.SetActive(true);
             }
-
-            SelectionSprite.gameObject.SetActive(true);
             return true;
         }
     }

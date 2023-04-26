@@ -501,8 +501,8 @@ public class SessionState : MonoBehaviour
         {
             if(well.Value.selected)
             {
-                Debug.Log(well.Value.id);
                 selectedWells.Add(well.Value);
+                well.Value.selected = false;
             }
         }
         SelectedWells = selectedWells;
