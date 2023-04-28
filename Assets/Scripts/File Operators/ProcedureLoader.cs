@@ -264,6 +264,37 @@ public class ProcedureLoader : MonoBehaviour
         ColorUtility.TryParseHtmlString(targetColors[0], out targetColor);
         targetColorName = targetColors[1];
 
+
+        string[] wellGroup;
+        string activeWellId;
+        int offset = 0;
+        //set active tool
+        if (targetSubID != "" && targetSubID.Contains("-"))
+        {
+            wellGroup = targetSubID.Split('-');
+            activeWellId = wellGroup[0];
+
+            if (wellGroup[0][0] == wellGroup[1][0])
+            {
+                int numWellsSpanned = GetNumWellsSpanned(wellGroup, true);
+                offset = (numWellsSpanned + 1) / numChannels;
+
+                SessionState.ActiveTool = new Tool("multichannel", numChannels, "row", volume);
+            }
+            else
+            {
+                int numWellsSpanned = GetNumWellsSpanned(wellGroup, false);
+                offset = (numWellsSpanned + 1) / numChannels;
+
+                SessionState.ActiveTool = new Tool("multichannel", numChannels, "column", volume);
+            }
+        }
+        else
+        {
+            SessionState.ActiveTool = new Tool("pipette", 1, "row", volume);
+        }
+
+        //Add action
         if (actionType == LabAction.ActionType.pipette)
         {
             startOfDilution = true;
@@ -272,62 +303,36 @@ public class ProcedureLoader : MonoBehaviour
             //set active tool to match action
             if (targetSubID != "" && targetSubID.Contains("-"))
             {
-                string[] wellGroup = targetSubID.Split('-');
-                string activeWellId = wellGroup[0];
+                wellGroup = targetSubID.Split('-');
+                activeWellId = wellGroup[0];
 
-                if (wellGroup[0][0] == wellGroup[1][0])
+                while (numChannels > 0)
                 {
-                    int numWellsSpanned = GetNumWellsSpanned(wellGroup, true);
-                    int offset = (numWellsSpanned + 1) / numChannels;
-
-                    SessionState.ActiveTool = new Tool("multichannel", numChannels, "row", volume);
-                    while (numChannels > 0)
+                    if (activeWellId == wellGroup[0])
                     {
-                        if (activeWellId == wellGroup[0])
-                        {
-                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
-                        }
-                        else if (activeWellId == wellGroup[1])
-                        {
-                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
-                        }
-                        else
-                        {
-                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
-                        }
-                        numChannels--;
+                        SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
+                    }
+                    else if (activeWellId == wellGroup[1])
+                    {
+                        SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
+                    }
+                    else
+                    {
+                        SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
+                    }
+                    numChannels--;
+                    if (wellGroup[0][0] == wellGroup[1][0])
+                    {
                         activeWellId = GetNextWellHorizontal(activeWellId, offset);
                     }
-                }
-                else
-                {
-                    int numWellsSpanned = GetNumWellsSpanned(wellGroup, false);
-                    int offset = (numWellsSpanned + 1) / numChannels;
-
-                    SessionState.ActiveTool = new Tool("multichannel", numChannels, "column", volume);
-                    while (numChannels > 0)
+                    else
                     {
-                        if (activeWellId == wellGroup[0])
-                        {
-                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, true, false);
-                        }
-                        else if (activeWellId == wellGroup[1])
-                        {
-                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, true);
-                        }
-                        else
-                        {
-                            SessionState.CurrentStep.TryAddActiveSampleToWell(activeWellId, int.Parse(targetID), true, false, false);
-                        }
-                        numChannels--;
                         activeWellId = GetNextWellVertical(activeWellId, offset);
                     }
                 }
-
             }
             else
             {
-                SessionState.ActiveTool = new Tool("pipette", 1, "row", volume);
                 SessionState.CurrentStep.TryAddActiveSampleToWell(targetSubID, int.Parse(targetID), false, false, false);
             }
         }
