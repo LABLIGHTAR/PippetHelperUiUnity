@@ -241,21 +241,21 @@ public class Step
         AddAction(LabAction.ActionType.transfer, source, target);
     }
 
-    public void AddDilutionAction(Well sourceWell, Well targetWell, float dilutionFactor)
+    public void AddDilutionAction(string sourceId, string SourceSubId, string targetId, string targetSubId,float dilutionFactor)
     {
-        var source = new LabAction.Source(sourceWell.plateId.ToString(), sourceWell.id, Color.red, "Red", dilutionFactor, "μL");
-        var target = new LabAction.Target(targetWell.plateId.ToString(), targetWell.id, Color.green, "Green");
+        var source = new LabAction.Source(sourceId, SourceSubId, Color.red, "Red", dilutionFactor, "μL");
+        var target = new LabAction.Target(targetId, targetSubId, Color.green, "Green");
         AddAction(LabAction.ActionType.dilution, source, target);
     }
 
-    public void AddDilutionActionStart(Sample sourceSample, Well targetWell, float dilutionFactor)
+    public void AddDilutionActionStart(Sample sourceSample, string targetId, string targetSubId, float dilutionFactor)
     {
         var sourceMaterial = SessionState.Materials.Where(material => material.ContainsSample(sourceSample)).FirstOrDefault();
         var sampleList = sourceMaterial.GetSampleList();
         var sampleID = sampleList.IndexOf(sourceSample);
 
         var source = new LabAction.Source(sourceMaterial.id.ToString(), sampleID.ToString(), Color.red, "Red", dilutionFactor, "μL");
-        var target = new LabAction.Target(targetWell.plateId.ToString(), targetWell.id, Color.green, "Green");
+        var target = new LabAction.Target(targetId, targetSubId, Color.green, "Green");
         AddAction(LabAction.ActionType.dilution, source, target);
     }
 }

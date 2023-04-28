@@ -342,12 +342,12 @@ public class ProcedureLoader : MonoBehaviour
             {
                 if (SessionState.CurrentStep.materials[int.Parse(targetID)].ContainsWell(targetSubID))
                 {
-                    SessionState.CurrentStep.AddDilutionActionStart(SessionState.Materials[int.Parse(sourceID)].GetSampleList()[int.Parse(sourceSubID)], SessionState.Materials[int.Parse(targetID)].GetWell(targetSubID), volume);
+                    SessionState.CurrentStep.AddDilutionActionStart(SessionState.Materials[int.Parse(sourceID)].GetSampleList()[int.Parse(sourceSubID)],targetID, targetSubID, volume);
                 }
                 else
                 {
                     SessionState.CurrentStep.materials[int.Parse(targetID)].AddWell(targetSubID, new Well(targetSubID, int.Parse(targetID)));
-                    SessionState.CurrentStep.AddDilutionActionStart(SessionState.Materials[int.Parse(sourceID)].GetSampleList()[int.Parse(sourceSubID)], SessionState.CurrentStep.materials[int.Parse(targetID)].GetWell(targetSubID), volume);
+                    SessionState.CurrentStep.AddDilutionActionStart(SessionState.Materials[int.Parse(sourceID)].GetSampleList()[int.Parse(sourceSubID)], targetID, targetSubID, volume);
                 }
                 startOfDilution = false;
             }
@@ -355,7 +355,7 @@ public class ProcedureLoader : MonoBehaviour
             {
                 if (SessionState.CurrentStep.materials[int.Parse(sourceID)].ContainsWell(sourceSubID) && SessionState.CurrentStep.materials[int.Parse(targetID)].ContainsWell(targetSubID))
                 {
-                    SessionState.CurrentStep.AddDilutionAction(SessionState.Materials[int.Parse(sourceID)].GetWell(sourceSubID), SessionState.Materials[int.Parse(targetID)].GetWell(targetSubID), volume);
+                    SessionState.CurrentStep.AddDilutionAction(sourceID, sourceSubID, targetID, targetSubID, volume);
                 }
                 else
                 {
@@ -367,7 +367,7 @@ public class ProcedureLoader : MonoBehaviour
                     {
                         SessionState.CurrentStep.materials[int.Parse(targetID)].AddWell(targetSubID, new Well(targetSubID, int.Parse(targetID)));
                     }
-                    SessionState.CurrentStep.AddDilutionAction(SessionState.CurrentStep.materials[int.Parse(sourceID)].GetWell(sourceSubID), SessionState.CurrentStep.materials[int.Parse(targetID)].GetWell(targetSubID), volume);
+                    SessionState.CurrentStep.AddDilutionAction(sourceID, sourceSubID, targetID, targetSubID, volume);
                 }
             }
         }

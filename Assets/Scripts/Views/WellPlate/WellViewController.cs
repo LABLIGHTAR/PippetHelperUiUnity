@@ -56,7 +56,6 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         SessionState.actionStatusStream.Subscribe(status =>
         {
-            Debug.Log(status);
             switch (status)
             {
                 case LabAction.ActionStatus.selectingSource:
@@ -478,9 +477,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
             else if (SessionState.ActiveActionType == LabAction.ActionType.dilution && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
             {
-                selected = true;
-                SessionState.CurrentStep.materials[plateId].GetWell(wellId).selected = true;
-                OnSelected(SessionState.ActiveTool.numChannels);
+                OnSelectedAndClicked(SessionState.ActiveTool.numChannels);
                 SessionState.SetSelectedWells(plateId);
             }
             if (SessionState.CurrentStep.materials[plateId].ContainsWell(wellId))

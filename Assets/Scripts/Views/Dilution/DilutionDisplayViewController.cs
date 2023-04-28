@@ -36,7 +36,7 @@ public class DilutionDisplayViewController : MonoBehaviour
     private int dilutionFactor;
     private int numDilutions;
 
-    private List<Well> selectedWells;
+    private List<(string Id, string subId)> selected;
     private int itemNum;
 
     private int inputSelected;
@@ -46,7 +46,7 @@ public class DilutionDisplayViewController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        selectedWells = new List<Well>();
+        selected = new List<(string, string)>();
 
         CreateDilutionItems();
 
@@ -83,7 +83,7 @@ public class DilutionDisplayViewController : MonoBehaviour
         }
         if(InputValid())
         {
-            if(selectedWells.Count != numDilutions + 1)
+            if(itemNum != numDilutions + 1)
             {
                 SessionState.ActiveActionStatus = LabAction.ActionStatus.selectingTarget;
                 instructionText.text = "Select a well";
@@ -143,7 +143,7 @@ public class DilutionDisplayViewController : MonoBehaviour
             }
         }
 
-        selectedWells.Clear();
+        selected.Clear();
         SessionState.ActiveActionStatus = LabAction.ActionStatus.submitted;
         SessionState.ActiveActionStatus = LabAction.ActionStatus.selectingTarget;
     }
@@ -261,28 +261,41 @@ public class DilutionDisplayViewController : MonoBehaviour
 
     void SelectWells(List<Well> wells)
     {
-        if(SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
+        foreach(Well well in wells)
         {
-            int itemNum = selectedWells.Count;
-            var dilutionItem = dilutionView.GetChild(itemNum).GetComponent<DilutionItemViewController>();
-            selectedWells.Add(wells[0]);
+            Debug.Log(well.id);
+        }
+        if (SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
+        {
+            var dilutionItemVC = dilutionView.GetChild(itemNum).GetComponent<DilutionItemViewController>();
 
-            dilutionItem.wellText.text = wells[0].id;
+            if (wells.Count > 1)
+            {
+                dilutionItemVC.wellText.text = wells[0].id + "-" + wells[wells.Count - 1].id;
+            }
+            else
+            {
+                dilutionItemVC.wellText.text = wells[0].id;
+            }
+
+            selected.Add((wells[0].plateId.ToString(), dilutionItemVC.wellText.text));
 
             string concentration;
             if (itemNum == 0)
             {
                 concentration = "1:" + dilutionFactor.ToString();
-                dilutionItem.dilutionText.text = concentration;
+                dilutionItemVC.dilutionText.text = concentration;
             }
             else
             {
-                double newConcentration = Math.Pow((double)dilutionFactor, (double)selectedWells.Count);
+                double newConcentration = Math.Pow((double)dilutionFactor, (double)selected.Count);
                 concentration = "1:" + newConcentration.ToString();
-                dilutionItem.dilutionText.text = concentration;
+                dilutionItemVC.dilutionText.text = concentration;
             }
+
+            itemNum++;
         }
-        if (selectedWells.Count == numDilutions + 1)
+        if (itemNum == numDilutions + 1)
         {
             SessionState.ActiveActionStatus = LabAction.ActionStatus.awaitingSubmission;
         }
@@ -290,18 +303,18 @@ public class DilutionDisplayViewController : MonoBehaviour
 
     void AddDilutionActions()
     {
-        if(SessionState.ActiveActionStatus == LabAction.ActionStatus.awaitingSubmission)
+        if (SessionState.ActiveActionStatus == LabAction.ActionStatus.awaitingSubmission)
         {
-            for (int i = 0; i < selectedWells.Count; i++)
+            for (int i = 0; i < numDilutions + 1; i++)
             {
                 if (i == 0)
                 {
                     Sample sample = SessionState.AvailableSamples.Where(s => s.sampleName == sampleDropdown.captionText.text).FirstOrDefault();
-                    SessionState.CurrentStep.AddDilutionActionStart(sample, selectedWells[i], float.Parse(dilutionFactorInput.text));
+                    SessionState.CurrentStep.AddDilutionActionStart(sample, selected[i].Id, selected[i].subId, float.Parse(dilutionFactorInput.text));
                 }
                 else
                 {
-                    SessionState.CurrentStep.AddDilutionAction(selectedWells[i - 1], selectedWells[i], float.Parse(dilutionFactorInput.text));
+                    SessionState.CurrentStep.AddDilutionAction(selected[i - 1].Id, selected[i-1].subId, selected[i].Id, selected[i].subId, float.Parse(dilutionFactorInput.text));
                 }
             }
             SessionState.ActiveActionStatus = LabAction.ActionStatus.submitted;
@@ -310,7 +323,7 @@ public class DilutionDisplayViewController : MonoBehaviour
 
     void ClearUI()
     {
-        selectedWells.Clear();
+        selected.Clear();
 
         instructionText.text = "Enter dilution parameters";
         dilutionFactorInput.text = "";
