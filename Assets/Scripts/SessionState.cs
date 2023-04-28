@@ -344,7 +344,7 @@ public class SessionState : MonoBehaviour
 
     public static void AddNewSample(string name, string abreviation, string colorName, Color color, string vesselType)
     {
-        Sample newSample = new Sample(name, abreviation, colorName, color);
+        Sample newSample = new Sample(name, abreviation, colorName, color, vesselType);
 
         if (AvailableSamples.Contains(newSample))
         {
@@ -364,6 +364,7 @@ public class SessionState : MonoBehaviour
             var tubeRack = Materials.Where(mat => mat is TubeRack5mL).FirstOrDefault();
             if (tubeRack != null && tubeRack.HasSampleSlot())
             {
+                Debug.Log("adding tube to tube rack");
                 tubeRack.AddNewSample(newSample);
             }
             else
@@ -389,7 +390,7 @@ public class SessionState : MonoBehaviour
         {
             ActiveSample = forRemoval;
 
-            RemoveSampleFromAllWells(forRemoval);
+            RemoveAllActionsWithSample(forRemoval);
 
             ActiveSample = null;
 
@@ -399,21 +400,25 @@ public class SessionState : MonoBehaviour
         }
     }
 
-    static void RemoveSampleFromAllWells(Sample forRemoval)
+    static void RemoveAllActionsWithSample(Sample forRemoval)
     {
+        List<LabAction> removalActions = new List<LabAction>();
         foreach (Step step in Steps)
         {
-            foreach (var plate in step.materials)
+            foreach (var action in step.actions)
             {
-                foreach (var well in plate.GetWells())
+                if(action.SampleIsSource(forRemoval))
                 {
-                    if (well.Value.ContainsSample(forRemoval))
-                    {
-                        step.TryRemoveActiveSampleFromWell(well.Key, well.Value.plateId);
-                    }
+                    removalActions.Add(action);
                 }
             }
+            foreach(LabAction action in removalActions)
+            {
+                step.RemoveAction(action);
+            }
+            removalActions.Clear();
         }
+        
     }
 
     static void RemoveSampleFromMateralsList(Sample forRemoval)
@@ -426,7 +431,7 @@ public class SessionState : MonoBehaviour
                 {
                     if (tube.Value == forRemoval)
                     {
-                        material.GetTubes().Remove(tube.Key);
+                        material.RemoveSample(tube.Key);
                         break;
                     }
                 }
@@ -434,14 +439,15 @@ public class SessionState : MonoBehaviour
             else if (material is Reservoir && material.ContainsSample(forRemoval))
             {
                 Materials.Remove(material);
+                break;
             }
         }
     }
 
-    public static void EditSample(string oldName, string newName, string newAbreviation, string newColorName, Color newColor)
+    public static void EditSample(string oldName, string newName, string newAbreviation, string newColorName, Color newColor, string newVesselType)
     {
         Sample toEdit = AvailableSamples.Where(sample => sample.sampleName == oldName).FirstOrDefault();
-        Sample preEditCopy = new Sample(toEdit.sampleName, toEdit.abreviation, toEdit.colorName, toEdit.color);
+        Sample preEditCopy = new Sample(toEdit.sampleName, toEdit.abreviation, toEdit.colorName, toEdit.color, toEdit.vesselType);
 
         if (toEdit != null)
         {
@@ -454,6 +460,7 @@ public class SessionState : MonoBehaviour
                 toEdit.color = newColor;
                 UsedColors.Add(newColorName);
             }
+            toEdit.vesselType = newVesselType;
 
             foreach(Step step in Steps)
             {
@@ -465,6 +472,9 @@ public class SessionState : MonoBehaviour
                     }
                 }
             }
+
+            RemoveSampleFromMateralsList(preEditCopy);
+            AddSampleToMaterialsList(toEdit, newVesselType);
 
             editedSampleStream.OnNext((preEditCopy, toEdit));
         }

@@ -11,7 +11,8 @@ public class NewSampleFormController : MonoBehaviour
     public Transform abreviationError;
     public Transform colorError;
 
-    public TMP_Dropdown dropdown;
+    public TMP_Dropdown vesselDropdown;
+    public TMP_Dropdown colorDropdown;
     public Button submitButton;
     public Button closeButton;
 
@@ -45,9 +46,9 @@ public class NewSampleFormController : MonoBehaviour
     void OnEnable()
     {
         //update color dropdown options
-        dropdown.ClearOptions();
+        colorDropdown.ClearOptions();
         List<TMP_Dropdown.OptionData> availableColors = dropdownOptions.Where(option => !SessionState.UsedColors.Contains(option.text)).ToList();
-        dropdown.AddOptions(availableColors);
+        colorDropdown.AddOptions(availableColors);
     }
 
     void OnDisable()
@@ -55,7 +56,7 @@ public class NewSampleFormController : MonoBehaviour
         //reset form values
         nameText.text = "";
         abreviationText.text = "";
-        dropdown.value = 0;
+        colorDropdown.value = 0;
     }
 
     void Update()
@@ -102,9 +103,9 @@ public class NewSampleFormController : MonoBehaviour
             SessionState.AddNewSample(nameText.text, abreviationText.text, colorText.text, color, vesselText.text);
 
             //update color dropdown options
-            dropdown.ClearOptions();
+            colorDropdown.ClearOptions();
             List<TMP_Dropdown.OptionData> availableColors = dropdownOptions.Where(option => !SessionState.UsedColors.Contains(option.text)).ToList();
-            dropdown.AddOptions(availableColors);
+            colorDropdown.AddOptions(availableColors);
 
             //disable form
             this.gameObject.SetActive(false);
@@ -118,20 +119,21 @@ public class NewSampleFormController : MonoBehaviour
     /// <param name="oldName"> name of sample before edit </param>
     /// <param name="abbreviation"></param>
     /// <param name="colorText"></param>
-    public void EditSample(string oldName, string oldAbbreviation, string oldColorString)
+    public void EditSample(string oldName, string oldAbbreviation, string oldColorString, string oldVesselType)
     {
         //activate edit form
         this.gameObject.SetActive(true);
         SessionState.FormActive = true;
 
         //add the edited samples color back to the dropdown and set the picker to it
-        dropdown.AddOptions(new List<string>() { oldColorString });
-        dropdown.value = dropdown.options.Count() - 1;
+        colorDropdown.AddOptions(new List<string>() { oldColorString });
+        colorDropdown.value = colorDropdown.options.Count() - 1;
 
         //fill out the form with the old values
         nameText.text = oldName;
         abreviationText.text = oldAbbreviation;
-        dropdown.value = dropdown.options.FindIndex((i) => { return i.text.Equals(oldColorString); });
+        colorDropdown.value = colorDropdown.options.FindIndex((i) => { return i.text.Equals(oldColorString); });
+        vesselDropdown.value = vesselDropdown.options.FindIndex((i) => { return i.text.Equals(oldVesselType); });
         
         //set the submit button text and change event to edit
         submitButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Save Changes";
@@ -144,7 +146,7 @@ public class NewSampleFormController : MonoBehaviour
                 var color = Colors.ColorValue((Colors.ColorNames)System.Enum.Parse(typeof(Colors.ColorNames), colorText.text, true));
 
                 //edit sample in session state
-                SessionState.EditSample(oldName, nameText.text, abreviationText.text, colorText.text, color);
+                SessionState.EditSample(oldName, nameText.text, abreviationText.text, colorText.text, color, vesselText.text);
 
                 //reset submit button event
                 submitButton.onClick.RemoveAllListeners();

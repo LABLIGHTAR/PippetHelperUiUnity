@@ -21,6 +21,16 @@ public class TubeRack5mL : LabMaterial
         return false;
     }
 
+    public override string GetSampleID(Sample sample)
+    {
+        foreach(var item in tubes)
+        {
+            if(item.Value == sample)
+                return item.Key;
+        }
+        return "";
+    }
+
     public override List<Sample> GetSampleList()
     {
         return tubes.Values.ToList();
@@ -30,6 +40,11 @@ public class TubeRack5mL : LabMaterial
     {
         tubes.Add(subId.ToString(), sample);
         subId++;
+    }
+
+    public override void RemoveSample(string id)
+    {
+        tubes.Remove(id);
     }
 
     public override bool HasSampleSlot()

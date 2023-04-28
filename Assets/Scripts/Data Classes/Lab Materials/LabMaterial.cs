@@ -36,12 +36,22 @@ public class LabMaterial
         return false;
     }
 
+    public virtual string GetSampleID(Sample sample)
+    {
+        return null;
+    }
+
     public virtual List<Sample> GetSampleList()
     {
         return null;
     }
 
     public virtual void AddNewSample(Sample sample)
+    {
+        return;
+    }
+
+    public virtual void RemoveSample(string sampleId)
     {
         return;
     }

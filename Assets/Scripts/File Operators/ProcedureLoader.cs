@@ -186,7 +186,7 @@ public class ProcedureLoader : MonoBehaviour
             SessionState.Materials.Add(newTubeRack);
             if (material.contentsColor != Color.white && material.contentsColorName != "")
             {
-                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor);
+                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "5mL Tube");
                 newTubeRack.AddNewSample(newSample);
             }
         }
@@ -195,7 +195,7 @@ public class ProcedureLoader : MonoBehaviour
             var tubeRack = SessionState.Materials[material.id];
             if (material.contentsColor != Color.white && material.contentsColorName != "")
             {
-                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor);
+                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "5mL Tube");
                 tubeRack.AddNewSample(newSample);
             }
         }
@@ -207,7 +207,7 @@ public class ProcedureLoader : MonoBehaviour
         SessionState.Materials.Add(newReservoir);
         if (material.contentsColor != Color.white && material.contentsColorName != "")
         {
-            Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor);
+            Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "Reservoir");
             newReservoir.AddNewSample(newSample);
         }
     }

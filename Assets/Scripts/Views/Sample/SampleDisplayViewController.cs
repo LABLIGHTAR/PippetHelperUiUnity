@@ -64,7 +64,7 @@ public class SampleDisplayViewController : MonoBehaviour
         newSampleSwatch.GetComponent<SampleSwatchViewController>().editButton.onClick.AddListener(delegate
         {
             //open edit form
-            newSampleForm.GetComponent<NewSampleFormController>().EditSample(sample.sampleName, sample.abreviation, sample.colorName);
+            newSampleForm.GetComponent<NewSampleFormController>().EditSample(sample.sampleName, sample.abreviation, sample.colorName, sample.vesselType);
         });
     }
 }

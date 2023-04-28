@@ -3614,7 +3614,8 @@ MonoBehaviour:
   nameError: {fileID: 1513832722925271049}
   abreviationError: {fileID: 1513832723029929094}
   colorError: {fileID: 2845649773991086238}
-  dropdown: {fileID: 1513832722470072673}
+  vesselDropdown: {fileID: 5950743251505218791}
+  colorDropdown: {fileID: 1513832722470072673}
   submitButton: {fileID: 1513832722162130518}
   closeButton: {fileID: 1513832721876036951}
   nameText: {fileID: 1513832723049936202}

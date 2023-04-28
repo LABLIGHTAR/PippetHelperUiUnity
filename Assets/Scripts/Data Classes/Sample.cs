@@ -6,13 +6,15 @@ public class Sample
     public string abreviation;
     public string colorName;
     public Color color;
+    public string vesselType;
 
-    public Sample(string name, string abreviation, string colorName, Color color)
+    public Sample(string name, string abreviation, string colorName, Color color, string vesselType)
     {
         this.sampleName = name;
         this.abreviation = abreviation;
         this.colorName = colorName;
         this.color = color;
+        this.vesselType = vesselType;
     }
 
     public override bool Equals(object s)

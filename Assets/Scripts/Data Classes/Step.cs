@@ -223,18 +223,10 @@ public class Step
         string sourceSubID = "";
         foreach (var material in SessionState.Materials)
         {
-            var samples = material.GetSampleList();
-            if (samples != null)
+            if(material.ContainsSample(SessionState.ActiveSample))
             {
-                foreach (var sample in samples)
-                {
-                    if (sample == SessionState.ActiveSample)
-                    {
-                        sourceID = material.id.ToString();
-                        sourceSubID = samples.IndexOf(sample).ToString();
-                        break;
-                    }
-                }
+                sourceID = material.id.ToString();
+                sourceSubID = material.GetSampleID(SessionState.ActiveSample);
             }
         }
         var source = new LabAction.Source(sourceID, sourceSubID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName, SessionState.ActiveTool.volume, "μL");
