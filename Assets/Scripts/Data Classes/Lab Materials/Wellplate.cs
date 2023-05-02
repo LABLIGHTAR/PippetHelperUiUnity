@@ -1,14 +1,28 @@
 using System.Collections.Generic;
+using System.Linq;
 
 public class Wellplate : LabMaterial
 {
     public int numWells;
     public Dictionary<string, Well> wells;
 
-    public Wellplate(int id, string name, int numberOfWells) : base(id, name)
+    public Wellplate(int id, string name, int numberOfWells, string customName) : base(id, name)
     {
         wells = new Dictionary<string, Well>();
         numWells = numberOfWells;
+        this.customName = customName;
+    }
+
+    public override bool SetCustomName(string name)
+    {
+        foreach(LabMaterial material in SessionState.Materials.Where(m => m is Wellplate))
+        {
+            if (material.customName == name)
+                return false;
+        }
+
+        customName = name;
+        return true;
     }
 
     public override bool ContainsWell(string wellID)

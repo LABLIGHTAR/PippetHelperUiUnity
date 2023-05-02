@@ -80,37 +80,62 @@ public class MaterialViewController : MonoBehaviour
     {
         materialList.SetActive(false);
 
-        LabMaterial newWellplate = new Wellplate(materialID, "wellplate96", 96);
+        LabMaterial newWellplate = new Wellplate(materialID, "wellplate96", 96, "plate " + (materialID + 1));
         SessionState.Materials.Add(newWellplate);
-        materialID++;
-        numMaterials++;
 
         var newMaterialVC = Instantiate(materialViewPrefab, this.transform).GetComponent<MaterialDisplayViewController>();
-        newMaterialVC.InitDisplay("96-Well Plate", sprite96);
-        newMaterialVC.trashButton.onClick.AddListener(delegate
-        {
-            materialID = newWellplate.id;
-            SessionState.Materials.Remove(newWellplate);
-            numMaterials--;
+        newMaterialVC.InitDisplay("96-Well Plate", sprite96, materialID);
+        newMaterialVC.trashButton.onClick.AddListener(delegate { RemovePlate(newWellplate); });
+        newMaterialVC.nameInput.onEndEdit.AddListener(delegate 
+        { 
+            if(newWellplate.SetCustomName(newMaterialVC.nameInput.text))
+            {
+                newMaterialVC.errorText.gameObject.SetActive(false);
+                newMaterialVC.materialName.text = newMaterialVC.nameInput.text;
+                newMaterialVC.nameInput.gameObject.SetActive(false);
+            }
+            else
+            {
+                newMaterialVC.errorText.gameObject.SetActive(true);
+            }
         });
+
+        materialID++;
+        numMaterials++;
     }
 
     void Add384WellPlate()
     {
         materialList.SetActive(false);
 
-        LabMaterial newWellplate = new Wellplate(materialID, "wellplate384", 384);
+        LabMaterial newWellplate = new Wellplate(materialID, "wellplate384", 384, "plate " + (materialID + 1));
         SessionState.Materials.Add(newWellplate);
-        materialID++;
-        numMaterials++;
 
         var newMaterialVC = Instantiate(materialViewPrefab, this.transform).GetComponent<MaterialDisplayViewController>();
-        newMaterialVC.InitDisplay("384-Well Plate", sprite384);
-        newMaterialVC.trashButton.onClick.AddListener(delegate
+        newMaterialVC.InitDisplay("384-Well Plate", sprite384, materialID);
+        newMaterialVC.trashButton.onClick.AddListener(delegate { RemovePlate(newWellplate); });
+        newMaterialVC.nameInput.onEndEdit.AddListener(delegate
         {
-            materialID = newWellplate.id;
-            SessionState.Materials.Remove(newWellplate);
-            numMaterials--;
+            if (newWellplate.SetCustomName(newMaterialVC.nameInput.text))
+            {
+                newMaterialVC.errorText.gameObject.SetActive(false);
+                newMaterialVC.materialName.text = newMaterialVC.nameInput.text;
+                newMaterialVC.nameInput.gameObject.SetActive(false);
+            }
+            else
+            {
+                newMaterialVC.errorText.gameObject.SetActive(true);
+            }
         });
+
+        materialID++;
+        numMaterials++;
+    }
+
+    void RemovePlate(LabMaterial plate)
+    {
+        materialID = plate.id;
+        SessionState.Materials.Remove(plate);
+        numMaterials--;
     }
 }

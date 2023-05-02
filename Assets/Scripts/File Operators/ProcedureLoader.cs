@@ -68,7 +68,6 @@ public class ProcedureLoader : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         SessionState.SetActiveStep(0);
-        SessionState.ActiveSample = null;
         
         procedureStream.OnNext(true);
 
@@ -166,7 +165,16 @@ public class ProcedureLoader : MonoBehaviour
         //add materials to session state
         if (material.name.Contains("wellplate"))
         {
-            SessionState.Materials.Add(new Wellplate(material.id, material.name, material.numWells));
+            if(material.name.Contains(":"))
+            {
+                string customName = material.name.Split(":")[1];
+                material.name = material.name.Split(":")[0];
+                SessionState.Materials.Add(new Wellplate(material.id, material.name, material.numWells, customName));
+            }
+            else
+            {
+                SessionState.Materials.Add(new Wellplate(material.id, material.name, material.numWells, "plate " + (material.id + 1)));
+            }
         }
         else if (material.name.Contains("tuberack5ml"))
         {

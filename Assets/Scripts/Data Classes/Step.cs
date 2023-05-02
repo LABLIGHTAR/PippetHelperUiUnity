@@ -28,7 +28,7 @@ public class Step
             if (material is Wellplate)
             {
                 var wellplate = (Wellplate)material;
-                materials.Add(new Wellplate(wellplate.id, wellplate.materialName, wellplate.numWells));
+                materials.Add(new Wellplate(wellplate.id, wellplate.materialName, wellplate.numWells, wellplate.customName));
             }
         }
     }

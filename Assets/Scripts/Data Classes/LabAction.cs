@@ -73,18 +73,20 @@ public class LabAction
     {
         string sourceName = SessionState.Materials[int.Parse(source.matID)].GetNameAsSource(source.matSubID);
         string targetName = SessionState.Materials[int.Parse(target.matID)].GetNameAsTarget(target.matSubID);
+        string sourcePlateName = SessionState.Materials[int.Parse(source.matID)].customName;
+        string targetPlateName = SessionState.Materials[int.Parse(target.matID)].customName;
 
         if (type == ActionType.pipette)
         {
-            return "Load " + source.volume + "μl" + " of " + sourceName + " into " + targetName + " of plate " + target.matID;
+            return "Load " + source.volume + "μl" + " of " + sourceName + " into " + targetName + " of " + targetPlateName;
         }
         else if (type == ActionType.transfer)
         {
-            return "Transfer " + source.volume + "μl" + " from " + sourceName + " of plate " + source.matID + " into " + targetName + " of plate " + target.matID;
+            return "Transfer " + source.volume + "μl" + " from " + sourceName + " of " + sourcePlateName + " into " + targetName + " of " + targetPlateName;
         }
         else if (type == ActionType.dilution)
         {
-            return "Perform a serial " + type.ToString() + " with a factor of " + source.volume + " from " + sourceName + " into " + targetName + " of plate " + target.matID;
+            return "Perform a serial " + type.ToString() + " with a factor of " + source.volume + " from " + sourceName + " into " + targetName + " of " + targetPlateName;
         }
         else
         {

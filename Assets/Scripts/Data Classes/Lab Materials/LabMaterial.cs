@@ -4,6 +4,7 @@ public class LabMaterial
 {
     public int id;
     public string materialName;
+    public string customName;
 
     public LabMaterial(int materialId, string name)
     {
@@ -74,5 +75,10 @@ public class LabMaterial
     public virtual string GetNameAsTarget(string subID) 
     {
         return null;
+    }
+
+    public virtual bool SetCustomName(string name)
+    {
+        return false;
     }
 }

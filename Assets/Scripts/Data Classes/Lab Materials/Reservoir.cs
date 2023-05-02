@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class Reservoir : LabMaterial
 {
@@ -30,6 +29,11 @@ public class Reservoir : LabMaterial
         List<Sample> list = new List<Sample>();
         list.Add(sample);
         return list;
+    }
+
+    public override string GetSampleID(Sample sample)
+    {
+        return "0";
     }
 
     public override string GetNameAsSource(string subID)
