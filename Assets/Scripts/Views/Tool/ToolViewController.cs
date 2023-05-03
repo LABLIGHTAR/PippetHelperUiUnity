@@ -20,11 +20,17 @@ public class ToolViewController : MonoBehaviour
     public TextMeshProUGUI orientationText;
     public TMP_Dropdown orientationDropdown;
 
+    public Button pipetteButton;
+    public Button multichannelButton;
+
     // Start is called before the first frame update
     void Start()
     {
        //subscribe to data stream
         SessionState.activeSampleStream.Subscribe(_ => UpdateVisualState()).AddTo(this);
+
+        pipetteButton.onClick.AddListener(SelectMicropipette);
+        multichannelButton.onClick.AddListener(SelectMultichannel);
 
         //set default volume values
         pipetteVolumeText.text = "10";
@@ -36,14 +42,6 @@ public class ToolViewController : MonoBehaviour
 
     void Update()
     {
-        if(Keyboard.current.digit1Key.wasPressedThisFrame && !SessionState.FormActive && !pipetteVolumeText.isFocused && !multiVolumeText.isFocused)
-        {
-            SelectMicropipette();
-        }
-        else if(Keyboard.current.digit2Key.wasPressedThisFrame && !SessionState.FormActive && !pipetteVolumeText.isFocused && !multiVolumeText.isFocused)
-        {
-            SelectMultichannel();
-        }
         if(Keyboard.current.tabKey.wasPressedThisFrame && !SessionState.FormActive)
         {
             if(SessionState.ActiveTool.name == "micropipette")

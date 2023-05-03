@@ -475,7 +475,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     }
                 }
             }
-            else if (SessionState.ActiveActionType == LabAction.ActionType.dilution && SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget)
+            else if (SessionState.ActiveActionType == LabAction.ActionType.dilution && (SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingTarget || SessionState.ActiveActionStatus == LabAction.ActionStatus.selectingSource))
             {
                 OnSelectedAndClicked(SessionState.ActiveTool.numChannels);
                 SessionState.SetSelectedWells(plateId);

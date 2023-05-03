@@ -63,6 +63,8 @@ MonoBehaviour:
   multichannelDropdown: {fileID: 4379117395804261686}
   orientationText: {fileID: 4379117396118467159}
   orientationDropdown: {fileID: 4379117395606701640}
+  pipetteButton: {fileID: 5908524318517714176}
+  multichannelButton: {fileID: 7141754826448646511}
 --- !u!114 &8892151334069343455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,6 +341,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5908524318517714176 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2010433156235263586, guid: 5a514e3704c28b447ab945da817e7632, type: 3}
+  m_PrefabInstance: {fileID: 5339358060455437154}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &6372232448558505043
@@ -768,5 +781,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7141754826448646511 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4283534073964211516, guid: 45619f481793e134fae919fa352fc481, type: 3}
+  m_PrefabInstance: {fileID: 6372232448558505043}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

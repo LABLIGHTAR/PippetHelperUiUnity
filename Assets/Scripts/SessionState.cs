@@ -364,7 +364,6 @@ public class SessionState : MonoBehaviour
             var tubeRack = Materials.Where(mat => mat is TubeRack5mL).FirstOrDefault();
             if (tubeRack != null && tubeRack.HasSampleSlot())
             {
-                Debug.Log("adding tube to tube rack");
                 tubeRack.AddNewSample(newSample);
             }
             else
