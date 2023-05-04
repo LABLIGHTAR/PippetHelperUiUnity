@@ -16,8 +16,7 @@ public class ToolViewController : MonoBehaviour
     public Image multichannelIndicator;
     public TMP_InputField multiVolumeText;
     public TextMeshProUGUI multiErrorText;
-    public TextMeshProUGUI multichannelDropdown;
-    public TextMeshProUGUI orientationText;
+    public TMP_Dropdown multichannelDropdown;
     public TMP_Dropdown orientationDropdown;
 
     public Button pipetteButton;
@@ -31,6 +30,11 @@ public class ToolViewController : MonoBehaviour
 
         pipetteButton.onClick.AddListener(SelectMicropipette);
         multichannelButton.onClick.AddListener(SelectMultichannel);
+
+        pipetteVolumeText.onEndEdit.AddListener(delegate { SelectMicropipette(); });
+        multiVolumeText.onEndEdit.AddListener(delegate { SelectMultichannel(); });
+        multichannelDropdown.onValueChanged.AddListener(delegate { SelectMultichannel(); });
+        orientationDropdown.onValueChanged.AddListener(delegate { SelectMultichannel(); });
 
         //set default volume values
         pipetteVolumeText.text = "10";
@@ -122,7 +126,7 @@ public class ToolViewController : MonoBehaviour
         {
             multichannelIndicator.color = Color.green;
         }
-        int channels = int.Parse(multichannelDropdown.text);
+        int channels = int.Parse(multichannelDropdown.options[multichannelDropdown.value].text);
 
         if (!(multiVolumeText.text.Length > 0))
         {
@@ -148,7 +152,7 @@ public class ToolViewController : MonoBehaviour
 
         multiErrorText.gameObject.SetActive(false);
 
-        SessionState.ActiveTool = new Tool("multichannel", channels, orientationText.text, volume);
+        SessionState.ActiveTool = new Tool("multichannel", channels, orientationDropdown.options[orientationDropdown.value].text, volume);
         //Debug.Log(SessionState.ActiveTool.name + " " + SessionState.ActiveTool.volume + " " + SessionState.ActiveTool.numChannels + " " + SessionState.ActiveTool.orientation);
     }
 }
