@@ -54,7 +54,6 @@ public class ActionDisplayViewController : MonoBehaviour
 
         actionRemovedSubscription = SessionState.CurrentStep.actionRemovedStream.Subscribe(action =>
         {
-            Debug.Log(action.type);
             foreach (Transform child in ContentParent)
             {
                 if (child.GetComponent<ActionItemViewController>().associatedAction == action)

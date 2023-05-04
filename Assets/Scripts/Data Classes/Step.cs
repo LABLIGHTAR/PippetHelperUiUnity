@@ -216,7 +216,7 @@ public class Step
         actionRemovedStream.OnNext(action);
     }
 
-    void AddPipetteAction(string plateID, string wellID)
+    public void AddPipetteAction(string plateID, string wellID)
     {
         //add action to session state
         string sourceID = "";

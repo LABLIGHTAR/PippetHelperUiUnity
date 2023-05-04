@@ -25,8 +25,8 @@ public class DilutionDisplayViewController : MonoBehaviour
     public TMP_InputField initialVolumeInput;
     public TextMeshProUGUI volumeError;
 
-    public TMP_InputField solventNameInput;
-    public TextMeshProUGUI solventError;
+    public TMP_Dropdown diluentDropdown;
+    public TextMeshProUGUI diluentError;
 
     public GameObject sourceDisplay;
     public TextMeshProUGUI sourceName;
@@ -38,6 +38,8 @@ public class DilutionDisplayViewController : MonoBehaviour
     public Button clearSelectionsButton;
     public Button confirmButton;
 
+    private float initialVolume;
+
     private int dilutionFactor;
     private int numDilutions;
 
@@ -47,6 +49,7 @@ public class DilutionDisplayViewController : MonoBehaviour
     private bool sourceIsWell = true;
     private List<Well> sourceWells;
     private Sample sourceSample;
+    private Sample diluent;
 
     private int inputSelected;
     private float tabDelay = 0.2f;
@@ -83,7 +86,7 @@ public class DilutionDisplayViewController : MonoBehaviour
     void OnEnable()
     {
         ClearUI();
-        PopulateSampleDropdown();
+        PopulateDropdowns();
     }
 
     void Update()
@@ -157,8 +160,6 @@ public class DilutionDisplayViewController : MonoBehaviour
     {
         sourceWells = wells;
 
-        float volume = 0f;
-
         if (sourceWells.Count == 1)
         {
             sourceName.text = sourceWells[0].id;
@@ -201,24 +202,34 @@ public class DilutionDisplayViewController : MonoBehaviour
 
     void AddDilutionActions()
     {
+        float finalVolume = dilutionFactor * initialVolume;
+        
         if (SessionState.ActiveActionStatus == LabAction.ActionStatus.awaitingSubmission)
         {
+            for(int i = 0; i < selected.Count; i++)
+            {
+                SessionState.ActiveTool.SetVolume(initialVolume * dilutionFactor);
+                SessionState.ActiveSample = diluent;
+                SessionState.CurrentStep.AddPipetteAction(selected[i].Id, selected[i].subId);
+            }
             for (int i = 0; i < numDilutions + 1; i++)
             {
                 if (i == 0)
                 {
                     if(sourceIsWell)
                     {
-                        SessionState.CurrentStep.AddDilutionAction(sourceWells[0].plateId.ToString(), sourceName.text, selected[i].Id, selected[i].subId, float.Parse(dilutionFactorInput.text));
+                        SessionState.CurrentStep.AddTransferAction(sourceWells[0].plateId.ToString(), sourceName.text, selected[i].Id, selected[i].subId, float.Parse(initialVolumeInput.text));
                     }
                     else
                     {
-                        SessionState.CurrentStep.AddDilutionActionStart(sourceSample, selected[i].Id, selected[i].subId, float.Parse(dilutionFactorInput.text));
+                        SessionState.ActiveSample = sourceSample;
+                        SessionState.ActiveTool.SetVolume(float.Parse(initialVolumeInput.text));
+                        SessionState.CurrentStep.AddPipetteAction(selected[i].Id, selected[i].subId);
                     }
                 }
                 else
                 {
-                    SessionState.CurrentStep.AddDilutionAction(selected[i - 1].Id, selected[i-1].subId, selected[i].Id, selected[i].subId, float.Parse(dilutionFactorInput.text));
+                    SessionState.CurrentStep.AddTransferAction(selected[i - 1].Id, selected[i-1].subId, selected[i].Id, selected[i].subId, float.Parse(initialVolumeInput.text));
                 }
             }
             SessionState.ActiveActionStatus = LabAction.ActionStatus.submitted;
@@ -227,7 +238,7 @@ public class DilutionDisplayViewController : MonoBehaviour
 
     void UpdateSource()
     {
-        if (sampleDropdown.value == 0)
+        if (sampleDropdown.value == sampleDropdown.options.Count - 1)
         {
             sourceIsWell = true;
             sourceDisplay.GetComponent<Image>().color = Color.white;
@@ -243,7 +254,7 @@ public class DilutionDisplayViewController : MonoBehaviour
 
     bool InputValid()
     {
-        if (InitalVolumeValid() && SolventNameValid() && DilutionFactorValid())
+        if (InitalVolumeValid() && DiluentValid() && DilutionFactorValid())
         {
             return true;
         }
@@ -252,11 +263,9 @@ public class DilutionDisplayViewController : MonoBehaviour
 
     public bool InitalVolumeValid()
     {
-        float intialVolume;
-
-        if (float.TryParse(initialVolumeInput.text, out intialVolume))
+        if (float.TryParse(initialVolumeInput.text, out initialVolume))
         {
-            if (!(intialVolume > 0))
+            if (!(initialVolume > 0))
             {
                 volumeError.gameObject.SetActive(true);
                 volumeError.text = "volume must be positive*";
@@ -273,21 +282,22 @@ public class DilutionDisplayViewController : MonoBehaviour
             volumeError.text = "volume must be a floating point number*";
             return false;
         }
-        sourceVolume.text = intialVolume.ToString() + "μL";
+        sourceVolume.text = initialVolume.ToString() + "μL";
         return true;
     }
 
-    public bool SolventNameValid()
+    public bool DiluentValid()
     {
-        if (!(solventNameInput.text.Length > 1))
+        if (diluentDropdown.options.Count < 1)
         {
-            solventError.gameObject.SetActive(true);
-            solventError.text = "Solvent name cannot be empty*";
+            diluentError.gameObject.SetActive(true);
+            diluentError.text = "No samples defined*";
             return false;
         }
         else
         {
-            solventError.gameObject.SetActive(false);
+            diluent = SessionState.AvailableSamples.Where(s => s.sampleName == diluentDropdown.captionText.text).FirstOrDefault();
+            diluentError.gameObject.SetActive(false);
         }
         return true;
     }
@@ -325,17 +335,19 @@ public class DilutionDisplayViewController : MonoBehaviour
         return true;
     }
 
-    void PopulateSampleDropdown()
+    void PopulateDropdowns()
     {
         List<string> options = new List<string>();
-
-        options.Add("Select Well");
 
         foreach (var sample in SessionState.AvailableSamples)
         {
             options.Add(sample.sampleName);
         }
 
+        diluentDropdown.ClearOptions();
+        diluentDropdown.AddOptions(options);
+
+        options.Add("Select Well");
         sampleDropdown.ClearOptions();
         sampleDropdown.AddOptions(options);
     }
@@ -349,7 +361,7 @@ public class DilutionDisplayViewController : MonoBehaviour
         instructionText.text = "Enter dilution parameters";
         dilutionFactorInput.text = "";
         initialVolumeInput.text = "";
-        solventNameInput.text = "";
+        diluentDropdown.value = -1;
         numDilutionsDropdown.value = -1;
 
         itemNum = 0;
@@ -382,7 +394,7 @@ public class DilutionDisplayViewController : MonoBehaviour
                 initialVolumeInput.Select();
                 break;
             case 1:
-                solventNameInput.Select();
+                diluentDropdown.Select();
                 break;
             case 2:
                 dilutionFactorInput.Select();
