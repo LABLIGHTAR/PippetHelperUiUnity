@@ -5,11 +5,14 @@ using UniRx;
 
 public class MainCanvasViewController : MonoBehaviour
 {
-    public GameObject ActionDisplay;
     public GameObject SampleDisplay;
-    public GameObject TransferDisplay;
-    public GameObject DilutionDisplay;
-  
+    public Transform ActionDisplay;
+
+    public GameObject TransferDisplayPrefab;
+    public GameObject DilutionDisplayPrefab;
+
+    private GameObject TransferDisplay;
+    private GameObject DilutionDisplay;
 
     void Awake()
     {
@@ -18,19 +21,31 @@ public class MainCanvasViewController : MonoBehaviour
             switch (actionType)
             {
                 case (LabAction.ActionType.pipette):
-                    TransferDisplay.SetActive(false);
-                    DilutionDisplay.SetActive(false);
+                    if (DilutionDisplay != null)
+                    {
+                        Destroy(DilutionDisplay);
+                    }
+                    if (TransferDisplay != null)
+                    {
+                        Destroy(TransferDisplay);
+                    }
                     SampleDisplay.SetActive(true);
                     break;
                 case (LabAction.ActionType.transfer):
                     SampleDisplay.SetActive(false);
-                    DilutionDisplay.SetActive(false);
-                    TransferDisplay.SetActive(true);
+                    if(DilutionDisplay != null)
+                    {
+                        Destroy(DilutionDisplay);
+                    }    
+                    TransferDisplay = Instantiate(TransferDisplayPrefab, ActionDisplay);
                     break;
                 case (LabAction.ActionType.dilution):
                     SampleDisplay.SetActive(false);
-                    TransferDisplay.SetActive(false);
-                    DilutionDisplay.SetActive(true);
+                    if(TransferDisplay != null)
+                    {
+                        Destroy(TransferDisplay);
+                    }
+                    DilutionDisplay = Instantiate(DilutionDisplayPrefab, ActionDisplay);
                     break;
             }
         }).AddTo(this);

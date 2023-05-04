@@ -15,10 +15,10 @@ public class ActionSelectionViewController : MonoBehaviour
             case ("Load"):
                 SessionState.ActiveActionType = LabAction.ActionType.pipette;
                 break;
-            case ("Plate Transfer"):
+            case ("Transfer"):
                 SessionState.ActiveActionType = LabAction.ActionType.transfer;
                 break;
-            case ("Serial Dilution"):
+            case ("Dilution"):
                 SessionState.ActiveActionType = LabAction.ActionType.dilution;
                 break;
         }
