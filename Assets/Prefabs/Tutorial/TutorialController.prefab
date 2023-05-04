@@ -191,8 +191,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Load is the default action that allows you to select any tool and use
-        it to load any well with a sample you have defined.
+      value: '''Load'' is the default action that allows you to select any tool and
+        use it to load any well with the active sample.'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -325,9 +325,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: 'Wells can be "focused" by hovering the cursor over them. Information
-        about samples inside the focused well appears at the bottom right of the
-        screen.
+      value: 'Wells can be ''focused'' by hovering the cursor over them. Information
+        about the samples inside the focused well will appear at the bottom right
+        of the screen.
 
 '
       objectReference: {fileID: 0}
@@ -462,10 +462,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: 'At the top of the screen, a display indicates the current step as well
-        as the total number of steps in the protocol. To add a new step press the
-        button labeled "+ New Step". To delete the current step press the button
-        labeled "Delete Step".
+      value: 'At the top of the screen, there is a display indicating the current
+        step as well as the total number of steps in the protocol. To add a new step,
+        press the button labeled ''+ New Step.'' To delete the current step, press
+        the button labeled ''Delete Step''.
 
 '
       objectReference: {fileID: 0}
@@ -600,10 +600,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: When plate transfer is selected the sample list will be replaced with
-        a plate transfer window. This window will walk you through defining a transfer.
-        To transfer you first select source wells (red), then you select target wells
-        (green). When you are satisfied confirm.
+      value: When selecting 'Plate Transfer,' a transfer window will appear, allowing
+        you to define a transfer by selecting source wells (in red) and target wells
+        (in green). When you are satisfied, confirm the transfer.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -736,10 +735,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: When serial dilution is selected the sample list will be replaced with
-        the dilution window. In this window you will enter the parameters for your
-        dilution. You will select a sample that has been defined, a solvent, a dilution 
-        factor and the number of dilutions.
+      value: When 'Serial Dilution' is selected, the sample list will be replaced
+        with the dilution window. In this window, you can select either a sample
+        or a well as the source for the dilution, along with a solvent, dilution
+        factor, and the number of dilutions to perform.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -872,10 +871,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Each sample must be assigned a name, an abbreviation and a color that
-        will be displayed in this editor as well as the resulting AR protocol. If
-        the volume or weight is undefined simply enter 0 in that field. When finished
-        press "Add Sample:"
+      value: Each sample must be assigned a name, abbreviation, color, and vessel
+        that will be displayed in this editor, as well as the resulting AR protocol.
+        If the volume or weight is undefined, simply enter 0 in that field. When
+        finished, click 'Add Sample.'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -905,6 +904,14 @@ PrefabInstance:
     - target: {fileID: 783509033112317129, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
       value: Creating a Sample
+      objectReference: {fileID: 0}
+    - target: {fileID: 1140517474554353102, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.0012207
+      objectReference: {fileID: 0}
+    - target: {fileID: 1140517474554353102, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.00000047684
       objectReference: {fileID: 0}
     - target: {fileID: 3735882242034018338, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_Pivot.x
@@ -1000,10 +1007,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: 'Piplight calls the different things (reagents, buffers, samples, cell
-        suspensions, bacterial colonies to be loaded into wells) "samples". To define
-        a sample, press the button labeled "+ New Sample" or simply press the "N"
-        key.
+      value: 'PipLight refers to the various substances such as reagents, buffers,
+        diluents, samples, cell suspensions, etc. that are to be loaded into wells
+        as ''samples.'' To define a sample, click the button labeled ''+ New Sample'',
+        or simply press the ''N'' key.
 
 '
       objectReference: {fileID: 0}
@@ -1138,10 +1145,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: Once a sample is added, it will appear as an entry in the "Sample List".
-        Click on the entry to set it as the active sample. You will then select a
-        tool and use that tool to click on each well you would like to add the sample
-        to.
+      value: Once a sample is added, it will appear as an entry in the 'Sample List.'
+        Click on the entry to set it as the active sample. You can then select a
+        tool and use it to click on each well where you would like to load the sample.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -1274,10 +1280,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: 'When using a tool, its icon will be the same color as the selected
-        sample. Tools have two actions. To add the selected sample to a plate well,
-        left-click, to correct a mistake or to remove a sample, right-click while
-        the desired sample is active.
+      value: 'When using a tool, its icon will be the same color as the active sample.
+        Tools have two actions: to load the active sample into a well, left-click;
+        to correct a mistake or remove a sample, right-click while the desired sample
+        is active.
 
 '
       objectReference: {fileID: 0}
@@ -1412,10 +1418,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: 'This Alpha version recognizes two tools, a single channel micropipette
-        and a multichannel pipet. To select the micropipette press "1". For the multichannel
-        press "2" then specify the number of channels and how you will orient the
-        tool. '
+      value: 'This alpha version recognizes two tools: a single-channel micropipette
+        and a multichannel pipette. Click on a tool''s icon to set it as the active
+        tool. For the multichannel tool, specify the number of channels and how you
+        will orient the tool.'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -1548,8 +1554,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: To the left is the action list. Whenever a sample is loaded, transfer
-        is made or dilution is performed it will add actions to this list. Hovering
+      value: To the left is the action list. Whenever a sample is loaded, a transfer
+        is made, or a dilution is performed, it will add actions to this list. Hovering
         the cursor over an item in the action list will highlight the wells associated
         with that action on the microplates.
       objectReference: {fileID: 0}
@@ -1688,9 +1694,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: The gear icon at the top right opens the Settings menu where you can
-        set your preferneces or quit the application. To the right of the gear icon
-        is the save icon, press this at any time to save your progress and automatically
+      value: The gear icon at the top right opens the Settings menu, where you can
+        set your preferences or quit the application. To the right of the gear icon
+        is the save icon. Press this at any time to save your progress and automatically
         upload your protocol.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1824,11 +1830,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: 'PipLight is a protocol editor for the LabLight Augmented Reality system.
-        Using this app you will specify samples to be added to the different wells
-        of
-
-        microplates. To continue this tutorial, press "Next" below.'
+      value: PipLight is a protocol editor for the LabLight Augmented Reality system.
+        Using this app, you can specify samples to be loaded into the different wells
+        of microplates. To continue with this tutorial, please press 'Next' below.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
@@ -1961,9 +1965,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7483723888274677865, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
       propertyPath: m_text
-      value: 'Above is a dropdown menu to select the type of action you would like
-        to perform. This prototype system currently supports three common liquid
-        handling actions: Load, Plate Transfer and Serial Dilution.'
+      value: 'Above, there is a dropdown menu to select the type of action you would
+        like to perform. This prototype system currently supports three common liquid
+        handling actions: Load, Plate Transfer, and Serial Dilution.'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bbad09693e433a64f8db9c22de4bcb7f, type: 3}
