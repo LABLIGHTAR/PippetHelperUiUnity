@@ -5,42 +5,53 @@ public class Colors
 {
     public enum ColorNames
     {
-        Lime,
-        Green,
-        Olive,
-        Brown,
-        Aqua,
-        Blue,
-        Navy,
-        Slate,
-        Purple,
-        Plum,
-        Pink,
-        Salmon,
         Red,
-        Orange,
+        Green,
+        Blue,
         Yellow,
-        Khaki
+        Orange,
+        Pink,
+        Purple,
+        Lime,
+        Teal,
+        Aqua,
+        Olive,
+        Maroon,
+        Fuchsia,
+        Cyan,
+        LightGreen,
+        LightBlue,
+        LightPink,
+        Mustard,
+        Goldenrod,
+        Brown,
+        Beige
     }
 
-    private static Hashtable colorValues = new Hashtable{
-             {  ColorNames.Lime,    new Color32( 166 , 254 , 0, 255 ) },
-             {  ColorNames.Green,   new Color32( 0 , 254 , 111, 255 ) },
-             {  ColorNames.Olive,   new Color32( 85, 107, 47, 255 ) },
-             {  ColorNames.Brown,   new Color32( 139, 69, 19, 255 ) },
-             {  ColorNames.Aqua,    new Color32( 0 , 201 , 254, 255 ) },
-             {  ColorNames.Blue,    new Color32( 0 , 122 , 254, 255 ) },
-             {  ColorNames.Navy,    new Color32( 60 , 0 , 254, 255 ) },
-             {  ColorNames.Slate,   new Color32( 72, 61, 139, 255 ) },
-             {  ColorNames.Purple,  new Color32( 143 , 0 , 254, 255 ) },
-             {  ColorNames.Plum,    new Color32( 221, 160, 221, 255 ) },
-             {  ColorNames.Pink,    new Color32( 232 , 0 , 254, 255 ) },
-             {  ColorNames.Salmon,  new Color32( 255, 160, 122, 255 ) },
-             {  ColorNames.Red,     new Color32( 254 , 9 , 0, 255 ) },
-             {  ColorNames.Orange,  new Color32( 254 , 161 , 0, 255 ) },
-             {  ColorNames.Yellow,  new Color32( 254 , 224 , 0, 255 ) },
-             {  ColorNames.Khaki,   new Color32( 240,230,140, 255 ) },
-        };
+    public static Hashtable colorValues = new Hashtable()
+    {
+            { ColorNames.Red,       new Color32(255, 0, 0, 255) },
+            { ColorNames.Green,     new Color32(0, 255, 0, 255) },
+            { ColorNames.Blue,      new Color32(0, 0, 255, 255) },
+            { ColorNames.Yellow,    new Color32(255, 255, 0, 255) },
+            { ColorNames.Orange,    new Color32(255, 128, 0, 255) },
+            { ColorNames.Pink,      new Color32(255, 102, 178, 255) },
+            { ColorNames.Purple,    new Color32(128, 0, 255, 255) },
+            { ColorNames.Lime,      new Color32(166, 254, 0, 255) },
+            { ColorNames.Teal,      new Color32(0, 128, 128, 255) },
+            { ColorNames.Aqua,      new Color32(0, 255, 255, 255) },
+            { ColorNames.Olive,     new Color32(128, 128, 0, 255) },
+            { ColorNames.Maroon,    new Color32(128, 0, 0, 255) },
+            { ColorNames.Fuchsia,   new Color32(255, 0, 255, 255) },
+            { ColorNames.Cyan,      new Color32(0, 255, 255, 255) },
+            { ColorNames.LightGreen,new Color32(128, 255, 128, 255) },
+            { ColorNames.LightBlue, new Color32(128, 128, 255, 255) },
+            { ColorNames.LightPink, new Color32(255, 204, 204, 255) },
+            { ColorNames.Mustard,   new Color32(255, 219, 88, 255) },
+            { ColorNames.Goldenrod, new Color32(218, 165, 32, 255) },
+            { ColorNames.Brown,     new Color32(165, 42, 42, 255) },
+            { ColorNames.Beige,     new Color32(245, 245, 220, 255) }
+    };
 
     public static Color32 ColorValue(ColorNames color)
     {

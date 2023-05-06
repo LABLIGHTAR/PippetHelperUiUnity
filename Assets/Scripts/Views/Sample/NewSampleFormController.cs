@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,6 +15,7 @@ public class NewSampleFormController : MonoBehaviour
 
     public TMP_Dropdown vesselDropdown;
     public TMP_Dropdown colorDropdown;
+    public Transform dropdownContent;
     public Button submitButton;
     public Button closeButton;
 
@@ -23,6 +26,8 @@ public class NewSampleFormController : MonoBehaviour
     public TextMeshProUGUI colorText;
     public TextMeshProUGUI vesselText;
 
+    public Sprite dropdownSwatch;
+
     private Color newColor;
     private int inputSelected;
     private float tabDelay = 0.2f;
@@ -31,15 +36,25 @@ public class NewSampleFormController : MonoBehaviour
     public List<TMP_Dropdown.OptionData> dropdownOptions = new List<TMP_Dropdown.OptionData>();
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        //Add button events
+        foreach(string colorName in Enum.GetNames(typeof(Colors.ColorNames)))
+        {
+            dropdownOptions.Add(new TMP_Dropdown.OptionData(colorName, dropdownSwatch));
+        }
+ 
         submitButton.onClick.AddListener(AddNewSample);
-
         closeButton.onClick.AddListener(delegate
         {
             this.gameObject.SetActive(false);
             SessionState.FormActive = false;
+        });
+
+        colorDropdown.onValueChanged.AddListener(delegate
+        {
+            Colors.ColorNames color;
+            Enum.TryParse(colorDropdown.captionText.text, out color);
+            colorDropdown.captionImage.color = Colors.ColorValue(color);
         });
     }
 
@@ -49,6 +64,11 @@ public class NewSampleFormController : MonoBehaviour
         colorDropdown.ClearOptions();
         List<TMP_Dropdown.OptionData> availableColors = dropdownOptions.Where(option => !SessionState.UsedColors.Contains(option.text)).ToList();
         colorDropdown.AddOptions(availableColors);
+        colorDropdown.value = 0;
+
+        Colors.ColorNames color;
+        Enum.TryParse(colorDropdown.captionText.text, out color);
+        colorDropdown.captionImage.color = Colors.ColorValue(color);
     }
 
     void OnDisable()

@@ -3616,6 +3616,7 @@ MonoBehaviour:
   colorError: {fileID: 2845649773991086238}
   vesselDropdown: {fileID: 5950743251505218791}
   colorDropdown: {fileID: 1513832722470072673}
+  dropdownContent: {fileID: 0}
   submitButton: {fileID: 1513832722162130518}
   closeButton: {fileID: 1513832721876036951}
   nameText: {fileID: 1513832723049936202}
@@ -3624,39 +3625,8 @@ MonoBehaviour:
   abreviationErrorText: {fileID: 1513832723029929097}
   colorText: {fileID: 1513832722132875707}
   vesselText: {fileID: 2147149643455520760}
-  dropdownOptions:
-  - m_Text: Lime
-    m_Image: {fileID: 21300000, guid: fa0b10fc7769eca4cbb0932bb13b933b, type: 3}
-  - m_Text: Khaki
-    m_Image: {fileID: 21300000, guid: 4f29368af1c1b514e88d33ea77feb817, type: 3}
-  - m_Text: Slate
-    m_Image: {fileID: 21300000, guid: a05d2840215a50c4ca66a415191695c0, type: 3}
-  - m_Text: Red
-    m_Image: {fileID: 21300000, guid: 499aad0a4212999448c454402ff55f04, type: 3}
-  - m_Text: Plum
-    m_Image: {fileID: 21300000, guid: 17a06dd54210e7648adde8a5f2ffd923, type: 3}
-  - m_Text: Green
-    m_Image: {fileID: 21300000, guid: 18b8bd2e1d7715648abe6e3ad0fdb094, type: 3}
-  - m_Text: Navy
-    m_Image: {fileID: 21300000, guid: 1798ea8501356a54cbebd61ba60eda43, type: 3}
-  - m_Text: Yellow
-    m_Image: {fileID: 21300000, guid: 29a2d7a19a3e3354297a2af59541dabb, type: 3}
-  - m_Text: Olive
-    m_Image: {fileID: 21300000, guid: 33155ace36bd823418a9163da6e328aa, type: 3}
-  - m_Text: Pink
-    m_Image: {fileID: 21300000, guid: 7a820046cc7f8a94785d22e87dde9260, type: 3}
-  - m_Text: Orange
-    m_Image: {fileID: 21300000, guid: d8d8128262a840f459804773d33ca2c0, type: 3}
-  - m_Text: Aqua
-    m_Image: {fileID: 21300000, guid: 723ce99a21208e9468a20972699041ad, type: 3}
-  - m_Text: Brown
-    m_Image: {fileID: 21300000, guid: a4afa8f9805a6f144a3405a338939e4b, type: 3}
-  - m_Text: Salmon
-    m_Image: {fileID: 21300000, guid: 5fba3d22c0a08974d9268931ad07851b, type: 3}
-  - m_Text: Purple
-    m_Image: {fileID: 21300000, guid: 973d82baff00c6f4fa0901a2263112a7, type: 3}
-  - m_Text: Blue
-    m_Image: {fileID: 21300000, guid: 6fb9b54db15804d48b038d2361323dbc, type: 3}
+  dropdownSwatch: {fileID: 21300000, guid: 0bb10ac4b45a55d46ac91199bbccc507, type: 3}
+  dropdownOptions: []
 --- !u!1 &1513832723504299754
 GameObject:
   m_ObjectHideFlags: 0
@@ -3833,6 +3803,7 @@ GameObject:
   - component: {fileID: 1513832723916490012}
   - component: {fileID: 1513832723916490013}
   - component: {fileID: 1513832723916490010}
+  - component: {fileID: 3253050262724775978}
   m_Layer: 5
   m_Name: Template
   m_TagString: Untagged
@@ -3930,6 +3901,22 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3253050262724775978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513832723916490008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eeebfa594a089045892162ddb74bb6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorDropdown: {fileID: 1513832722470072673}
+  dropdownOptions: []
+  dropdownContent: {fileID: 1513832723838745872}
+  dropdownSprite: {fileID: 21300000, guid: 0bb10ac4b45a55d46ac91199bbccc507, type: 3}
 --- !u!1 &2045081656392498297
 GameObject:
   m_ObjectHideFlags: 0
