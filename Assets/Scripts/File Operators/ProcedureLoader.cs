@@ -30,7 +30,7 @@ public class ProcedureLoader : MonoBehaviour
     void Start()
     {
         //check if protocol folder exists
-        folderPath = Path.Combine(@Application.temporaryCachePath, "..", "inflight_protocols");
+        folderPath = Path.Combine(@Application.temporaryCachePath, "..", "saved_protocols");
 
         if (!Directory.Exists(folderPath))
         {

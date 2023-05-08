@@ -11,7 +11,8 @@ public class ProcedureGenerator : MonoBehaviour
 
     public TextMeshProUGUI saveMessage;
 
-    private string folderPath;
+    private string folderPathLighthouse;
+    private string folderPathPersistent;
     private string filePath;
 
     private string delimiter = ",";
@@ -32,10 +33,15 @@ public class ProcedureGenerator : MonoBehaviour
         addedSamples = new List<Sample>();
 
         //check if new protocol folder exists
-        folderPath = Path.Combine(@Application.temporaryCachePath, "..", "new_protocols");
-        if(!Directory.Exists(folderPath))
+        folderPathLighthouse = Path.Combine(@Application.temporaryCachePath, "..", "new_protocols");
+        folderPathPersistent = Path.Combine(@Application.temporaryCachePath, "..", "saved_protocols");
+        if (!Directory.Exists(folderPathLighthouse))
         {
-            Directory.CreateDirectory(folderPath);
+            Directory.CreateDirectory(folderPathLighthouse);
+        }
+        if (!Directory.Exists(folderPathPersistent))
+        {
+            Directory.CreateDirectory(folderPathPersistent);
         }
     }
 
@@ -43,7 +49,7 @@ public class ProcedureGenerator : MonoBehaviour
     {
         if(SessionState.ProcedureName != null)
         {
-            filePath = Path.Combine(folderPath, SessionState.ProcedureName + ".csv");
+            filePath = Path.Combine(folderPathLighthouse, SessionState.ProcedureName + ".csv");
         }
         else
         {
@@ -97,6 +103,11 @@ public class ProcedureGenerator : MonoBehaviour
         sw.Close();
 
         Debug.Log("CSV file written to: " + filePath);
+
+
+        string persistantPath =  Path.Combine(folderPathPersistent, SessionState.ProcedureName + ".csv");
+        File.Copy(filePath, persistantPath);
+        Debug.Log("CSV file copied to: " + persistantPath);
     }
 
     private IEnumerator ShowSaveMessage()

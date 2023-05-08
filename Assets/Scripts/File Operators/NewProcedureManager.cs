@@ -60,7 +60,7 @@ public class NewProcedureManager : MonoBehaviour
             inputError.text = "Invalid character in protocol name*";
             return false;
         }
-        if (File.Exists(Path.Combine(@Application.temporaryCachePath, "..", "inflight_protocols", procedureName + ".csv")))
+        if (File.Exists(Path.Combine(@Application.temporaryCachePath, "..", "inflight_protocols", procedureName + ".csv")) || File.Exists(Path.Combine(@Application.temporaryCachePath, "..", "saved_protocols", procedureName + ".csv")))
         {
             inputError.text = "A protocol with this name already exists*";
             return false;
