@@ -28,7 +28,7 @@ public class ProtocolListItemViewController : MonoBehaviour
 
         uploadButton.onClick.AddListener(delegate
         {
-            File.Move(filePath, Path.Combine(@Application.temporaryCachePath, "..", "new_protocols", protocolName.text + ".csv"));
+            File.Copy(filePath, Path.Combine(@Application.temporaryCachePath, "..", "new_protocols", protocolName.text + ".csv"));
         });
 
         deleteButton.onClick.AddListener(delegate
