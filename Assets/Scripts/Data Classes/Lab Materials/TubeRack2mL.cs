@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class TubeRack5mL : LabMaterial
+public class TubeRack2mL : LabMaterial
 {
     public Dictionary<string, Sample> tubes;
 
     private int subId;
 
-    public TubeRack5mL(int id, string name) : base(id, name)
+    public TubeRack2mL(int id, string name) : base(id, name)
     {
         tubes = new Dictionary<string, Sample>();
     }

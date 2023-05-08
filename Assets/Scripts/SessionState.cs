@@ -359,16 +359,16 @@ public class SessionState : MonoBehaviour
 
     static void AddSampleToMaterialsList(Sample newSample, string vesselType)
     {
-        if (vesselType == "5mL Tube")
+        if (vesselType == "2mL Tube")
         {
-            var tubeRack = Materials.Where(mat => mat is TubeRack5mL).FirstOrDefault();
+            var tubeRack = Materials.Where(mat => mat is TubeRack2mL).FirstOrDefault();
             if (tubeRack != null && tubeRack.HasSampleSlot())
             {
                 tubeRack.AddNewSample(newSample);
             }
             else
             {
-                TubeRack5mL newRack = new TubeRack5mL(Materials.Count, "tuberack5ml");
+                TubeRack2mL newRack = new TubeRack2mL(Materials.Count, "tuberack2ml");
                 newRack.AddNewSample(newSample);
                 Materials.Add(newRack);
             }
@@ -424,7 +424,7 @@ public class SessionState : MonoBehaviour
     {
         foreach (var material in Materials)
         {
-            if (material is TubeRack5mL)
+            if (material is TubeRack2mL)
             {
                 foreach (var tube in material.GetTubes())
                 {

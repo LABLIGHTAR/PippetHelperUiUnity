@@ -176,9 +176,9 @@ public class ProcedureLoader : MonoBehaviour
                 SessionState.Materials.Add(new Wellplate(material.id, material.name, material.numWells, "plate " + (material.id + 1)));
             }
         }
-        else if (material.name.Contains("tuberack5ml"))
+        else if (material.name.Contains("tuberack2ml"))
         {
-            AddTubeRack5mL(material);
+            AddTubeRack2mL(material);
         }
         else if (material.name.Contains("reservoir"))
         {
@@ -186,15 +186,15 @@ public class ProcedureLoader : MonoBehaviour
         }
     }
 
-    void AddTubeRack5mL(MaterialFields material)
+    void AddTubeRack2mL(MaterialFields material)
     {
         if (material.subId != "" && material.subId == "0")
         {
-            var newTubeRack = new TubeRack5mL(material.id, material.name);
+            var newTubeRack = new TubeRack2mL(material.id, material.name);
             SessionState.Materials.Add(newTubeRack);
             if (material.contentsColor != Color.white && material.contentsColorName != "")
             {
-                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "5mL Tube");
+                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "2mL Tube");
                 newTubeRack.AddNewSample(newSample);
             }
         }
@@ -203,7 +203,7 @@ public class ProcedureLoader : MonoBehaviour
             var tubeRack = SessionState.Materials[material.id];
             if (material.contentsColor != Color.white && material.contentsColorName != "")
             {
-                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "5mL Tube");
+                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "2mL Tube");
                 tubeRack.AddNewSample(newSample);
             }
         }
