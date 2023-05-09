@@ -116,9 +116,9 @@ public class SubstanceLoader : MonoBehaviour
             ColorUtility.TryParseHtmlString(lineCells[3], out sampleColor);
             string vesselType = lineCells[4];
 
-            if (vesselType == "tuberack5ml")
+            if (vesselType == "tuberack2ml")
             {
-                vesselType = "5mL Tube";
+                vesselType = "2mL Tube";
             }
             else if (vesselType == "reservoir")
             {
