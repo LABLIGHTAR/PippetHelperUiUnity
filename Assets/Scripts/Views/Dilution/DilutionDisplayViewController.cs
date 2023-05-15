@@ -40,7 +40,7 @@ public class DilutionDisplayViewController : MonoBehaviour
 
     private float initialVolume;
 
-    private int dilutionFactor;
+    private float dilutionFactor;
     private int numDilutions;
 
     private List<(string Id, string subId)> selected;
@@ -193,7 +193,7 @@ public class DilutionDisplayViewController : MonoBehaviour
         else
         {
             double newConcentration = Math.Pow((double)dilutionFactor, (double)selected.Count);
-            concentration = "1:" + newConcentration.ToString();
+            concentration = "1:" + newConcentration.ToString("0.000");
             dilutionItemVC.dilutionText.text = concentration;
         }
 
@@ -306,7 +306,7 @@ public class DilutionDisplayViewController : MonoBehaviour
     {
         if (dilutionFactorInput.text.Length > 0)
         {
-            if (int.TryParse(dilutionFactorInput.text, out dilutionFactor))
+            if (float.TryParse(dilutionFactorInput.text, out dilutionFactor))
             {
                 if (!(dilutionFactor > 0))
                 {
@@ -322,7 +322,7 @@ public class DilutionDisplayViewController : MonoBehaviour
             else
             {
                 dilutionFactorError.gameObject.SetActive(true);
-                dilutionFactorError.text = "Factor must be an integer*";
+                dilutionFactorError.text = "Factor must be a number*";
                 return false;
             }
         }
