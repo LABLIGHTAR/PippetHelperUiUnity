@@ -38,9 +38,9 @@ public class FocusedWellViewController : MonoBehaviour
 
         float wellVolume = 0f;
         
-        foreach(Step step in SessionState.Steps)
+        for(int i=0; i<=SessionState.ActiveStep; i++)
         {
-            foreach (LabAction action in step.GetActionsWithTargetWell(well).Where(action => action.type == LabAction.ActionType.pipette))
+            foreach (LabAction action in SessionState.Steps[i].GetActionsWithTargetWell(well).Where(action => action.type == LabAction.ActionType.pipette))
             {
                 wellVolume += action.source.volume;
                 var newSampleItem = Instantiate(SampleItemPrefab, ScrollViewContent);
