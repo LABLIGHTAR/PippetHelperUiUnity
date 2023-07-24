@@ -92,7 +92,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (actionRemovedSubscription != null)
             actionRemovedSubscription.Dispose();
 
-        SessionState.CurrentStep.actionAddedStream.Subscribe(action =>
+        actionAddedSubscription = SessionState.CurrentStep.actionAddedStream.Subscribe(action =>
         {
             if (action.WellIsTarget(plateId.ToString(), wellId))
             {
@@ -100,7 +100,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
         }).AddTo(this);
 
-        SessionState.CurrentStep.actionRemovedStream.Subscribe(action =>
+        actionRemovedSubscription = SessionState.CurrentStep.actionRemovedStream.Subscribe(action =>
         {
             if (action.WellIsTarget(plateId.ToString(), wellId))
             {
@@ -114,6 +114,16 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (action.type == LabAction.ActionType.pipette && action.WellIsTarget(plateId.ToString(), wellId))
         {
             AddSampleIndicator(action.source.color);
+        }
+        else if(action.type == LabAction.ActionType.transfer && action.WellIsTarget(plateId.ToString(), wellId))
+        {
+            for (int i=0; i<=SessionState.ActiveStep; i++)
+            {
+                foreach(var pipetteAction in SessionState.Steps[i].actions.Where(a => a.type == LabAction.ActionType.pipette && a.WellIsTarget(action.source.matID, action.source.matSubID))) //all pipette actions in this step where the target is the source of the transfer action
+                {
+                    AddSampleIndicator(pipetteAction.source.color);
+                }
+            }
         }
     }
 
@@ -211,11 +221,25 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void LoadSampleIndicators()
     {
-        foreach(LabAction action in SessionState.CurrentStep.actions)
+        Debug.Log("Loading Sample Indicators");
+        for (int i = 0; i <= SessionState.ActiveStep; i++)
         {
-            if(action.type == LabAction.ActionType.pipette && action.WellIsTarget(plateId.ToString(), wellId))
+            foreach (LabAction action in SessionState.Steps[i].actions)
             {
-                AddSampleIndicator(action.source.color);
+                if (action.type == LabAction.ActionType.pipette && action.WellIsTarget(plateId.ToString(), wellId))
+                {
+                    AddSampleIndicator(action.source.color);
+                }
+                else if (action.type == LabAction.ActionType.transfer && action.WellIsTarget(plateId.ToString(), wellId))
+                {
+                    for (int j = 0; j <= SessionState.ActiveStep; j++)
+                    {
+                        foreach (var pipetteAction in SessionState.Steps[j].actions.Where(a => a.type == LabAction.ActionType.pipette && a.WellIsTarget(action.source.matID, action.source.matSubID))) //all pipette actions in this step where the target is the source of the transfer action
+                        {
+                            AddSampleIndicator(pipetteAction.source.color);
+                        }
+                    }
+                }
             }
         }
     }
