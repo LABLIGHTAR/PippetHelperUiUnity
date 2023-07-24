@@ -426,6 +426,30 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1924922418778041416}
     m_Modifications:
+    - target: {fileID: 3178156393267839494, guid: 3be19d4f9dbca3f47b0897fec6aeb341, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 148
+      objectReference: {fileID: 0}
+    - target: {fileID: 3894366980556696862, guid: 3be19d4f9dbca3f47b0897fec6aeb341, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128889818318991051, guid: 3be19d4f9dbca3f47b0897fec6aeb341, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128889818318991051, guid: 3be19d4f9dbca3f47b0897fec6aeb341, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128889818318991051, guid: 3be19d4f9dbca3f47b0897fec6aeb341, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6128889818318991051, guid: 3be19d4f9dbca3f47b0897fec6aeb341, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7146222812464733094, guid: 3be19d4f9dbca3f47b0897fec6aeb341, type: 3}
       propertyPath: m_Name
       value: AddMaterial
