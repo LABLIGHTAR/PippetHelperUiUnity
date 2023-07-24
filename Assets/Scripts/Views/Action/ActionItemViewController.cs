@@ -10,6 +10,7 @@ public class ActionItemViewController : MonoBehaviour, IPointerEnterHandler, IPo
     public LabAction associatedAction;
     public Canvas canvas;
     public TextMeshProUGUI actionText;
+    public TextMeshProUGUI actionNum;
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
 
@@ -48,5 +49,6 @@ public class ActionItemViewController : MonoBehaviour, IPointerEnterHandler, IPo
     {
         associatedAction = action;
         actionText.text = action.GetActionString();
+        actionNum.text = (SessionState.Steps[SessionState.ActiveStep].actions.IndexOf(action) + 1).ToString();
     }
 }

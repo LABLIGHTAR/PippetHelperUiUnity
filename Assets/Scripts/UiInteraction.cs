@@ -22,7 +22,7 @@ public class UiInteraction : MonoBehaviour
 
     void HandleSelectionInput()
     {
-        if(Mouse.current.leftButton.wasPressedThisFrame && SessionState.ActiveTool.name == "micropipette" && !SessionState.FormActive)
+/*        if(Mouse.current.leftButton.wasPressedThisFrame && SessionState.ActiveTool.name == "micropipette" && !SessionState.FormActive)
         {
             //set up selection box
             SelectionBox.sizeDelta = Vector2.zero;
@@ -38,12 +38,12 @@ public class UiInteraction : MonoBehaviour
             {
                 SessionState.SelectionActive = true;
             }
-        }
-        else if(Mouse.current.leftButton.wasReleasedThisFrame && !SessionState.FormActive)
+        }*/
+        if(Mouse.current.leftButton.wasReleasedThisFrame && !SessionState.FormActive)
         {
             //deactive selection box
-            SelectionBox.sizeDelta = Vector2.zero;
-            SelectionBox.gameObject.SetActive(false);
+/*            SelectionBox.sizeDelta = Vector2.zero;
+            SelectionBox.gameObject.SetActive(false);*/
 
             //check what was clicked on
             RaycastHit2D hit = Physics2D.Raycast(Camera.ScreenToWorldPoint(Mouse.current.position.ReadValue()), Vector2.zero);

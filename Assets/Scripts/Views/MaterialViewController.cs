@@ -72,7 +72,8 @@ public class MaterialViewController : MonoBehaviour
         if(this.transform.childCount < 5)
         {
             addMaterialButton.transform.parent.gameObject.SetActive(true);
-            materialList.SetActive(true);
+            Add96WellPlate();
+            //materialList.SetActive(true);
         }
     }
 

@@ -18,9 +18,9 @@ public class ActionSelectionViewController : MonoBehaviour
             case ("Transfer"):
                 SessionState.ActiveActionType = LabAction.ActionType.transfer;
                 break;
-            case ("Dilution"):
+/*            case ("Dilution"):
                 SessionState.ActiveActionType = LabAction.ActionType.dilution;
-                break;
+                break;*/
         }
     }
 }
