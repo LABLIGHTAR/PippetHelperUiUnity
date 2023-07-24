@@ -104,8 +104,13 @@ public class ProcedureGenerator : MonoBehaviour
 
         Debug.Log("CSV file written to: " + filePath);
 
+        string persistantPath = Path.Combine(folderPathPersistent, SessionState.ProcedureName + ".csv");
 
-        string persistantPath =  Path.Combine(folderPathPersistent, SessionState.ProcedureName + ".csv");
+        if (File.Exists(persistantPath))
+        {
+            Debug.Log("File already exists, overwriting " + persistantPath);
+            File.Delete(persistantPath);
+        }
         File.Copy(filePath, persistantPath);
         Debug.Log("CSV file copied to: " + persistantPath);
     }
