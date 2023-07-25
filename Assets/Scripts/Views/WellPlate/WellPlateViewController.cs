@@ -19,11 +19,11 @@ public class WellPlateViewController : MonoBehaviour
         {
             child.GetComponent<WellViewController>().plateId = id;
 
-            if (SessionState.CurrentStep.materials[id] is Wellplate)
+            if (SessionState.Materials[id] is Wellplate)
             {
-                if (!SessionState.CurrentStep.materials[id].ContainsWell(child.gameObject.name))
+                if (!SessionState.Materials[id].ContainsWell(child.gameObject.name))
                 {
-                    SessionState.CurrentStep.materials[id].AddWell(child.gameObject.name, new Well(child.name, id));
+                    SessionState.Materials[id].AddWell(child.gameObject.name, new Well(child.name, id));
                 }
             }
         }

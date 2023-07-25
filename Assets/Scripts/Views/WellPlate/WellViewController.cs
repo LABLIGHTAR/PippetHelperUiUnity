@@ -41,14 +41,14 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         
         SessionState.stepStream.Subscribe(_ => 
         {
-            SessionState.CurrentStep.materials[plateId].GetWell(wellId);
+            SessionState.Materials[plateId].GetWell(wellId);
             LoadVisualState();
             RenewStepSubscriptions();
         }).AddTo(this);
 
         SessionState.editedSampleStream.Subscribe(samples =>
         {
-            if (SessionState.CurrentStep.materials[plateId].GetWell(wellId).ContainsSample(samples.Item2))
+            if (SessionState.Materials[plateId].GetWell(wellId).ContainsSample(samples.Item2))
             {
                 UpdateSampleIndicator(samples.Item1.color, samples.Item2.color);
             }
@@ -68,7 +68,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                     break;
                 case LabAction.ActionStatus.submitted:
                     selected = false;
-                    SessionState.CurrentStep.materials[plateId].GetWell(wellId).selected = false;
+                    SessionState.Materials[plateId].GetWell(wellId).selected = false;
                     OnDeselected(SessionState.ActiveTool.numChannels);
                     break;
             }
@@ -129,9 +129,20 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     private void UpdateFromActionRemoved(LabAction action)
     {
-        if (action.type == LabAction.ActionType.pipette && action.WellIsTarget(plateId.ToString(), wellId))
+        if(action.WellIsTarget(plateId.ToString(), wellId))
         {
-            RemoveSampleIndicator(action.source.color);
+            if (action.type == LabAction.ActionType.pipette)
+            {
+                RemoveSampleIndicator(action.source.color);
+            }
+            else if(action.type == LabAction.ActionType.transfer)
+            {
+                List<Sample> samples = action.TryGetSourceWellSamples();
+                foreach(var sample in samples)
+                {
+                    RemoveSampleIndicator(sample.color);
+                }
+            }
         }
     }
 
@@ -282,7 +293,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         if (SessionState.ActiveSample != null)
         {
-            if (SessionState.CurrentStep.materials[plateId].GetWell(wellId).ContainsSample(SessionState.ActiveSample))
+            if (SessionState.Materials[plateId].GetWell(wellId).ContainsSample(SessionState.ActiveSample))
             {
                 DeactivateHighlight(SessionState.ActiveTool.numChannels);
                 return false;
@@ -371,7 +382,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     public virtual void OnSelectedAndClicked(int numChannels)
     {
         selected = true;
-        SessionState.CurrentStep.materials[plateId].GetWell(wellId).selected = true;
+        SessionState.Materials[plateId].GetWell(wellId).selected = true;
 
         numChannels--;
 
@@ -500,7 +511,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                 OnSelectedAndClicked(SessionState.ActiveTool.numChannels);
                 SessionState.SetSelectedWells(plateId);
             }
-            if (SessionState.CurrentStep.materials[plateId].ContainsWell(wellId))
+            if (SessionState.Materials[plateId].ContainsWell(wellId))
             {
                 SessionState.SetFocusedWell(wellId, plateId);
             }

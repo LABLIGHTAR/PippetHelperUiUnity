@@ -491,14 +491,14 @@ public class SessionState : MonoBehaviour
 
     public static void SetFocusedWell(string wellId, int plateId)
     {
-        if (!CurrentStep.materials[plateId].ContainsWell(wellId))
+        if (!Materials[plateId].ContainsWell(wellId))
         {
-            CurrentStep.materials[plateId].AddWell(wellId, new Well(wellId, plateId));
-            FocusedWell = CurrentStep.materials[plateId].GetWell(wellId);
+            Materials[plateId].AddWell(wellId, new Well(wellId, plateId));
+            FocusedWell = Materials[plateId].GetWell(wellId);
         }
         else
         {
-            FocusedWell = CurrentStep.materials[plateId].GetWell(wellId);
+            FocusedWell = Materials[plateId].GetWell(wellId);
         }
     }
 
@@ -506,7 +506,7 @@ public class SessionState : MonoBehaviour
     {
         List<Well> selectedWells = new List<Well>();
 
-        foreach(var well in CurrentStep.materials[plateId].GetWells())
+        foreach(var well in Materials[plateId].GetWells())
         {
             if(well.Value.selected)
             {

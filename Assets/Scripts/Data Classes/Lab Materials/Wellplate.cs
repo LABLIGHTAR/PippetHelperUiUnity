@@ -39,7 +39,7 @@ public class Wellplate : LabMaterial
     {
         if(!ContainsWell(wellID))
         {
-            AddWell(wellID, new Well(wellID, SessionState.CurrentStep.materials.IndexOf(this)));
+            AddWell(wellID, new Well(wellID, SessionState.Materials.IndexOf(this)));
         }
         return wells[wellID];
     }

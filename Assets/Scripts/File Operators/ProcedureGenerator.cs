@@ -131,9 +131,7 @@ public class ProcedureGenerator : MonoBehaviour
 
     string FindGroupEnd(int groupId, int plateId)
     {
-        foreach (Step step in SessionState.Steps)
-        {
-            foreach (Wellplate plate in step.materials)
+            foreach (Wellplate plate in SessionState.Materials)
             {
                 if(plate.id == plateId)
                 {
@@ -149,7 +147,6 @@ public class ProcedureGenerator : MonoBehaviour
                     }
                 }
             }
-        }
         return null;
     }
 

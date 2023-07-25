@@ -64,7 +64,7 @@ public class LabAction
 
     public LabAction(int step, ActionType action, Source sourceMat, Target targetMat)
     {
-        step = step;
+        this.step = step;
         type = action;
         source = sourceMat;
         target = targetMat;
@@ -297,11 +297,8 @@ public class LabAction
     
     public bool SampleIsSource(Sample sample)
     {
-        if(source.color == sample.color)
-        {
-            return true;
-        }
-        return false;
+        //return (source.color == sample.color);
+        return (SessionState.Materials[int.Parse(source.matID)].GetNameAsSource(source.matSubID) == sample.sampleName);
     }
 
     public Sample TryGetSourceSample()
@@ -309,12 +306,22 @@ public class LabAction
         return SessionState.Materials[int.Parse(source.matID)].GetSampleList().Where(sample => SampleIsSource(sample)).FirstOrDefault();
     }
 
+    public Well TryGetSourceWell()
+    {
+        if(SourceIsWellplate())
+        {
+            return ((Wellplate)SessionState.Materials[int.Parse(source.matID)]).wells[source.matSubID];
+        }
+        return null;
+    }
+
     public List<Sample> TryGetSourceWellSamples()
     {
         List<Sample> samples = new List<Sample>();
-        if(SourceIsWellplate())
+        Well well = TryGetSourceWell();
+        if(well != null)
         {
-            samples = ((Wellplate)SessionState.Materials[int.Parse(source.matID)]).wells[source.matSubID].GetSamples();
+            samples = well.GetSamplesBeforeAction(this);
         }
 
         return samples;

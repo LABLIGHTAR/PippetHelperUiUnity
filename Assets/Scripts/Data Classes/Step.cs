@@ -5,7 +5,6 @@ using UniRx;
 
 public class Step
 {
-    public List<LabMaterial> materials;
     public List<LabAction> actions;
 
     private int GroupId;
@@ -16,42 +15,28 @@ public class Step
 
     public Step()
     {
-        materials = new List<LabMaterial>();
         actions = new List<LabAction>();
-        AddWellplates();
-    }
-
-    void AddWellplates()
-    {
-        foreach (var material in SessionState.Materials)
-        {
-            if (material is Wellplate)
-            {
-                var wellplate = (Wellplate)material;
-                materials.Add(new Wellplate(wellplate.id, wellplate.materialName, wellplate.numWells, wellplate.customName));
-            }
-        }
     }
 
     public bool TryAddActiveSampleToWell(string wellName, int plateId, bool inGroup, bool isStart, bool isEnd)
     {
         if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
         {
-            if (!materials[plateId].ContainsWell(wellName))
+            if (!SessionState.Materials[plateId].ContainsWell(wellName))
             {
-                materials[plateId].AddWell(wellName, new Well(wellName, plateId));
+                SessionState.Materials[plateId].AddWell(wellName, new Well(wellName, plateId));
             }
 
-            if (materials[plateId].ContainsWell(wellName) && !materials[plateId].GetWell(wellName).ContainsSample(SessionState.ActiveSample))
+            if (SessionState.Materials[plateId].ContainsWell(wellName) && !SessionState.Materials[plateId].GetWell(wellName).ContainsSample(SessionState.ActiveSample))
             {
                 if (inGroup)
                 {
-                    materials[plateId].GetWell(wellName).groups.Add(new Well.SampleGroup(GroupId, isStart, isEnd, SessionState.ActiveSample));
+                    SessionState.Materials[plateId].GetWell(wellName).groups.Add(new Well.SampleGroup(GroupId, isStart, isEnd, SessionState.ActiveSample));
 
                     if (isEnd)
                     {
                         string multichannelTargetID = "";
-                        foreach (var well in materials[plateId].GetWells())
+                        foreach (var well in SessionState.Materials[plateId].GetWells())
                         {
                             if (well.Value.IsStartOfGroup(GroupId))
                             {
@@ -84,7 +69,7 @@ public class Step
     {
         if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
         {
-            if (materials[plateId].ContainsWell(wellName))
+            if (SessionState.Materials[plateId].ContainsWell(wellName))
             {
                 LabAction removalAction = actions.Where(action => action.source.color == SessionState.ActiveSample.color && action.WellIsTarget(plateId.ToString(), wellName)).FirstOrDefault();
                 
@@ -94,7 +79,7 @@ public class Step
 
                     SessionState.SampleRemovedStream.OnNext(wellName);
 
-                    if (materials[plateId].GetWell(wellName).groups != null)
+                    if (SessionState.Materials[plateId].GetWell(wellName).groups != null)
                     {
                         RemoveSampleGroup(wellName, plateId);
                     }
@@ -117,7 +102,7 @@ public class Step
 
     void RemoveSampleGroup(string wellName, int plateId)
     {
-        foreach (Well.SampleGroup group in materials[plateId].GetWell(wellName).groups)
+        foreach (Well.SampleGroup group in SessionState.Materials[plateId].GetWell(wellName).groups)
         {
             if (group.Sample == SessionState.ActiveSample)
             {
@@ -127,7 +112,7 @@ public class Step
                 string groupStart = "";
                 string groupEnd = "";
 
-                foreach (var well in materials[plateId].GetWells())
+                foreach (var well in SessionState.Materials[plateId].GetWells())
                 {
                     if (well.Value.IsStartOfGroup(IdForRemoval))
                     {
@@ -158,7 +143,7 @@ public class Step
     {
         List<Well.SampleGroup> groupsToRemove = new List<Well.SampleGroup>();
 
-        foreach (var well in materials[plateId].GetWells())
+        foreach (var well in SessionState.Materials[plateId].GetWells())
         {
             foreach (Well.SampleGroup group in well.Value.groups)
             {
@@ -212,8 +197,8 @@ public class Step
 
     public void RemoveAction(LabAction action)
     {
-        actions.Remove(action);
         actionRemovedStream.OnNext(action);
+        actions.Remove(action);
     }
 
     public void AddPipetteAction(string plateID, string wellID)

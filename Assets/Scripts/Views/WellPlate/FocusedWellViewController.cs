@@ -43,25 +43,28 @@ public class FocusedWellViewController : MonoBehaviour
 
         foreach(var sample in well.GetSamples())
         {
-            Debug.Log(sample.sampleName);
             for (int i = 0; i <= SessionState.ActiveStep; i++)
             {
-                foreach (LabAction action in SessionState.Steps[i].GetActionsWithTargetWell(well).Where(action => action.SampleIsSource(sample)))
+                foreach (LabAction action in SessionState.Steps[i].GetActionsWithTargetWell(well))
                 {
                     if(action.SampleIsSource(sample))
                     {
                         sampleAddedAction = action;
                         sampleVolume += action.source.volume;
                     }
-                    if(action.TryGetSourceWellSamples() != null && action.TryGetSourceWellSamples().Contains(sample))
+                    else if(action.TryGetSourceWellSamples() != null && action.TryGetSourceWellSamples().Contains(sample))
                     {
+                        Debug.Log(sample.sampleName + " volume: " + well.GetSampleVolumeAtAction(sample, action) + " well volume: " + well.GetVolumeAtAction(action) + " transfer volume: " + action.source.volume);
                         sampleVolume += ((well.GetSampleVolumeAtAction(sample, action) / well.GetVolumeAtAction(action)) * action.source.volume);
                     }
                 }
             }
-            foreach (LabAction action in SessionState.GetAllActionsAfter(sampleAddedAction).Where(action => action.WellIsSource(well.plateId.ToString(), well.id)))
+            if(sampleAddedAction != null)
             {
-                sampleVolume -= (action.source.volume / well.GetSamplesBeforeAction(action).Count());
+                foreach (LabAction action in SessionState.GetAllActionsAfter(sampleAddedAction).Where(action => action.WellIsSource(well.plateId.ToString(), well.id)))
+                {
+                    sampleVolume -= (action.source.volume / well.GetSamplesBeforeAction(action).Count());
+                }
             }
 
             wellVolume += sampleVolume;
