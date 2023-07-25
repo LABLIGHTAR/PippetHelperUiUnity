@@ -309,6 +309,17 @@ public class LabAction
         return SessionState.Materials[int.Parse(source.matID)].GetSampleList().Where(sample => SampleIsSource(sample)).FirstOrDefault();
     }
 
+    public List<Sample> TryGetSourceWellSamples()
+    {
+        List<Sample> samples = new List<Sample>();
+        if(SourceIsWellplate())
+        {
+            samples = ((Wellplate)SessionState.Materials[int.Parse(source.matID)]).wells[source.matSubID].GetSamples();
+        }
+
+        return samples;
+    }
+
     public void UpdateSourceSample(Sample sample)
     {
         source.color = sample.color;

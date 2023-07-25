@@ -221,7 +221,6 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void LoadSampleIndicators()
     {
-        Debug.Log("Loading Sample Indicators");
         for (int i = 0; i <= SessionState.ActiveStep; i++)
         {
             foreach (LabAction action in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), wellId)))

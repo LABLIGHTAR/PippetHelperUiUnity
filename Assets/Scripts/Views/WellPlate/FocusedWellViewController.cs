@@ -43,13 +43,20 @@ public class FocusedWellViewController : MonoBehaviour
 
         foreach(var sample in well.GetSamples())
         {
+            Debug.Log(sample.sampleName);
             for (int i = 0; i <= SessionState.ActiveStep; i++)
             {
                 foreach (LabAction action in SessionState.Steps[i].GetActionsWithTargetWell(well).Where(action => action.SampleIsSource(sample)))
                 {
-                    sampleAddedAction = action;
-                    sampleVolume += action.source.volume;
-                    break;
+                    if(action.SampleIsSource(sample))
+                    {
+                        sampleAddedAction = action;
+                        sampleVolume += action.source.volume;
+                    }
+                    if(action.TryGetSourceWellSamples() != null && action.TryGetSourceWellSamples().Contains(sample))
+                    {
+                        sampleVolume += ((well.GetSampleVolumeAtAction(sample, action) / well.GetVolumeAtAction(action)) * action.source.volume);
+                    }
                 }
             }
             foreach (LabAction action in SessionState.GetAllActionsAfter(sampleAddedAction).Where(action => action.WellIsSource(well.plateId.ToString(), well.id)))

@@ -69,14 +69,22 @@ public class Well
 
         for(int i=0; i<=SessionState.ActiveStep; i++)
         {
-            foreach(var action in SessionState.Steps[i].actions)
+            foreach(var action in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), id)))
             {
-                if (action.WellIsTarget(plateId.ToString(), id) && action.type == LabAction.ActionType.pipette)
+                if (action.type == LabAction.ActionType.pipette)
                 {
                     Sample sourceSample = action.TryGetSourceSample();
                     if (sourceSample != null)
                     {
                         samples.Add(sourceSample);
+                    }
+                }
+                else if(action.type == LabAction.ActionType.transfer)
+                {
+                    List<Sample> sourceWellSamples = action.TryGetSourceWellSamples();
+                    if(sourceWellSamples != null)
+                    {
+                        samples.Union(sourceWellSamples);
                     }
                 }
             }
@@ -100,5 +108,72 @@ public class Well
         }
 
         return samples;
+    }
+
+    public float GetVolumeAtAction(LabAction action)
+    {
+        float volume = 0f;
+
+        for(int i=0; i<=action.step; i++)
+        {
+            foreach (var a in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), id)))
+            {
+                if (i < action.step)
+                {
+                    volume += a.source.volume;
+                }
+                else
+                {
+                    if(SessionState.Steps[i].actions.IndexOf(a) <= SessionState.Steps[i].actions.IndexOf(action))
+                    {
+                        volume += a.source.volume;
+                    }
+                }
+            }
+        }
+
+        return volume;
+    }
+
+    public float GetSampleVolumeAtAction(Sample sample, LabAction action)
+    {
+        float volume = 0f;
+
+        if(ContainsSample(sample))
+        {
+            for(int i=0; i<=action.step; i++)
+            {
+                foreach(var a in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), id)))
+                {
+                    if(i < action.step)
+                    {
+                        if (a.type == LabAction.ActionType.pipette && a.SampleIsSource(sample))
+                        {
+                            volume += a.source.volume;
+                        }
+                        else if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples().Contains(sample))
+                        {
+                            volume += (a.source.volume / a.TryGetSourceWellSamples().Count());
+                        }
+                    }
+                    else
+                    {
+                        if (SessionState.Steps[i].actions.IndexOf(a) <= SessionState.Steps[i].actions.IndexOf(action))
+                        {
+                            if (a.type == LabAction.ActionType.pipette && a.SampleIsSource(sample))
+                            {
+                                volume += a.source.volume;
+                            }
+                            else if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples().Contains(sample))
+                            {
+                                volume += (a.source.volume / a.TryGetSourceWellSamples().Count());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return volume;
     }
 }
