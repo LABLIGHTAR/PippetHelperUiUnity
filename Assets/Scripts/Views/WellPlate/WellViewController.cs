@@ -224,20 +224,17 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         Debug.Log("Loading Sample Indicators");
         for (int i = 0; i <= SessionState.ActiveStep; i++)
         {
-            foreach (LabAction action in SessionState.Steps[i].actions)
+            foreach (LabAction action in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), wellId)))
             {
-                if (action.type == LabAction.ActionType.pipette && action.WellIsTarget(plateId.ToString(), wellId))
+                if (action.type == LabAction.ActionType.pipette)
                 {
                     AddSampleIndicator(action.source.color);
                 }
-                else if (action.type == LabAction.ActionType.transfer && action.WellIsTarget(plateId.ToString(), wellId))
+                else if (action.type == LabAction.ActionType.transfer)
                 {
-                    for (int j = 0; j <= SessionState.ActiveStep; j++)
+                    foreach(var pipetteAction in SessionState.GetAllActionsBefore(action).Where(a => a.type == LabAction.ActionType.pipette && a.WellIsTarget(action.source.matID, action.source.matSubID)))
                     {
-                        foreach (var pipetteAction in SessionState.Steps[j].actions.Where(a => a.type == LabAction.ActionType.pipette && a.WellIsTarget(action.source.matID, action.source.matSubID))) //all pipette actions in this step where the target is the source of the transfer action
-                        {
-                            AddSampleIndicator(pipetteAction.source.color);
-                        }
+                        AddSampleIndicator(pipetteAction.source.color);
                     }
                 }
             }

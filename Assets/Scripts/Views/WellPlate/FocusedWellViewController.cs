@@ -37,17 +37,32 @@ public class FocusedWellViewController : MonoBehaviour
         ClearSampleDisplays();
 
         float wellVolume = 0f;
-        
-        for(int i=0; i<=SessionState.ActiveStep; i++)
-        {
-            foreach (LabAction action in SessionState.Steps[i].GetActionsWithTargetWell(well).Where(action => action.type == LabAction.ActionType.pipette))
-            {
-                wellVolume += action.source.volume;
-                var newSampleItem = Instantiate(SampleItemPrefab, ScrollViewContent);
-                newSampleItem.GetComponent<FocusedSampleItemViewController>().InitItem(action);
-            }
-        }
+        float sampleVolume = 0f;
 
+        LabAction sampleAddedAction = null;
+
+        foreach(var sample in well.GetSamples())
+        {
+            for (int i = 0; i <= SessionState.ActiveStep; i++)
+            {
+                foreach (LabAction action in SessionState.Steps[i].GetActionsWithTargetWell(well).Where(action => action.SampleIsSource(sample)))
+                {
+                    sampleAddedAction = action;
+                    sampleVolume += action.source.volume;
+                    break;
+                }
+            }
+            foreach (LabAction action in SessionState.GetAllActionsAfter(sampleAddedAction).Where(action => action.WellIsSource(well.plateId.ToString(), well.id)))
+            {
+                sampleVolume -= (action.source.volume / well.GetSamplesBeforeAction(action).Count());
+            }
+
+            wellVolume += sampleVolume;
+            var newSampleItem = Instantiate(SampleItemPrefab, ScrollViewContent);
+            newSampleItem.GetComponent<FocusedSampleItemViewController>().InitItem(sample, sampleVolume);
+            sampleVolume = 0f;
+        }
+        
         //update well display
         if(well.id != null)
         {

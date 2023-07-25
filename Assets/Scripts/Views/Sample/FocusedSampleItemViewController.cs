@@ -20,4 +20,11 @@ public class FocusedSampleItemViewController : MonoBehaviour
             sampleVolume.text = action.source.volume.ToString() + "μl";
         }
     }
+
+    public void InitItem(Sample sample, float volume)
+    {
+        sampleName.text = sample.sampleName;
+        bgImage.color = sample.color;
+        sampleVolume.text = volume.ToString() + "μl";
+    }
 }

@@ -67,15 +67,35 @@ public class Well
     {
         List<Sample> samples = new List<Sample>();
 
-        foreach(LabAction action in SessionState.CurrentStep.actions)
+        for(int i=0; i<=SessionState.ActiveStep; i++)
         {
-            if (action.WellIsTarget(plateId.ToString(), id) && action.type == LabAction.ActionType.pipette)
+            foreach(var action in SessionState.Steps[i].actions)
             {
-                Sample sourceSample = action.TryGetSourceSample();
-                if (sourceSample != null)
+                if (action.WellIsTarget(plateId.ToString(), id) && action.type == LabAction.ActionType.pipette)
                 {
-                    samples.Add(sourceSample);
+                    Sample sourceSample = action.TryGetSourceSample();
+                    if (sourceSample != null)
+                    {
+                        samples.Add(sourceSample);
+                    }
                 }
+            }
+        }
+
+        return samples;
+    }
+
+
+    public List<Sample> GetSamplesBeforeAction(LabAction action)
+    {
+        List<Sample> samples = new List<Sample>();
+
+        foreach(LabAction a in SessionState.GetAllActionsBefore(action).Where(a => a.WellIsTarget(plateId.ToString(), id) && a.type == LabAction.ActionType.pipette))
+        {
+            Sample sourceSample = a.TryGetSourceSample();
+            if (sourceSample != null)
+            {
+                samples.Add(sourceSample);
             }
         }
 

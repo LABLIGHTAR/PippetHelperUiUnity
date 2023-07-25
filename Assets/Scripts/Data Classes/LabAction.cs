@@ -56,13 +56,15 @@ public class LabAction
         }
     }
 
+    public int step;
     public ActionType type;
     public Source source;
     public Target target;
     public int numChannels;
 
-    public LabAction(ActionType action, Source sourceMat, Target targetMat)
+    public LabAction(int step, ActionType action, Source sourceMat, Target targetMat)
     {
+        step = step;
         type = action;
         source = sourceMat;
         target = targetMat;

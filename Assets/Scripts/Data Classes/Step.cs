@@ -205,7 +205,7 @@ public class Step
 
     public void AddAction(LabAction.ActionType action, LabAction.Source source, LabAction.Target target)
     {
-        var newAction = new LabAction(action, source, target);
+        var newAction = new LabAction(SessionState.ActiveStep, action, source, target);
         actions.Add(newAction);
         actionAddedStream.OnNext(newAction);
     }

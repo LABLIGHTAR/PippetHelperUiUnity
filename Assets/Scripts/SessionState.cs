@@ -521,4 +521,58 @@ public class SessionState : MonoBehaviour
     {
         FocusedAction = action;
     }
+
+    public static List<LabAction> GetAllActionsBefore(LabAction action)
+    {
+        List<LabAction> actions = new List<LabAction>();
+        for(int i=0; i<=action.step; i++)
+        {
+            if(i < action.step)
+            {
+                foreach(var a in Steps[i].actions)
+                {
+                    actions.Add(a);
+                }
+            }
+            else
+            {
+                foreach (var a in Steps[i].actions)
+                {
+                    if(Steps[i].actions.IndexOf(action) > Steps[i].actions.IndexOf(a))
+                    {
+                        actions.Add(a);
+                    }
+                }
+            }
+        }
+
+        return actions;
+    }
+
+    public static List<LabAction> GetAllActionsAfter(LabAction action)
+    {
+        List<LabAction> actions = new List<LabAction>();
+        for (int i = action.step; i < Steps.Count(); i++)
+        {
+            if (i > action.step)
+            {
+                foreach (var a in Steps[i].actions)
+                {
+                    actions.Add(a);
+                }
+            }
+            else
+            {
+                foreach (var a in Steps[i].actions)
+                {
+                    if (Steps[i].actions.IndexOf(action) < Steps[i].actions.IndexOf(a))
+                    {
+                        actions.Add(a);
+                    }
+                }
+            }
+        }
+
+        return actions;
+    }
 }
