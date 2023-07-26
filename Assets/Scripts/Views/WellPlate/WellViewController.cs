@@ -121,22 +121,19 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 for (int i = 0; i <= SessionState.ActiveStep; i++)
                 {
-                    foreach (var pipetteAction in SessionState.Steps[i].actions.Where(a => a.type == LabAction.ActionType.pipette && a.WellIsTarget(action.source.matID, action.source.matSubID))) //all pipette actions in this step where the target is the source of the transfer action
+                    foreach (Sample sample in action.TryGetSourceWell().GetSamplesBeforeAction(action))
                     {
-                        AddSampleIndicator(pipetteAction.source.color);
+                        AddSampleIndicator(sample.color);
                     }
                 }
             }
         }
         else if(action.WellIsSource(plateId.ToString(), wellId))
         {
-            Debug.Log("well " + wellId + " is the source of a transfer");
             foreach (Sample sample in action.TryGetSourceWellSamples())
             {
-                Debug.Log("Checking " + sample.sampleName + " volume");
                 if(action.TryGetSourceWell().GetSampleVolumeAtAction(sample, action) == 0)
                 {
-                    Debug.Log("Removing indicator for " + sample.sampleName);
                     RemoveSampleIndicator(sample.color);
                 }
             }
