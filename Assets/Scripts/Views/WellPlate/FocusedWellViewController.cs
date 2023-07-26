@@ -74,8 +74,11 @@ public class FocusedWellViewController : MonoBehaviour
             }
 
             wellVolume += sampleVolume;
-            var newSampleItem = Instantiate(SampleItemPrefab, ScrollViewContent);
-            newSampleItem.GetComponent<FocusedSampleItemViewController>().InitItem(sample, sampleVolume);
+            if(sampleVolume > 0)
+            {
+                var newSampleItem = Instantiate(SampleItemPrefab, ScrollViewContent);
+                newSampleItem.GetComponent<FocusedSampleItemViewController>().InitItem(sample, sampleVolume);
+            }
             sampleVolume = 0f;
         }
         
