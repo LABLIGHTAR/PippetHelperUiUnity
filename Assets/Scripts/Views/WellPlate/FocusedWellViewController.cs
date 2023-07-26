@@ -67,7 +67,9 @@ public class FocusedWellViewController : MonoBehaviour
             {
                 foreach (LabAction action in SessionState.GetAllActionsAfter(sampleAddedAction).Where(action => action.WellIsSource(well.plateId.ToString(), well.id)))
                 {
-                    sampleVolume -= (action.source.volume / well.GetSamplesBeforeAction(action).Count());
+                    var prevAction = SessionState.Steps[action.step].actions[(SessionState.Steps[action.step].actions.IndexOf(action) - 1)];
+
+                    sampleVolume -= (sampleVolume / well.GetVolumeAtAction(prevAction)) * action.source.volume;
                 }
             }
 
