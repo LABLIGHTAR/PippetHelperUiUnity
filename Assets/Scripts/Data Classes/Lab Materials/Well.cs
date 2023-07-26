@@ -165,6 +165,7 @@ public class Well
 
         for(int i=0; i<=action.step; i++)
         {
+            //add all volumes
             foreach (var a in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), id)))
             {
                 if (i < action.step)
@@ -176,6 +177,21 @@ public class Well
                     if(SessionState.Steps[i].actions.IndexOf(a) <= SessionState.Steps[i].actions.IndexOf(action))
                     {
                         volume += a.source.volume;
+                    }
+                }
+            }
+            //subtract volumes
+            foreach (var a in SessionState.Steps[i].actions.Where(a => a.WellIsSource(plateId.ToString(), id)))
+            {
+                if (i < action.step)
+                {
+                    volume -= a.source.volume;
+                }
+                else
+                {
+                    if (SessionState.Steps[i].actions.IndexOf(a) <= SessionState.Steps[i].actions.IndexOf(action))
+                    {
+                        volume -= a.source.volume;
                     }
                 }
             }
@@ -192,9 +208,9 @@ public class Well
         {
             for(int i=0; i<=action.step; i++)
             {
+                //add volumes when well is target
                 foreach(var a in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), id)))
                 {
-                    //all actions before the action in questions step
                     if(i < action.step)
                     {
                         if (a.type == LabAction.ActionType.pipette && a.SampleIsSource(sample))
@@ -208,10 +224,8 @@ public class Well
                             volume += (a.source.volume / sourceWell.GetSamplesBeforeAction(a).Count());
                         }
                     }
-                    //actions on the same step as the action in question
                     else
                     {
-                        //ensure we do not grab any actions after the action in question
                         if (SessionState.Steps[i].actions.IndexOf(a) <= SessionState.Steps[i].actions.IndexOf(action))
                         {
                             if (a.type == LabAction.ActionType.pipette && a.SampleIsSource(sample))
@@ -223,6 +237,30 @@ public class Well
                                 //for transfers we calculate the volume of sample added by dividing the total volume transfered by the number of samples in the source well
                                 Well sourceWell = a.TryGetSourceWell();
                                 volume += (a.source.volume / sourceWell.GetSamplesBeforeAction(a).Count());
+                            }
+                        }
+                    }
+                }
+                foreach (var a in SessionState.Steps[i].actions.Where(a => a.WellIsSource(plateId.ToString(), id)))
+                {
+                    if (i < action.step)
+                    {
+                        if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples().Contains(sample))
+                        {
+                            //for transfers we calculate the volume of sample added by dividing the total volume transfered by the number of samples in the source well
+                            Well sourceWell = a.TryGetSourceWell();
+                            volume -= (a.source.volume / sourceWell.GetSamplesBeforeAction(a).Count());
+                        }
+                    }
+                    else
+                    {
+                        if (SessionState.Steps[i].actions.IndexOf(a) <= SessionState.Steps[i].actions.IndexOf(action))
+                        {
+                            if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples().Contains(sample))
+                            {
+                                //for transfers we calculate the volume of sample added by dividing the total volume transfered by the number of samples in the source well
+                                Well sourceWell = a.TryGetSourceWell();
+                                volume -= (a.source.volume / sourceWell.GetSamplesBeforeAction(a).Count());
                             }
                         }
                     }

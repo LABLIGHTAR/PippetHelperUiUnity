@@ -54,8 +54,12 @@ public class FocusedWellViewController : MonoBehaviour
                     }
                     else if(action.TryGetSourceWellSamples() != null && action.TryGetSourceWellSamples().Contains(sample))
                     {
-                        Debug.Log(sample.sampleName + " volume: " + well.GetSampleVolumeAtAction(sample, action) + " well volume: " + well.GetVolumeAtAction(action) + " transfer volume: " + action.source.volume);
-                        sampleVolume += ((well.GetSampleVolumeAtAction(sample, action) / well.GetVolumeAtAction(action)) * action.source.volume);
+                        var prevAction = SessionState.Steps[i].actions[(SessionState.Steps[i].actions.IndexOf(action) - 1)];
+                        var sourceWell = action.TryGetSourceWell();
+                        
+                        float ratio = action.source.volume; / sourceWell.GetVolumeAtAction(prevAction);
+
+                        sampleVolume += ((sourceWell.GetSampleVolumeAtAction(sample, prevAction) * ratio));
                     }
                 }
             }
