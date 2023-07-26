@@ -57,7 +57,7 @@ public class FocusedWellViewController : MonoBehaviour
                         var prevAction = SessionState.Steps[i].actions[(SessionState.Steps[i].actions.IndexOf(action) - 1)];
                         var sourceWell = action.TryGetSourceWell();
                         
-                        float ratio = action.source.volume; / sourceWell.GetVolumeAtAction(prevAction);
+                        float ratio = action.source.volume / sourceWell.GetVolumeAtAction(prevAction);
 
                         sampleVolume += ((sourceWell.GetSampleVolumeAtAction(sample, prevAction) * ratio));
                     }
