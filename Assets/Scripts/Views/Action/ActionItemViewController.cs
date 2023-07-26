@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using TMPro;
+using UniRx;
 
 public class ActionItemViewController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
 {
@@ -20,6 +21,8 @@ public class ActionItemViewController : MonoBehaviour, IPointerEnterHandler, IPo
     {
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
+
+        SessionState.CurrentStep.actionRemovedStream.Subscribe(action => UpdateActionNum(action));
     }
 
     void OnDestroy()
@@ -50,5 +53,13 @@ public class ActionItemViewController : MonoBehaviour, IPointerEnterHandler, IPo
         associatedAction = action;
         actionText.text = action.GetActionString();
         actionNum.text = (SessionState.Steps[SessionState.ActiveStep].actions.IndexOf(action) + 1).ToString();
+    }
+
+    private void UpdateActionNum(LabAction action)
+    {
+        if (SessionState.CurrentStep.actions.IndexOf(action) < SessionState.CurrentStep.actions.IndexOf(associatedAction))
+        {
+            actionNum.text = (SessionState.Steps[SessionState.ActiveStep].actions.IndexOf(associatedAction)).ToString();
+        }
     }
 }
