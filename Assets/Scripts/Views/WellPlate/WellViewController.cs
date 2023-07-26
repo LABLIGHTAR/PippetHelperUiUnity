@@ -94,7 +94,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         actionAddedSubscription = SessionState.CurrentStep.actionAddedStream.Subscribe(action =>
         {
-            if (action.WellIsTarget(plateId.ToString(), wellId))
+            if (action.WellIsTarget(plateId.ToString(), wellId) || action.WellIsSource(plateId.ToString(), wellId))
             {
                 UpdateFromActionAdded(action);
             }
@@ -102,7 +102,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         actionRemovedSubscription = SessionState.CurrentStep.actionRemovedStream.Subscribe(action =>
         {
-            if (action.WellIsTarget(plateId.ToString(), wellId))
+            if (action.WellIsTarget(plateId.ToString(), wellId) || action.WellIsSource(plateId.ToString(), wellId))
             {
                 UpdateFromActionRemoved(action);
             }
@@ -111,17 +111,33 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     private void UpdateFromActionAdded(LabAction action)
     {
-        if (action.type == LabAction.ActionType.pipette && action.WellIsTarget(plateId.ToString(), wellId))
+        if(action.WellIsTarget(plateId.ToString(), wellId))
         {
-            AddSampleIndicator(action.source.color);
-        }
-        else if(action.type == LabAction.ActionType.transfer && action.WellIsTarget(plateId.ToString(), wellId))
-        {
-            for (int i=0; i<=SessionState.ActiveStep; i++)
+            if (action.type == LabAction.ActionType.pipette)
             {
-                foreach(var pipetteAction in SessionState.Steps[i].actions.Where(a => a.type == LabAction.ActionType.pipette && a.WellIsTarget(action.source.matID, action.source.matSubID))) //all pipette actions in this step where the target is the source of the transfer action
+                AddSampleIndicator(action.source.color);
+            }
+            else if (action.type == LabAction.ActionType.transfer)
+            {
+                for (int i = 0; i <= SessionState.ActiveStep; i++)
                 {
-                    AddSampleIndicator(pipetteAction.source.color);
+                    foreach (var pipetteAction in SessionState.Steps[i].actions.Where(a => a.type == LabAction.ActionType.pipette && a.WellIsTarget(action.source.matID, action.source.matSubID))) //all pipette actions in this step where the target is the source of the transfer action
+                    {
+                        AddSampleIndicator(pipetteAction.source.color);
+                    }
+                }
+            }
+        }
+        else if(action.WellIsSource(plateId.ToString(), wellId))
+        {
+            Debug.Log("well " + wellId + " is the source of a transfer");
+            foreach (Sample sample in action.TryGetSourceWellSamples())
+            {
+                Debug.Log("Checking " + sample.sampleName + " volume");
+                if(action.TryGetSourceWell().GetSampleVolumeAtAction(sample, action) == 0)
+                {
+                    Debug.Log("Removing indicator for " + sample.sampleName);
+                    RemoveSampleIndicator(sample.color);
                 }
             }
         }
