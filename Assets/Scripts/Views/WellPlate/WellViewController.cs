@@ -157,6 +157,17 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                 }
             }
         }
+        else if(action.WellIsSource(plateId.ToString(), wellId))
+        {
+            Well thisWell = action.TryGetSourceWell();
+            foreach (Sample sample in action.TryGetSourceWellSamples())
+            {
+                if(thisWell.GetSampleVolumeAtAction(sample, action) <= 0)
+                {
+                    AddSampleIndicator(sample.color);
+                }
+            }
+        }
     }
 
     public void LoadVisualState()
