@@ -72,6 +72,18 @@ public class FocusedWellViewController : MonoBehaviour
                     sampleVolume -= (sampleVolume / well.GetVolumeAtAction(prevAction)) * action.source.volume;
                 }
             }
+            else
+            {
+                for (int i = 0; i <= SessionState.ActiveStep; i++)
+                {
+                    foreach (LabAction action in SessionState.Steps[i].GetActionsWithSourceWell(well))
+                    {
+                        var prevAction = SessionState.Steps[action.step].actions[(SessionState.Steps[action.step].actions.IndexOf(action) - 1)];
+
+                        sampleVolume -= (sampleVolume / well.GetVolumeAtAction(prevAction)) * action.source.volume;
+                    }
+                }
+            }
 
             wellVolume += sampleVolume;
             if(sampleVolume > 0)

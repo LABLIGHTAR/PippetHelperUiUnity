@@ -158,6 +158,22 @@ public class Step
         }
     }
 
+
+    public List<LabAction> GetActionsWithSourceWell(Well well)
+    {
+        List<LabAction> associatedActions = new List<LabAction>();
+
+        foreach (LabAction action in actions)
+        {
+            if (action.WellIsSource(well.plateId.ToString(), well.id))
+            {
+                associatedActions.Add(action);
+            }
+        }
+
+        return associatedActions;
+    }
+
     public List<LabAction> GetActionsWithTargetWell(Well well)
     {
         List<LabAction> associatedActions = new List<LabAction>();
@@ -172,6 +188,7 @@ public class Step
         
         return associatedActions;
     }
+
 
     public List<LabAction> GetActionsWithSourceSample(Sample sample)
     {
