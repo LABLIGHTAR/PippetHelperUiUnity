@@ -121,7 +121,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             {
                 for (int i = 0; i <= SessionState.ActiveStep; i++)
                 {
-                    foreach (Sample sample in action.TryGetSourceWell().GetSamplesBeforeAction(action))
+                    foreach (Sample sample in action.TryGetSourceWell(SessionState.Materials[plateId].GetWell(wellId)).GetSamplesBeforeAction(action))
                     {
                         AddSampleIndicator(sample.color);
                     }
@@ -130,9 +130,9 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
         else if(action.WellIsSource(plateId.ToString(), wellId))
         {
-            foreach (Sample sample in action.TryGetSourceWellSamples())
+            foreach (Sample sample in SessionState.Materials[plateId].GetWell(wellId).GetSamples())
             {
-                if(action.TryGetSourceWell().GetSampleVolumeAtAction(sample, action) == 0)
+                if(SessionState.Materials[plateId].GetWell(wellId).GetSampleVolumeAtAction(sample, action) == 0)
                 {
                     RemoveSampleIndicator(sample.color);
                 }
@@ -150,7 +150,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
             }
             else if(action.type == LabAction.ActionType.transfer)
             {
-                List<Sample> samples = action.TryGetSourceWellSamples();
+                List<Sample> samples = action.TryGetSourceWellSamples(SessionState.Materials[plateId].GetWell(wellId));
                 foreach(var sample in samples)
                 {
                     RemoveSampleIndicator(sample.color);
@@ -159,8 +159,8 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
         else if(action.WellIsSource(plateId.ToString(), wellId))
         {
-            Well thisWell = action.TryGetSourceWell();
-            foreach (Sample sample in action.TryGetSourceWellSamples())
+            Well thisWell = action.TryGetSourceWell(SessionState.Materials[plateId].GetWell(wellId));
+            foreach (Sample sample in action.TryGetSourceWellSamples(SessionState.Materials[plateId].GetWell(wellId)))
             {
                 if(thisWell.GetSampleVolumeAtAction(sample, action) <= 0)
                 {

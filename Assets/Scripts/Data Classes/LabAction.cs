@@ -117,7 +117,7 @@ public class LabAction
     {
         string[] range = source.matSubID.Split("-");
 
-        return WellInRange(wellId, range);
+        return GetWellsInRange(range).Contains(wellId);
     }
 
     public bool WellIsTarget(string plateId, string wellId)
@@ -140,10 +140,10 @@ public class LabAction
     {
         string[] range = target.matSubID.Split("-");
 
-        return WellInRange(wellId, range);
+        return GetWellsInRange(range).Contains(wellId);
     }
 
-    private bool WellInRange(string wellId, string[] range)
+    List<string> GetWellsInRange(string[] range)
     {
         string startID = range[0];
         char startChar = startID[0];
@@ -153,68 +153,30 @@ public class LabAction
         char endChar = endID[0];
         int endNum = int.Parse(endID.Substring(1));
 
-        char wellChar = wellId[0];
-        int wellNum = int.Parse(wellId.Substring(1));
+        List<string> wellIds = new List<string>();
 
-        int numWellsSpanned;
-        int offset;
-
-        if (wellId == startID || wellId == endID)
+         //horizontal group
+        if (startChar == endChar)
         {
-            return true;
-        }
-
-        //horizontal group
-        else if (startChar == endChar)
-        {
-            if (wellChar != startChar)
+           for(int i=0; i<numChannels; i++)
             {
-                return false;
-            }
-
-            numWellsSpanned = endNum - startNum + 1;
-
-            offset = (numWellsSpanned + 1) / numChannels;
-
-            if (wellNum >= startNum && wellNum <= endNum)
-            {
-                if (offset > 1 && wellNum % offset == (startNum % 2))
-                {
-                    return true;
-                }
-                else if (offset <= 1)
-                {
-                    return true;
-                }
+                var nextWellNum = startNum + i;
+                string nextWell = startChar.ToString() + nextWellNum;
+                wellIds.Add(nextWell);
             }
         }
-
         //vertical group
         else
         {
-            if (wellNum != startNum)
+            for (int i = 0; i < numChannels; i++)
             {
-                return false;
-            }
-
-            numWellsSpanned = (endChar - startChar + 1);
-
-            offset = (numWellsSpanned + 1) / numChannels;
-
-            if (startChar <= wellChar && endChar >= wellChar)
-            {
-                if (offset > 1 && wellChar % offset == (startChar % 2))
-                {
-                    return true;
-                }
-                else if (offset <= 1)
-                {
-                    return true;
-                }
+                var nextWellChar = ((char)(startChar + i));
+                string nextWell = nextWellChar.ToString() + startNum.ToString();
+                wellIds.Add(nextWell);
             }
         }
 
-        return false;
+        return wellIds;
     }
 
     public bool SourceIsWellplate()
@@ -242,25 +204,92 @@ public class LabAction
         return SessionState.Materials[int.Parse(source.matID)].GetSampleList().Where(sample => SourceIsSample(sample)).FirstOrDefault();
     }
 
-    public Well TryGetSourceWell()
+    public List<Well> TryGetSourceWells()
     {
         if(SourceIsWellplate())
         {
-            return ((Wellplate)SessionState.Materials[int.Parse(source.matID)]).wells[source.matSubID];
+            List<Well> sourceWells = new List<Well>();
+
+            if(numChannels > 1)
+            {
+                string[] range = source.matSubID.Split("-");
+
+                foreach (string wellId in GetWellsInRange(range))
+                {
+                    sourceWells.Add(((Wellplate)SessionState.Materials[int.Parse(source.matID)]).wells[wellId]);
+                }
+            }
+            else
+            {
+                sourceWells.Add(((Wellplate)SessionState.Materials[int.Parse(source.matID)]).wells[source.matSubID]);
+            }
+            return sourceWells;
         }
         return null;
     }
 
-    public List<Sample> TryGetSourceWellSamples()
+    public List<Well> TryGetTargetWells()
+    {
+        if (TargetIsWellplate())
+        {
+            List<Well> targetWells = new List<Well>();
+
+            if (numChannels > 1)
+            {
+                string[] range = target.matSubID.Split("-");
+
+                foreach (string wellId in GetWellsInRange(range))
+                {
+                    targetWells.Add(((Wellplate)SessionState.Materials[int.Parse(target.matID)]).wells[wellId]);
+                }
+            }
+            else
+            {
+                targetWells.Add(((Wellplate)SessionState.Materials[int.Parse(target.matID)]).wells[target.matSubID]);
+            }
+            return targetWells;
+        }
+        return null;
+    }
+
+    public List<Sample> TryGetSourceWellSamples(Well targetWell)
     {
         List<Sample> samples = new List<Sample>();
-        Well well = TryGetSourceWell();
-        if(well != null)
+
+        Well sourceWell = TryGetSourceWell(targetWell);
+
+        if(sourceWell != null)
         {
-            samples = well.GetSamplesBeforeAction(this);
+            samples = sourceWell.GetSamplesBeforeAction(this);
         }
 
         return samples;
+    }
+
+    public List<Sample> TryGetTargetWellSamples(Well sourceWell)
+    {
+        List<Sample> samples = new List<Sample>();
+
+        Well targetWell = TryGetSourceWell(sourceWell);
+
+        if (targetWell != null)
+        {
+            samples = targetWell.GetSamplesBeforeAction(this);
+        }
+
+        return samples;
+    }
+
+    public Well TryGetSourceWell(Well targetWell)
+    {
+        int targetWellIndex = TryGetTargetWells().IndexOf(targetWell);
+        var sourceWells = TryGetSourceWells();
+
+        if (targetWellIndex > -1 && sourceWells != null)
+        {
+            return TryGetSourceWells()[targetWellIndex];
+        }
+        return null;
     }
 
     public void UpdateSourceSample(Sample sample)

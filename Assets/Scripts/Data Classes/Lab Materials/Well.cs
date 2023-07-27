@@ -87,7 +87,7 @@ public class Well
                 //get samples transfered into well
                 else if(action.type == LabAction.ActionType.transfer)
                 {
-                    List<Sample> sourceWellSamples = action.TryGetSourceWellSamples();
+                    List<Sample> sourceWellSamples = action.TryGetSourceWellSamples(this);
                     if(sourceWellSamples != null)
                     {
                         samples = samples.Union(sourceWellSamples).ToList();
@@ -122,7 +122,7 @@ public class Well
                     //get samples transfered into well
                     else if (a.type == LabAction.ActionType.transfer)
                     {
-                        List<Sample> sourceWellSamples = a.TryGetSourceWellSamples();
+                        List<Sample> sourceWellSamples = a.TryGetSourceWellSamples(this);
                         if (sourceWellSamples != null)
                         {
                             samples = samples.Union(sourceWellSamples).ToList();
@@ -145,7 +145,7 @@ public class Well
                         //get samples transfered into well
                         else if (a.type == LabAction.ActionType.transfer)
                         {
-                            List<Sample> sourceWellSamples = a.TryGetSourceWellSamples();
+                            List<Sample> sourceWellSamples = a.TryGetSourceWellSamples(this);
                             if (sourceWellSamples != null)
                             {
                                 samples = samples.Union(sourceWellSamples).ToList();
@@ -217,11 +217,11 @@ public class Well
                         {
                             volume += a.source.volume;
                         }
-                        else if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples().Contains(sample))
+                        else if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples(this).Contains(sample))
                         {
-                            //for transfers we calculate the volume of sample added by dividing the total volume transfered by the number of samples in the source well
-                            Well sourceWell = a.TryGetSourceWell();
-                            volume += (a.source.volume / sourceWell.GetSamplesBeforeAction(a).Count());
+                            Well sourceWell = a.TryGetSourceWell(this);
+                            float samplePercent = sourceWell.GetSampleVolumeAtAction(sample, a) / sourceWell.GetVolumeAtAction(a);
+                            volume += (a.source.volume * samplePercent);
                         }
                     }
                     else
@@ -232,35 +232,32 @@ public class Well
                             {
                                 volume += a.source.volume;
                             }
-                            else if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples().Contains(sample))
+                            else if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples(this).Contains(sample))
                             {
-                                //for transfers we calculate the volume of sample added by dividing the total volume transfered by the number of samples in the source well
-                                Well sourceWell = a.TryGetSourceWell();
-                                volume += (a.source.volume / sourceWell.GetSamplesBeforeAction(a).Count());
+                                Well sourceWell = a.TryGetSourceWell(this);
+                                float samplePercent = sourceWell.GetSampleVolumeAtAction(sample, a) / sourceWell.GetVolumeAtAction(a);
+                                volume += (a.source.volume * samplePercent);
                             }
                         }
                     }
                 }
+                //subtract volumes when well is source
                 foreach (var a in SessionState.Steps[i].actions.Where(a => a.WellIsSource(plateId.ToString(), id)))
                 {
                     if (i < action.step)
                     {
-                        if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples().Contains(sample))
+                        if (a.type == LabAction.ActionType.transfer)
                         {
-                            //for transfers we calculate the volume of sample added by dividing the total volume transfered by the number of samples in the source well
-                            Well sourceWell = a.TryGetSourceWell();
-                            volume -= (a.source.volume / sourceWell.GetSamplesBeforeAction(a).Count());
+                            volume -= (a.source.volume / this.GetSamplesBeforeAction(a).Count());
                         }
                     }
                     else
                     {
                         if (SessionState.Steps[i].actions.IndexOf(a) <= SessionState.Steps[i].actions.IndexOf(action))
                         {
-                            if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples().Contains(sample))
+                            if (a.type == LabAction.ActionType.transfer)
                             {
-                                //for transfers we calculate the volume of sample added by dividing the total volume transfered by the number of samples in the source well
-                                Well sourceWell = a.TryGetSourceWell();
-                                volume -= (a.source.volume / sourceWell.GetSamplesBeforeAction(a).Count());
+                                volume -= (a.source.volume / this.GetSamplesBeforeAction(a).Count());
                             }
                         }
                     }
