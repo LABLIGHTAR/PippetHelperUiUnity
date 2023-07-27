@@ -103,7 +103,7 @@ public class LabAction
         {
             if (numChannels > 1)
             {
-                return WellIsSourceMultichannel(plateId, wellId);
+                return WellIsSourceMultichannel(wellId);
             }
             else if (source.matSubID == wellId)
             {
@@ -113,15 +113,43 @@ public class LabAction
         return false;
     }
 
-    private bool WellIsSourceMultichannel(string plateID, string wellId)
+    private bool WellIsSourceMultichannel(string wellId)
     {
-        string[] wellIDs = source.matSubID.Split("-");
+        string[] range = source.matSubID.Split("-");
 
-        string startID = wellIDs[0];
+        return WellInRange(wellId, range);
+    }
+
+    public bool WellIsTarget(string plateId, string wellId)
+    {
+        if(target.matID == plateId)
+        {
+            if(numChannels > 1)
+            {
+                return WellIsTargetMultichannel(wellId);
+            }
+            else if(target.matSubID == wellId)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool WellIsTargetMultichannel(string wellId)
+    {
+        string[] range = target.matSubID.Split("-");
+
+        return WellInRange(wellId, range);
+    }
+
+    private bool WellInRange(string wellId, string[] range)
+    {
+        string startID = range[0];
         char startChar = startID[0];
         int startNum = int.Parse(startID.Substring(1));
 
-        string endID = wellIDs[1];
+        string endID = range[1];
         char endChar = endID[0];
         int endNum = int.Parse(endID.Substring(1));
 
@@ -180,98 +208,6 @@ public class LabAction
                     return true;
                 }
                 else if (offset <= 1)
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public bool WellIsTarget(string plateId, string wellId)
-    {
-        if(target.matID == plateId)
-        {
-            if(numChannels > 1)
-            {
-                return WellIsTargetMultichannel(plateId, wellId);
-            }
-            else if(target.matSubID == wellId)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private bool WellIsTargetMultichannel(string plateID, string wellId)
-    {
-        string[] wellIDs = target.matSubID.Split("-");
-        
-        string startID = wellIDs[0];
-        char startChar = startID[0];
-        int startNum = int.Parse(startID.Substring(1));
-       
-        string endID = wellIDs[1];
-        char endChar = endID[0];
-        int endNum = int.Parse(endID.Substring(1));
-
-        char wellChar = wellId[0];
-        int wellNum = int.Parse(wellId.Substring(1));
-
-        int numWellsSpanned;
-        int offset;
-
-        if (wellId == startID || wellId == endID)
-        {
-            return true;
-        }
-
-        //horizontal group
-        else if (startChar == endChar)
-        {
-            if (wellChar != startChar)
-            {
-                return false;
-            }
-
-            numWellsSpanned = endNum - startNum + 1;
-
-            offset = (numWellsSpanned + 1) / numChannels;
-
-            if(wellNum >= startNum && wellNum <= endNum)
-            {
-                if (offset > 1 && wellNum % offset == (startNum % 2))
-                {
-                    return true;
-                }
-                else if (offset <= 1)
-                {
-                    return true;
-                }
-            }
-        }
-
-        //vertical group
-        else
-        {
-            if(wellNum !=  startNum)
-            {
-                return false;
-            }
-
-            numWellsSpanned = (endChar - startChar + 1);
-
-            offset = (numWellsSpanned + 1) / numChannels;
-
-            if (startChar <= wellChar && endChar >= wellChar)
-            {
-                if(offset > 1 && wellChar % offset == (startChar % 2))
-                {
-                    return true;
-                }
-                else if(offset <= 1)
                 {
                     return true;
                 }
