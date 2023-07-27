@@ -205,11 +205,10 @@ public class Step
         return associatedActions;
     }
 
-    public void AddAction(LabAction.ActionType action, LabAction.Source source, LabAction.Target target)
+    public void AddAction(LabAction action)
     {
-        var newAction = new LabAction(SessionState.ActiveStep, action, source, target);
-        actions.Add(newAction);
-        actionAddedStream.OnNext(newAction);
+        actions.Add(action);
+        actionAddedStream.OnNext(action);
     }
 
     public void RemoveAction(LabAction action)
@@ -233,21 +232,56 @@ public class Step
         }
         var source = new LabAction.Source(sourceID, sourceSubID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName, SessionState.ActiveTool.volume, "μL");
         var target = new LabAction.Target(plateID, wellID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName);
-        AddAction(LabAction.ActionType.pipette, source, target);
+        var newAction = new LabAction(SessionState.ActiveStep, LabAction.ActionType.pipette, source, target);
+        AddAction(newAction);
     }
 
     public void AddTransferAction(string sourcePlateId, string sourceWellId, string targetPlateId, string targetWellId, float volume)
     {
+        if(SessionState.ActiveStep == 0 && SessionState.CurrentStep.actions.Count() == 0)
+        {
+            Debug.LogWarning("First action of protocol cannot be a transfer");
+            return;
+        }
+
         var source = new LabAction.Source(sourcePlateId, sourceWellId, Color.red, "Red", volume, "μL");
         var target = new LabAction.Target(targetPlateId, targetWellId, Color.green, "Green");
-        AddAction(LabAction.ActionType.transfer, source, target);
+        var newAction = new LabAction(SessionState.ActiveStep, LabAction.ActionType.transfer, source, target);
+
+        //if this is the first action of the step check the source well volume at the final action of the previous step
+        if(SessionState.ActiveStep > 0 && SessionState.CurrentStep.actions.Count() == 0)
+        {
+            Step prevStep = SessionState.Steps[SessionState.ActiveStep - 1];
+            foreach (Well sourceWell in newAction.TryGetSourceWells())
+            {
+                if (prevStep.actions.Count() > 0 && sourceWell.GetVolumeAtAction(prevStep.actions[prevStep.actions.Count() - 1]) < volume)
+                {
+                    Debug.LogWarning("cannot perform transfer, well " + sourceWell.id + " has insufficent volume.");
+                    return;
+                }
+            }
+        }
+        else
+        {
+            foreach (Well sourceWell in newAction.TryGetSourceWells())
+            {
+                if (SessionState.CurrentStep.actions.Count() > 0 && sourceWell.GetVolumeAtAction(SessionState.CurrentStep.actions[SessionState.CurrentStep.actions.Count() - 1]) < volume)
+                {
+                    Debug.LogWarning("cannot perform transfer, well " + sourceWell.id + " has insufficent volume.");
+                    return;
+                }
+            }
+        }
+
+        AddAction(newAction);
     }
 
     public void AddDilutionAction(string sourceId, string SourceSubId, string targetId, string targetSubId,float dilutionFactor)
     {
         var source = new LabAction.Source(sourceId, SourceSubId, Color.red, "Red", dilutionFactor, "μL");
         var target = new LabAction.Target(targetId, targetSubId, Color.green, "Green");
-        AddAction(LabAction.ActionType.dilution, source, target);
+        var newAction = new LabAction(SessionState.ActiveStep, LabAction.ActionType.dilution, source, target);
+        AddAction(newAction);
     }
 
     public void AddDilutionActionStart(Sample sourceSample, string targetId, string targetSubId, float dilutionFactor)
@@ -258,6 +292,7 @@ public class Step
 
         var source = new LabAction.Source(sourceMaterial.id.ToString(), sampleID.ToString(), Color.red, "Red", dilutionFactor, "μL");
         var target = new LabAction.Target(targetId, targetSubId, Color.green, "Green");
-        AddAction(LabAction.ActionType.dilution, source, target);
+        var newAction = new LabAction(SessionState.ActiveStep, LabAction.ActionType.dilution, source, target);
+        AddAction(newAction);
     }
 }
