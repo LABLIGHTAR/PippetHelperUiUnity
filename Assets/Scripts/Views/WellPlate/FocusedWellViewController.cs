@@ -47,7 +47,7 @@ public class FocusedWellViewController : MonoBehaviour
             {
                 foreach (LabAction action in SessionState.Steps[i].GetActionsWithTargetWell(well))
                 {
-                    if(action.SampleIsSource(sample))
+                    if(action.SourceIsSample(sample))
                     {
                         sampleAddedAction = action;
                         sampleVolume += action.source.volume;

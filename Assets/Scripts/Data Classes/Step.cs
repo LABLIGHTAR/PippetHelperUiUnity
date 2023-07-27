@@ -196,7 +196,7 @@ public class Step
 
         foreach (LabAction action in actions)
         {
-            if (action.SampleIsSource(sample))
+            if (action.SourceIsSample(sample))
             {
                 associatedActions.Add(action);
             }

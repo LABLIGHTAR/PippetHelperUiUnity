@@ -213,7 +213,7 @@ public class Well
                 {
                     if(i < action.step)
                     {
-                        if (a.type == LabAction.ActionType.pipette && a.SampleIsSource(sample))
+                        if (a.type == LabAction.ActionType.pipette && a.SourceIsSample(sample))
                         {
                             volume += a.source.volume;
                         }
@@ -228,7 +228,7 @@ public class Well
                     {
                         if (SessionState.Steps[i].actions.IndexOf(a) <= SessionState.Steps[i].actions.IndexOf(action))
                         {
-                            if (a.type == LabAction.ActionType.pipette && a.SampleIsSource(sample))
+                            if (a.type == LabAction.ActionType.pipette && a.SourceIsSample(sample))
                             {
                                 volume += a.source.volume;
                             }

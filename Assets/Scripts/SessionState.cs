@@ -406,7 +406,7 @@ public class SessionState : MonoBehaviour
         {
             foreach (var action in step.actions)
             {
-                if(action.SampleIsSource(forRemoval))
+                if(action.SourceIsSample(forRemoval))
                 {
                     removalActions.Add(action);
                 }
@@ -465,7 +465,7 @@ public class SessionState : MonoBehaviour
             {
                 foreach(LabAction action in step.actions)
                 {
-                    if(action.SampleIsSource(preEditCopy))
+                    if(action.SourceIsSample(preEditCopy))
                     {
                         action.UpdateSourceSample(toEdit);
                     }

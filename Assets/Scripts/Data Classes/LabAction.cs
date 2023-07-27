@@ -295,7 +295,7 @@ public class LabAction
         return false;
     }
     
-    public bool SampleIsSource(Sample sample)
+    public bool SourceIsSample(Sample sample)
     {
         //return (source.color == sample.color);
         return (SessionState.Materials[int.Parse(source.matID)].GetNameAsSource(source.matSubID) == sample.sampleName);
@@ -303,7 +303,7 @@ public class LabAction
 
     public Sample TryGetSourceSample()
     {
-        return SessionState.Materials[int.Parse(source.matID)].GetSampleList().Where(sample => SampleIsSource(sample)).FirstOrDefault();
+        return SessionState.Materials[int.Parse(source.matID)].GetSampleList().Where(sample => SourceIsSample(sample)).FirstOrDefault();
     }
 
     public Well TryGetSourceWell()
