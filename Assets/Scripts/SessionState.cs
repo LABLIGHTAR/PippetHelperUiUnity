@@ -332,9 +332,16 @@ public class SessionState : MonoBehaviour
 
     public static void AddNewStep()
     {
-        Steps.Add(new Step());
-        ActiveStep = Steps.Count - 1;
-        newStepStream.OnNext(ActiveStep);
+        if (Steps.Count == 0 || (Steps.Count() == 1 && Steps[0].actions.Count() > 0) || (Steps.Count() > 1 && Steps[Steps.Count() - 1].actions.Count > 0))
+        {
+            Steps.Add(new Step());
+            ActiveStep = Steps.Count - 1;
+            newStepStream.OnNext(ActiveStep);
+        }
+        else
+        {
+            Debug.LogWarning("cannot create new step, there are no actions in the last step");
+        }
     }
 
     public static void RemoveCurrentStep()
