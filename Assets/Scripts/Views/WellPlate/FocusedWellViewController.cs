@@ -41,55 +41,71 @@ public class FocusedWellViewController : MonoBehaviour
 
         LabAction sampleAddedAction = null;
 
-        foreach(var sample in well.GetSamples())
+        /*        foreach(var sample in well.GetSamples())
+                {
+                    for (int i = 0; i <= SessionState.ActiveStep; i++)
+                    {
+                        foreach (LabAction action in SessionState.Steps[i].GetActionsWithTargetWell(well))
+                        {
+                            if(action.SourceIsSample(sample))
+                            {
+                                sampleAddedAction = action;
+                                sampleVolume += action.source.volume;
+                            }
+                            else if(action.TryGetSourceWellSamples(well) != null && action.TryGetSourceWellSamples(well).Contains(sample))
+                            {
+                                var prevAction = SessionState.Steps[i].actions[(SessionState.Steps[i].actions.IndexOf(action) - 1)];
+                                var sourceWell = action.TryGetSourceWell(well);
+
+                                float ratio = action.source.volume / sourceWell.GetVolumeAtAction(prevAction);
+
+                                sampleVolume += ((sourceWell.GetSampleVolumeAtAction(sample, prevAction) * ratio));
+                            }
+                        }
+                    }
+                    if(sampleAddedAction != null)
+                    {
+                        foreach (LabAction action in SessionState.GetAllActionsAfter(sampleAddedAction).Where(action => action.WellIsSource(well.plateId.ToString(), well.id)))
+                        {
+                            var prevAction = SessionState.Steps[action.step].actions[(SessionState.Steps[action.step].actions.IndexOf(action) - 1)];
+
+                            sampleVolume -= (sampleVolume / well.GetVolumeAtAction(prevAction)) * action.source.volume;
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i <= SessionState.ActiveStep; i++)
+                        {
+                            foreach (LabAction action in SessionState.Steps[i].GetActionsWithSourceWell(well))
+                            {
+                                var prevAction = SessionState.Steps[action.step].actions[(SessionState.Steps[action.step].actions.IndexOf(action) - 1)];
+
+                                sampleVolume -= (sampleVolume / well.GetVolumeAtAction(prevAction)) * action.source.volume;
+                            }
+                        }
+                    }
+
+                    wellVolume += sampleVolume;
+                    if(sampleVolume > 0)
+                    {
+                        var newSampleItem = Instantiate(SampleItemPrefab, ScrollViewContent);
+                        newSampleItem.GetComponent<FocusedSampleItemViewController>().InitItem(sample, sampleVolume);
+                    }
+                    sampleVolume = 0f;
+                }*/
+
+        LabAction mostRecentAction = SessionState.TryGetMostRecentAction();
+
+        foreach (Sample sample in well.GetSamples())
         {
-            for (int i = 0; i <= SessionState.ActiveStep; i++)
+            if(mostRecentAction != null)
             {
-                foreach (LabAction action in SessionState.Steps[i].GetActionsWithTargetWell(well))
+                sampleVolume = well.GetSampleVolumeAtAction(sample, mostRecentAction);
+                if(sampleVolume > 0)
                 {
-                    if(action.SourceIsSample(sample))
-                    {
-                        sampleAddedAction = action;
-                        sampleVolume += action.source.volume;
-                    }
-                    else if(action.TryGetSourceWellSamples(well) != null && action.TryGetSourceWellSamples(well).Contains(sample))
-                    {
-                        var prevAction = SessionState.Steps[i].actions[(SessionState.Steps[i].actions.IndexOf(action) - 1)];
-                        var sourceWell = action.TryGetSourceWell(well);
-                        
-                        float ratio = action.source.volume / sourceWell.GetVolumeAtAction(prevAction);
-
-                        sampleVolume += ((sourceWell.GetSampleVolumeAtAction(sample, prevAction) * ratio));
-                    }
+                    var newSampleItem = Instantiate(SampleItemPrefab, ScrollViewContent);
+                    newSampleItem.GetComponent<FocusedSampleItemViewController>().InitItem(sample, sampleVolume);
                 }
-            }
-            if(sampleAddedAction != null)
-            {
-                foreach (LabAction action in SessionState.GetAllActionsAfter(sampleAddedAction).Where(action => action.WellIsSource(well.plateId.ToString(), well.id)))
-                {
-                    var prevAction = SessionState.Steps[action.step].actions[(SessionState.Steps[action.step].actions.IndexOf(action) - 1)];
-
-                    sampleVolume -= (sampleVolume / well.GetVolumeAtAction(prevAction)) * action.source.volume;
-                }
-            }
-            else
-            {
-                for (int i = 0; i <= SessionState.ActiveStep; i++)
-                {
-                    foreach (LabAction action in SessionState.Steps[i].GetActionsWithSourceWell(well))
-                    {
-                        var prevAction = SessionState.Steps[action.step].actions[(SessionState.Steps[action.step].actions.IndexOf(action) - 1)];
-
-                        sampleVolume -= (sampleVolume / well.GetVolumeAtAction(prevAction)) * action.source.volume;
-                    }
-                }
-            }
-
-            wellVolume += sampleVolume;
-            if(sampleVolume > 0)
-            {
-                var newSampleItem = Instantiate(SampleItemPrefab, ScrollViewContent);
-                newSampleItem.GetComponent<FocusedSampleItemViewController>().InitItem(sample, sampleVolume);
             }
             sampleVolume = 0f;
         }
@@ -98,7 +114,11 @@ public class FocusedWellViewController : MonoBehaviour
         if(well.id != null)
         {
             wellIdText.text = well.id;
-            wellVolumeText.text = wellVolume.ToString() + " μL";
+
+            if(mostRecentAction != null)
+            {
+                wellVolumeText.text = well.GetVolumeAtAction(mostRecentAction).ToString() + " μL";
+            }
 
             wellDisplay.SetActive(true);
             wellVolumeDisplay.SetActive(true);

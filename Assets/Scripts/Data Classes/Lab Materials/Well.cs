@@ -73,7 +73,7 @@ public class Well
 
         for(int i=0; i<=SessionState.ActiveStep; i++)
         {
-            foreach(var action in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), id)))
+            foreach(var action in SessionState.Steps[i].GetActionsWithTargetWell(this))
             {
                 //get samples pipetted directly into well
                 if (action.type == LabAction.ActionType.pipette)
@@ -106,7 +106,7 @@ public class Well
 
         for (int i = 0; i <= action.step; i++)
         {
-            foreach (var a in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), id)))
+            foreach (var a in SessionState.Steps[i].GetActionsWithTargetWell(this))
             {
                 if (i < action.step)
                 {
@@ -166,7 +166,7 @@ public class Well
         for(int i=0; i<=action.step; i++)
         {
             //add all volumes
-            foreach (var a in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), id)))
+            foreach (var a in SessionState.Steps[i].GetActionsWithTargetWell(this))
             {
                 if (i < action.step)
                 {
@@ -181,7 +181,7 @@ public class Well
                 }
             }
             //subtract volumes
-            foreach (var a in SessionState.Steps[i].actions.Where(a => a.WellIsSource(plateId.ToString(), id)))
+            foreach (var a in SessionState.Steps[i].GetActionsWithSourceWell(this))
             {
                 if (i < action.step)
                 {
@@ -209,7 +209,7 @@ public class Well
             for(int i=0; i<=action.step; i++)
             {
                 //add volumes when well is target
-                foreach(var a in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), id)))
+                foreach(var a in SessionState.Steps[i].GetActionsWithTargetWell(this))
                 {
                     if(i < action.step)
                     {
@@ -242,13 +242,29 @@ public class Well
                     }
                 }
                 //subtract volumes when well is source
-                foreach (var a in SessionState.Steps[i].actions.Where(a => a.WellIsSource(plateId.ToString(), id)))
+                foreach (var a in SessionState.Steps[i].GetActionsWithSourceWell(this))
                 {
                     if (i < action.step)
                     {
                         if (a.type == LabAction.ActionType.transfer)
                         {
-                            volume -= (a.source.volume / this.GetSamplesBeforeAction(a).Count());
+                            LabAction prevAction = SessionState.TryGetPreviousAction(a);
+                            float sampleVolume = 0f;
+                            float wellVolume = 0f;
+                            float samplePercent = 0f;
+
+                            if(prevAction != null)
+                            {
+                                sampleVolume = this.GetSampleVolumeAtAction(sample, prevAction);
+                                wellVolume = this.GetVolumeAtAction(prevAction);
+
+                                samplePercent = sampleVolume / wellVolume;
+                            }
+
+                            if(samplePercent > 0)
+                            {
+                                volume -= (a.source.volume * samplePercent);
+                            }
                         }
                     }
                     else
@@ -257,7 +273,23 @@ public class Well
                         {
                             if (a.type == LabAction.ActionType.transfer)
                             {
-                                volume -= (a.source.volume / this.GetSamplesBeforeAction(a).Count());
+                                LabAction prevAction = SessionState.TryGetPreviousAction(a);
+                                float sampleVolume = 0f;
+                                float wellVolume = 0f;
+                                float samplePercent = 0f;
+
+                                if (prevAction != null)
+                                {
+                                    sampleVolume = this.GetSampleVolumeAtAction(sample, prevAction);
+                                    wellVolume = this.GetVolumeAtAction(prevAction);
+
+                                    samplePercent = sampleVolume / wellVolume;
+                                }
+
+                                if (samplePercent > 0)
+                                {
+                                    volume -= (a.source.volume * samplePercent);
+                                }
                             }
                         }
                     }

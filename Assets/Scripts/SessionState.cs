@@ -575,4 +575,35 @@ public class SessionState : MonoBehaviour
 
         return actions;
     }
+
+    public static LabAction TryGetPreviousAction(LabAction action)
+    {
+        if(Steps[action.step].actions.IndexOf(action) > 0)
+        {
+            return Steps[action.step].actions[Steps[action.step].actions.IndexOf(action) - 1];
+        }
+        else if(action.step > 0)
+        {
+            for (int i = action.step; i >= 0; i--)
+            {
+                if(Steps[i].actions.Count > 0)
+                {
+                    return Steps[i].actions[Steps[i].actions.Count - 1];
+                }
+            }
+        }
+        return null;
+    }
+
+    public static LabAction TryGetMostRecentAction()
+    {
+        for(int i=ActiveStep; i>=0; i--)
+        {
+            if(Steps[i].actions.Count() > 0)
+            {
+                return Steps[i].actions[Steps[i].actions.Count() - 1];
+            }
+        }
+        return null;
+    }
 }
