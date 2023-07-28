@@ -110,49 +110,41 @@ public class Well
             {
                 if (i < action.step)
                 {
-                    //get samples pipetted directly into well
-                    if (a.type == LabAction.ActionType.pipette)
-                    {
-                        Sample sourceSample = a.TryGetSourceSample();
-                        if (sourceSample != null)
-                        {
-                            samples.Add(sourceSample);
-                        }
-                    }
-                    //get samples transfered into well
-                    else if (a.type == LabAction.ActionType.transfer)
-                    {
-                        List<Sample> sourceWellSamples = a.TryGetSourceWellSamples(this);
-                        if (sourceWellSamples != null)
-                        {
-                            samples = samples.Union(sourceWellSamples).ToList();
-                        }
-                    }
+                    samples = samples.Union(GetSamplesFromAction(a)).ToList();
                 }
                 else
                 {
                     if (SessionState.Steps[i].actions.IndexOf(a) < SessionState.Steps[i].actions.IndexOf(action))
                     {
-                        //get samples pipetted directly into well
-                        if (a.type == LabAction.ActionType.pipette)
-                        {
-                            Sample sourceSample = a.TryGetSourceSample();
-                            if (sourceSample != null)
-                            {
-                                samples.Add(sourceSample);
-                            }
-                        }
-                        //get samples transfered into well
-                        else if (a.type == LabAction.ActionType.transfer)
-                        {
-                            List<Sample> sourceWellSamples = a.TryGetSourceWellSamples(this);
-                            if (sourceWellSamples != null)
-                            {
-                                samples = samples.Union(sourceWellSamples).ToList();
-                            }
-                        }
+                        samples = samples.Union(GetSamplesFromAction(a)).ToList();
                     }
                 }
+            }
+        }
+
+        return samples;
+    }
+
+    private List<Sample> GetSamplesFromAction(LabAction action)
+    {
+        List<Sample> samples = new List<Sample>();
+
+        //get samples pipetted directly into well
+        if (action.type == LabAction.ActionType.pipette)
+        {
+            Sample sourceSample = action.TryGetSourceSample();
+            if (sourceSample != null)
+            {
+                samples.Add(sourceSample);
+            }
+        }
+        //get samples transfered into well
+        else if (action.type == LabAction.ActionType.transfer)
+        {
+            List<Sample> sourceWellSamples = action.TryGetSourceWellSamples(this);
+            if (sourceWellSamples != null)
+            {
+                samples = samples.Union(sourceWellSamples).ToList();
             }
         }
 
@@ -213,31 +205,13 @@ public class Well
                 {
                     if(i < action.step)
                     {
-                        if (a.type == LabAction.ActionType.pipette && a.SourceIsSample(sample))
-                        {
-                            volume += a.source.volume;
-                        }
-                        else if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples(this).Contains(sample))
-                        {
-                            Well sourceWell = a.TryGetSourceWell(this);
-                            float samplePercent = sourceWell.GetSampleVolumeAtAction(sample, a) / sourceWell.GetVolumeAtAction(a);
-                            volume += (a.source.volume * samplePercent);
-                        }
+                        volume += AddSampleVolumeAtAction(sample, a);
                     }
                     else
                     {
                         if (SessionState.Steps[i].actions.IndexOf(a) <= SessionState.Steps[i].actions.IndexOf(action))
                         {
-                            if (a.type == LabAction.ActionType.pipette && a.SourceIsSample(sample))
-                            {
-                                volume += a.source.volume;
-                            }
-                            else if (a.type == LabAction.ActionType.transfer && a.TryGetSourceWellSamples(this).Contains(sample))
-                            {
-                                Well sourceWell = a.TryGetSourceWell(this);
-                                float samplePercent = sourceWell.GetSampleVolumeAtAction(sample, a) / sourceWell.GetVolumeAtAction(a);
-                                volume += (a.source.volume * samplePercent);
-                            }
+                            volume += AddSampleVolumeAtAction(sample, a);
                         }
                     }
                 }
@@ -246,54 +220,62 @@ public class Well
                 {
                     if (i < action.step)
                     {
-                        if (a.type == LabAction.ActionType.transfer)
-                        {
-                            LabAction prevAction = SessionState.TryGetPreviousAction(a);
-                            float sampleVolume = 0f;
-                            float wellVolume = 0f;
-                            float samplePercent = 0f;
-
-                            if(prevAction != null)
-                            {
-                                sampleVolume = this.GetSampleVolumeAtAction(sample, prevAction);
-                                wellVolume = this.GetVolumeAtAction(prevAction);
-
-                                samplePercent = sampleVolume / wellVolume;
-                            }
-
-                            if(samplePercent > 0)
-                            {
-                                volume -= (a.source.volume * samplePercent);
-                            }
-                        }
+                        volume += SubtractSampleVolumeAtAction(sample, a);
                     }
                     else
                     {
                         if (SessionState.Steps[i].actions.IndexOf(a) <= SessionState.Steps[i].actions.IndexOf(action))
                         {
-                            if (a.type == LabAction.ActionType.transfer)
-                            {
-                                LabAction prevAction = SessionState.TryGetPreviousAction(a);
-                                float sampleVolume = 0f;
-                                float wellVolume = 0f;
-                                float samplePercent = 0f;
-
-                                if (prevAction != null)
-                                {
-                                    sampleVolume = this.GetSampleVolumeAtAction(sample, prevAction);
-                                    wellVolume = this.GetVolumeAtAction(prevAction);
-
-                                    samplePercent = sampleVolume / wellVolume;
-                                }
-
-                                if (samplePercent > 0)
-                                {
-                                    volume -= (a.source.volume * samplePercent);
-                                }
-                            }
+                            volume += SubtractSampleVolumeAtAction(sample, a);
                         }
                     }
                 }
+            }
+        }
+
+        return volume;
+    }
+
+    private float AddSampleVolumeAtAction(Sample sample, LabAction action)
+    {
+        float volume = 0f;
+
+        if (action.type == LabAction.ActionType.pipette && action.SourceIsSample(sample))
+        {
+            volume += action.source.volume;
+        }
+        else if (action.type == LabAction.ActionType.transfer && action.TryGetSourceWellSamples(this).Contains(sample))
+        {
+            Well sourceWell = action.TryGetSourceWell(this);
+            float samplePercent = sourceWell.GetSampleVolumeAtAction(sample, action) / sourceWell.GetVolumeAtAction(action);
+            volume += (action.source.volume * samplePercent);
+        }
+
+        return volume;
+    }
+
+    private float SubtractSampleVolumeAtAction(Sample sample, LabAction aciton)
+    {
+        float volume = 0f;
+
+        if (aciton.type == LabAction.ActionType.transfer)
+        {
+            LabAction prevAction = SessionState.TryGetPreviousAction(aciton);
+            float sampleVolume = 0f;
+            float wellVolume = 0f;
+            float samplePercent = 0f;
+
+            if (prevAction != null)
+            {
+                sampleVolume = this.GetSampleVolumeAtAction(sample, prevAction);
+                wellVolume = this.GetVolumeAtAction(prevAction);
+
+                samplePercent = sampleVolume / wellVolume;
+            }
+
+            if (samplePercent > 0)
+            {
+                volume -= (aciton.source.volume * samplePercent);
             }
         }
 
