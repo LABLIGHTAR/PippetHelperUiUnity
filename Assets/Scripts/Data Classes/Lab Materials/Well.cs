@@ -194,13 +194,13 @@ public class Well
 
     public float GetSampleVolumeAtAction(Sample sample, LabAction action)
     {
-        float volume = 0f;
+        float volume = 0f; 
 
         if(ContainsSample(sample))
         {
             for(int i=0; i<=action.step; i++)
             {
-                //add volumes when well is target
+                //when well is target add volume
                 foreach(var a in SessionState.Steps[i].GetActionsWithTargetWell(this))
                 {
                     if(i < action.step)
@@ -215,7 +215,7 @@ public class Well
                         }
                     }
                 }
-                //subtract volumes when well is source
+                //when well is source subtract volume
                 foreach (var a in SessionState.Steps[i].GetActionsWithSourceWell(this))
                 {
                     if (i < action.step)
@@ -236,6 +236,7 @@ public class Well
         return volume;
     }
 
+    //if adding sample volume this well is the target of the action
     private float AddSampleVolumeAtAction(Sample sample, LabAction action)
     {
         float volume = 0f;
@@ -247,35 +248,30 @@ public class Well
         else if (action.type == LabAction.ActionType.transfer && action.TryGetSourceWellSamples(this).Contains(sample))
         {
             Well sourceWell = action.TryGetSourceWell(this);
-            float samplePercent = sourceWell.GetSampleVolumeAtAction(sample, action) / sourceWell.GetVolumeAtAction(action);
-            volume += (action.source.volume * samplePercent);
+
+            LabAction prevAction = SessionState.TryGetPreviousAction(action);
+
+            if (sourceWell !=null && prevAction != null)
+            {
+                volume += ((sourceWell.GetSampleVolumeAtAction(sample, prevAction) / sourceWell.GetVolumeAtAction(prevAction)) * action.source.volume);
+            }
         }
 
         return volume;
     }
 
-    private float SubtractSampleVolumeAtAction(Sample sample, LabAction aciton)
+    //if subtracting sample volume this well is the source of the action
+    private float SubtractSampleVolumeAtAction(Sample sample, LabAction action)
     {
         float volume = 0f;
 
-        if (aciton.type == LabAction.ActionType.transfer)
+        if (action.type == LabAction.ActionType.transfer)
         {
-            LabAction prevAction = SessionState.TryGetPreviousAction(aciton);
-            float sampleVolume = 0f;
-            float wellVolume = 0f;
-            float samplePercent = 0f;
+            LabAction prevAction = SessionState.TryGetPreviousAction(action);
 
             if (prevAction != null)
             {
-                sampleVolume = this.GetSampleVolumeAtAction(sample, prevAction);
-                wellVolume = this.GetVolumeAtAction(prevAction);
-
-                samplePercent = sampleVolume / wellVolume;
-            }
-
-            if (samplePercent > 0)
-            {
-                volume -= (aciton.source.volume * samplePercent);
+                volume -= ((this.GetSampleVolumeAtAction(sample, prevAction) / this.GetVolumeAtAction(prevAction)) * action.source.volume);
             }
         }
 

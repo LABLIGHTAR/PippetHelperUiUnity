@@ -591,7 +591,7 @@ public class SessionState : MonoBehaviour
         }
         else if(action.step > 0)
         {
-            for (int i = action.step; i >= 0; i--)
+            for (int i = action.step - 1; i >= 0; i--)
             {
                 if(Steps[i].actions.Count > 0)
                 {
