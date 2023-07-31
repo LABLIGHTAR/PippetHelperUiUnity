@@ -8,6 +8,6 @@ public class SampleIndicatorViewController : MonoBehaviour
 
     public void Resize(float yScale)
     {
-        sprite.localScale = new Vector3(sprite.localScale.x, yScale, sprite.localScale.z);
+        transform.localScale = new Vector3(sprite.localScale.x, yScale, sprite.localScale.z);
     }
 }

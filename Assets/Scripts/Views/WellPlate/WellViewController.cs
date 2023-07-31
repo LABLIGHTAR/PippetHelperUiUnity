@@ -20,8 +20,6 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
     public SpriteRenderer SelectionSprite;
     public bool selected;
 
-    public int SampleCount;
-
     public int maxRowNum;
     public int maxColNum;
 
@@ -37,12 +35,12 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         SelectionManager.Instance.AvailableWells.Add(this);
 
-        ProcedureLoader.procedureStream.Subscribe(_ => LoadVisualState()).AddTo(this);
+        ProcedureLoader.procedureStream.Subscribe(_ => LoadSampleIndicators()).AddTo(this);
         
         SessionState.stepStream.Subscribe(_ => 
         {
             SessionState.Materials[plateId].GetWell(wellId);
-            LoadVisualState();
+            LoadSampleIndicators();
             RenewStepSubscriptions();
         }).AddTo(this);
 
@@ -96,7 +94,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             if (action.WellIsTarget(plateId.ToString(), wellId) || action.WellIsSource(plateId.ToString(), wellId))
             {
-                UpdateFromActionAdded(action);
+                LoadSampleIndicators();
             }
         }).AddTo(this);
 
@@ -104,82 +102,9 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             if (action.WellIsTarget(plateId.ToString(), wellId) || action.WellIsSource(plateId.ToString(), wellId))
             {
-                UpdateFromActionRemoved(action);
+                LoadSampleIndicators();
             }
         }).AddTo(this);
-    }
-
-    private void UpdateFromActionAdded(LabAction action)
-    {
-        if(action.WellIsTarget(plateId.ToString(), wellId))
-        {
-            if (action.type == LabAction.ActionType.pipette)
-            {
-                AddSampleIndicator(action.source.color);
-            }
-            else if (action.type == LabAction.ActionType.transfer)
-            {
-                for (int i = 0; i <= SessionState.ActiveStep; i++)
-                {
-                    foreach (Sample sample in action.TryGetSourceWell(SessionState.Materials[plateId].GetWell(wellId)).GetSamplesBeforeAction(action))
-                    {
-                        AddSampleIndicator(sample.color);
-                    }
-                }
-            }
-        }
-        else if(action.WellIsSource(plateId.ToString(), wellId))
-        {
-            foreach (Sample sample in SessionState.Materials[plateId].GetWell(wellId).GetSamples())
-            {
-                if(SessionState.Materials[plateId].GetWell(wellId).GetSampleVolumeAtAction(sample, action) == 0)
-                {
-                    RemoveSampleIndicator(sample.color);
-                }
-            }
-        }
-    }
-
-    private void UpdateFromActionRemoved(LabAction action)
-    {
-        if(action.WellIsTarget(plateId.ToString(), wellId))
-        {
-            if (action.type == LabAction.ActionType.pipette)
-            {
-                RemoveSampleIndicator(action.source.color);
-            }
-            else if(action.type == LabAction.ActionType.transfer)
-            {
-                List<Sample> samples = action.TryGetSourceWellSamples(SessionState.Materials[plateId].GetWell(wellId));
-                foreach(var sample in samples)
-                {
-                    RemoveSampleIndicator(sample.color);
-                }
-            }
-        }
-        else if(action.WellIsSource(plateId.ToString(), wellId))
-        {
-            Well thisWell = action.TryGetSourceWell(SessionState.Materials[plateId].GetWell(wellId));
-            foreach (Sample sample in action.TryGetSourceWellSamples(SessionState.Materials[plateId].GetWell(wellId)))
-            {
-                if(thisWell.GetSampleVolumeAtAction(sample, action) <= 0)
-                {
-                    AddSampleIndicator(sample.color);
-                }
-            }
-        }
-    }
-
-    public void LoadVisualState()
-    {
-        if (SessionState.Steps != null & SessionState.CurrentStep != null)
-        {
-            RemoveAllSampleIndicators();
-
-            SampleCount = 0;
-            
-            LoadSampleIndicators();
-        }
     }
 
     public virtual void AddSampleMultichannel(int numChannels)
@@ -210,36 +135,43 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         }
     }
 
-    public void AddSampleIndicator(Color sampleColor)
+    public void AddTempSampleIndicator()
     {
-        SampleCount++;
-        var newIndicator = Instantiate(SampleIndicatorPrefab, SampleIndicators);
-        newIndicator.transform.GetChild(0).GetComponent<SpriteRenderer>().color = sampleColor;
-        ResizeSampleIndicators();
-    }
+        RemoveAllSampleIndicators();
 
-    public void RemoveSampleIndicator(Color sampleColor)
-    {
-        foreach(Transform indicator in SampleIndicators)
+        LabAction mostRecentAction = SessionState.TryGetMostRecentAction();
+        Well thisWell = SessionState.Materials[plateId].GetWell(wellId);
+        float sampleVolume = 0f;
+        float wellVolume = 0f;
+
+        if (mostRecentAction != null)
         {
-            if (indicator.GetChild(0).GetComponent<SpriteRenderer>().color == sampleColor)
+            wellVolume = thisWell.GetVolumeAtAction(mostRecentAction) + SessionState.ActiveTool.volume;
+            foreach (Sample sample in thisWell.GetSamples())
             {
-                Destroy(indicator.gameObject);
-                SampleCount--;
-                ResizeSampleIndicators();
+                sampleVolume = thisWell.GetSampleVolumeAtAction(sample, mostRecentAction);
+
+                if (sampleVolume > 0)
+                {
+                    float samplePercent = sampleVolume / wellVolume;
+                    var newIndicator = Instantiate(SampleIndicatorPrefab, SampleIndicators);
+                    newIndicator.transform.GetChild(0).GetComponent<SpriteRenderer>().color = sample.color;
+                    newIndicator.GetComponent<SampleIndicatorViewController>().Resize(samplePercent);
+                }
+                sampleVolume = 0f;
             }
         }
-    }
 
-    private void ResizeSampleIndicators()
-    {
-        if(SampleCount > 0)
+        var tempIndicator = Instantiate(SampleIndicatorPrefab, SampleIndicators);
+        tempIndicator.transform.GetChild(0).GetComponent<SpriteRenderer>().color = SessionState.ActiveSample.color;
+        if(wellVolume > 0)
         {
-            float yScale = 1f / (float)SampleCount;
-            foreach (Transform indicator in SampleIndicators)
-            {
-                indicator.GetComponent<SampleIndicatorViewController>().Resize(yScale);
-            }
+            var tempSamplePercent = SessionState.ActiveTool.volume / wellVolume;
+            tempIndicator.GetComponent<SampleIndicatorViewController>().Resize(tempSamplePercent);
+        }
+        else
+        {
+            tempIndicator.GetComponent<SampleIndicatorViewController>().Resize(1);
         }
     }
 
@@ -256,21 +188,28 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void LoadSampleIndicators()
     {
-        for (int i = 0; i <= SessionState.ActiveStep; i++)
+        RemoveAllSampleIndicators();
+
+        LabAction mostRecentAction = SessionState.TryGetMostRecentAction();
+        Well thisWell = SessionState.Materials[plateId].GetWell(wellId);
+        float sampleVolume = 0f;
+        float wellVolume = 0f;
+
+        if (mostRecentAction != null)
         {
-            foreach (LabAction action in SessionState.Steps[i].actions.Where(a => a.WellIsTarget(plateId.ToString(), wellId)))
+            wellVolume = thisWell.GetVolumeAtAction(mostRecentAction);
+            foreach (Sample sample in thisWell.GetSamples())
             {
-                if (action.type == LabAction.ActionType.pipette)
+                sampleVolume = thisWell.GetSampleVolumeAtAction(sample, mostRecentAction);
+
+                if (sampleVolume > 0)
                 {
-                    AddSampleIndicator(action.source.color);
+                    float samplePercent = sampleVolume / wellVolume;
+                    var newIndicator = Instantiate(SampleIndicatorPrefab, SampleIndicators);
+                    newIndicator.transform.GetChild(0).GetComponent<SpriteRenderer>().color = sample.color;
+                    newIndicator.GetComponent<SampleIndicatorViewController>().Resize(samplePercent);
                 }
-                else if (action.type == LabAction.ActionType.transfer)
-                {
-                    foreach(var pipetteAction in SessionState.GetAllActionsBefore(action).Where(a => a.type == LabAction.ActionType.pipette && a.WellIsTarget(action.source.matID, action.source.matSubID)))
-                    {
-                        AddSampleIndicator(pipetteAction.source.color);
-                    }
-                }
+                sampleVolume = 0f;
             }
         }
     }
@@ -281,8 +220,6 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             Destroy(indicator.gameObject);
         }
-
-        SampleCount = 0;
     }
 
     public virtual bool ActivateHighlight(int numChannels)
@@ -323,8 +260,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
                 return false;
             }
 
-            AddSampleIndicator(SessionState.ActiveSample.color);
-            SampleCount--;
+            AddTempSampleIndicator();
             return true;
         }
 
@@ -334,18 +270,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public virtual void DeactivateHighlight(int numChannels)
     {
-        if (SampleCount != SampleIndicators.childCount && SessionState.ActiveSample != null)
-        {
-            foreach(Transform indicator in SampleIndicators)
-            {
-                if(indicator.GetChild(0).GetComponent<SpriteRenderer>().color == SessionState.ActiveSample.color)
-                {
-                    Destroy(indicator.gameObject);
-                    break;
-                }
-            }
-            ResizeSampleIndicators();
-        }
+        LoadSampleIndicators();
 
         numChannels++;
 
