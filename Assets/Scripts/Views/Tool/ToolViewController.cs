@@ -27,6 +27,7 @@ public class ToolViewController : MonoBehaviour
     {
        //subscribe to data stream
         SessionState.activeSampleStream.Subscribe(_ => UpdateVisualState()).AddTo(this);
+        SessionState.procedureNameStream.Subscribe(_ => SelectMicropipette()).AddTo(this);
 
         pipetteButton.onClick.AddListener(SelectMicropipette);
         multichannelButton.onClick.AddListener(SelectMultichannel);
