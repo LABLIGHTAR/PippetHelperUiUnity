@@ -26,7 +26,6 @@ public class ActionDisplayViewController : MonoBehaviour
                 }
                 foreach (LabAction action in SessionState.Steps[SessionState.ActiveStep].actions)
                 {
-
                     CreateActionItem(action);
                 }
             }

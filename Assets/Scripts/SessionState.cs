@@ -66,6 +66,18 @@ public class SessionState : MonoBehaviour
     public static Subject<LabAction.ActionStatus> actionStatusStream = new Subject<LabAction.ActionStatus>();
     public static Subject<LabAction> focusedActionStream = new Subject<LabAction>();
 
+    public static void ClearSessionState()
+    {
+        ProcedureName = "";
+        Materials.Clear();
+        Steps.Clear();
+        AvailableSamples.Clear();
+        ActiveSample = null;
+        UsedColors.Clear();
+        ActiveTool = null;
+    }
+
+
     //getters and setters
     #region
     public static string ProcedureName
