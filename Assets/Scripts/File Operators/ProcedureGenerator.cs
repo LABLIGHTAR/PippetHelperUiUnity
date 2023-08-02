@@ -63,7 +63,6 @@ public class ProcedureGenerator : MonoBehaviour
             var samples = material.GetSampleList();
             if (samples != null)
             {
-                
                 foreach(var sample in samples)
                 {
                     string matID = material.id + ":" + samples.IndexOf(sample);

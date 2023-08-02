@@ -367,7 +367,7 @@ public class SessionState : MonoBehaviour
 
         if (AvailableSamples.Contains(newSample))
         {
-            Debug.LogWarning("Sample already exists");
+            Debug.LogWarning("Sample " + name + " already exists");
             return;
         }
 

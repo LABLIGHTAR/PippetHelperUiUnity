@@ -178,45 +178,11 @@ public class ProcedureLoader : MonoBehaviour
         }
         else if (material.name.Contains("tuberack2ml"))
         {
-            AddTubeRack2mL(material);
+            SessionState.AddNewSample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "2mL Tube");
         }
         else if (material.name.Contains("reservoir"))
         {
-            AddReservoir(material);
-        }
-    }
-
-    void AddTubeRack2mL(MaterialFields material)
-    {
-        if (material.subId != "" && material.subId == "0")
-        {
-            var newTubeRack = new TubeRack2mL(material.id, material.name);
-            SessionState.Materials.Add(newTubeRack);
-            if (material.contentsColor != Color.white && material.contentsColorName != "")
-            {
-                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "2mL Tube");
-                newTubeRack.AddNewSample(newSample);
-            }
-        }
-        else if (material.subId != "" && material.subId != "0")
-        {
-            var tubeRack = SessionState.Materials[material.id];
-            if (material.contentsColor != Color.white && material.contentsColorName != "")
-            {
-                Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "2mL Tube");
-                tubeRack.AddNewSample(newSample);
-            }
-        }
-    }
-
-    void AddReservoir(MaterialFields material)
-    {
-        var newReservoir = new Reservoir(material.id, material.name);
-        SessionState.Materials.Add(newReservoir);
-        if (material.contentsColor != Color.white && material.contentsColorName != "")
-        {
-            Sample newSample = new Sample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "Reservoir");
-            newReservoir.AddNewSample(newSample);
+            SessionState.AddNewSample(material.contentsName, material.contentsAbrev, material.contentsColorName, material.contentsColor, "Reservoir");
         }
     }
 
