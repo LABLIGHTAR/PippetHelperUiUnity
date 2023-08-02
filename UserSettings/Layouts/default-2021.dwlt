@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1920
     height: 989
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Game
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -118,7 +118,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 15
+  controlID: 99
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -143,7 +143,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 16
+  controlID: 100
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -169,7 +169,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 17
+  controlID: 101
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -242,8 +242,8 @@ MonoBehaviour:
     y: 0
     width: 475
     height: 595
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 276, y: 71}
+  m_MaxSize: {x: 4001, y: 4021}
   m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 16}
@@ -335,9 +335,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 2afbffff
-      m_LastClickedID: -1238
-      m_ExpandedIDs: aeccfbffdeccfbff04e6fbff5ef5fbff60f5fbff6cf5fbff0c11fcffd095fcffacabffffbaabffffc2abffffcaabffff48adffff78adffff446500007ef10000
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 82d7ffffcad7ffff78e9ffff92f9ffffb4f9ffff2afbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -608,9 +608,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 1094.5527, y: 726.0376, z: -10.2618885}
+    m_Target: {x: 864.98175, y: 435.26715, z: -5.2727985}
     speed: 2
-    m_Value: {x: 1094.5527, y: 726.0376, z: -10.2618885}
+    m_Value: {x: 1162.7543, y: 702.50323, z: -28.481722}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -661,9 +661,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 1239.8241
+    m_Target: 1614.5736
     speed: 2
-    m_Value: 1239.8241
+    m_Value: 782.75476
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -850,7 +850,7 @@ MonoBehaviour:
     m_LastAppliedPresetName: Default
     m_SaveData: []
   m_SearchFilter:
-    m_NameFilter: sce
+    m_NameFilter: ui
     m_ClassNames: []
     m_AssetLabels: []
     m_AssetBundleNames: []
@@ -862,22 +862,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts
+    - Assets/Scripts/File Operators
     m_Globs: []
-    m_OriginalText: sce
+    m_OriginalText: ui
   m_ViewMode: 1
   m_StartGridSize: 96
   m_LastFolders:
-  - Assets/Scripts
+  - Assets/Scripts/File Operators
   m_LastFoldersGridSize: 96
   m_LastProjectPath: C:\Users\nikst\dev\PippetHelperUiUnity
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 26680000
-    m_LastClickedID: 26662
-    m_ExpandedIDs: 0000000030660000326600003466000036660000386600003a6600003c66000000ca9a3b
+    m_SelectedIDs: 56660000
+    m_LastClickedID: 26198
+    m_ExpandedIDs: 0000000030660000326600003466000036660000386600003a6600003c6600005066000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

@@ -22,14 +22,6 @@ public class SampleDisplayViewController : MonoBehaviour
         {
             AddSampleDisplay(newSample);
         }).AddTo(this);
-
-        ProcedureLoader.procedureStream.Subscribe(_ =>
-        {
-            foreach (Sample sample in SessionState.AvailableSamples)
-            {
-                AddSampleDisplay(sample);
-            }
-        }).AddTo(this);
     }
 
     void Update()
