@@ -102,6 +102,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             if (action.WellIsTarget(plateId.ToString(), wellId) || action.WellIsSource(plateId.ToString(), wellId))
             {
+                Debug.Log("action removed");
                 LoadSampleIndicators();
             }
         }).AddTo(this);

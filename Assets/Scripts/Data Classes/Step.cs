@@ -213,8 +213,8 @@ public class Step
 
     public void RemoveAction(LabAction action)
     {
-        actionRemovedStream.OnNext(action);
         actions.Remove(action);
+        actionRemovedStream.OnNext(action);
     }
 
     public void AddPipetteAction(string plateID, string wellID)
@@ -234,7 +234,14 @@ public class Step
         var target = new LabAction.Target(plateID, wellID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName);
         var newAction = new LabAction(SessionState.ActiveStep, LabAction.ActionType.pipette, source, target);
         AddAction(newAction);
-        SessionState.SetFocusedWell(wellID, int.Parse(plateID));
+        if(newAction.numChannels < 2)
+        {
+            SessionState.SetFocusedWell(wellID, int.Parse(plateID));
+        }
+        else
+        {
+            SessionState.SetFocusedWell(wellID.Split("-")[0], int.Parse(plateID));
+        }
     }
 
     public void AddTransferAction(string sourcePlateId, string sourceWellId, string targetPlateId, string targetWellId, float volume)
