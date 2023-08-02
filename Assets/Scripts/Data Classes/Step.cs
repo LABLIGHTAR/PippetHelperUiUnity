@@ -234,6 +234,7 @@ public class Step
         var target = new LabAction.Target(plateID, wellID, SessionState.ActiveSample.color, SessionState.ActiveSample.colorName);
         var newAction = new LabAction(SessionState.ActiveStep, LabAction.ActionType.pipette, source, target);
         AddAction(newAction);
+        SessionState.SetFocusedWell(wellID, int.Parse(plateID));
     }
 
     public void AddTransferAction(string sourcePlateId, string sourceWellId, string targetPlateId, string targetWellId, float volume)

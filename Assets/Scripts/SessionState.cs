@@ -193,10 +193,7 @@ public class SessionState : MonoBehaviour
     {
         set
         {
-            if (focusedWell != value)
-            {
-                focusedWell = value;
-            }
+            focusedWell = value;
             focusedWellStream.OnNext(focusedWell);
         }
         get

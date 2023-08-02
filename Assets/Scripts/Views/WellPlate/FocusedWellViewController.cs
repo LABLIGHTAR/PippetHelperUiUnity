@@ -34,6 +34,7 @@ public class FocusedWellViewController : MonoBehaviour
 
     void UpdateVisualState(Well well)
     {
+        Debug.Log("updating focused well");
         ClearSampleDisplays();
 
         float sampleVolume = 0f;
