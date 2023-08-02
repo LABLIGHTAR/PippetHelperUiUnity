@@ -39,7 +39,7 @@ public class UiInteraction : MonoBehaviour
                 SessionState.SelectionActive = true;
             }
         }*/
-        if(Mouse.current.leftButton.wasReleasedThisFrame && !SessionState.FormActive)
+        if(Mouse.current.leftButton.wasReleasedThisFrame && !Input.GetKey(KeyCode.LeftShift) && !SessionState.FormActive)
         {
             //deactive selection box
 /*            SelectionBox.sizeDelta = Vector2.zero;
@@ -64,7 +64,7 @@ public class UiInteraction : MonoBehaviour
                         well.AddSampleMultichannel(SessionState.ActiveTool.numChannels);
                     }
                 }
-                //if the shift key is held down edit selection
+               /* //if the shift key is held down edit selection
                 if (Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed)
                 {
                     if (SelectionManager.Instance.IsSelected(well))
@@ -76,7 +76,7 @@ public class UiInteraction : MonoBehaviour
                         SelectionManager.Instance.Select(well);
                         SessionState.SelectionActive = true;
                     }
-                }
+                }*/
                 //if the shift key is not held and the selection is active deselect and add sample to all wells
                 else if (MouseDownTime + DragDelay > Time.time && SessionState.SelectionActive)
                 {

@@ -439,7 +439,7 @@ public class WellViewController : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             if (SessionState.ActiveActionType == LabAction.ActionType.pipette)
             {
-                if (eventData.button == PointerEventData.InputButton.Right)
+                if (eventData.button == PointerEventData.InputButton.Right || (eventData.button == PointerEventData.InputButton.Left && Input.GetKey(KeyCode.LeftShift)))
                 {
                     SessionState.CurrentStep.TryRemoveActiveSampleFromWell(wellId, plateId);
                 }
