@@ -1,10 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using TMPro;
 
 public class SubstanceSaver : MonoBehaviour
 {
     public Button saveSubstancesButton;
+    public TextMeshProUGUI saveMessage;
 
     private string folderPath;
     private string filePath;
@@ -59,6 +62,21 @@ public class SubstanceSaver : MonoBehaviour
         sw.Close();
 
         Debug.Log("CSV file written to: " + filePath);
+        StartCoroutine(ShowSaveMessage());
+    }
+
+    private IEnumerator ShowSaveMessage()
+    {
+        saveMessage.gameObject.SetActive(true);
+
+        saveMessage.color = new Color(saveMessage.color.r, saveMessage.color.g, saveMessage.color.b, 1);
+        while (saveMessage.color.a > 0.0f)
+        {
+            saveMessage.color = new Color(saveMessage.color.r, saveMessage.color.g, saveMessage.color.b, saveMessage.color.a - (Time.deltaTime * 1f));
+            yield return null;
+        }
+
+        saveMessage.gameObject.SetActive(false);
     }
 
     public static string Color32ToHex(Color32 color)
