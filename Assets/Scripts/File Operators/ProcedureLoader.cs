@@ -75,6 +75,8 @@ public class ProcedureLoader : MonoBehaviour
         {
             SessionState.ProcedureName = Path.GetFileNameWithoutExtension(fileName);
         }
+
+        sr.Close();
     }
 
     void ParseLine(string currentLine)

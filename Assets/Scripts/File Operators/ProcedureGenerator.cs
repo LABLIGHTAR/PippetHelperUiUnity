@@ -11,8 +11,10 @@ public class ProcedureGenerator : MonoBehaviour
 
     public TextMeshProUGUI saveMessage;
 
+    private string folderPathTemp;
     private string folderPathLighthouse;
     private string folderPathPersistent;
+    private string tempFilePath;
     private string filePath;
 
     private string delimiter = ",";
@@ -33,6 +35,7 @@ public class ProcedureGenerator : MonoBehaviour
         addedSamples = new List<Sample>();
 
         //check if new protocol folder exists
+        folderPathTemp = Path.Combine(@Application.temporaryCachePath, "..", "temp");
         folderPathLighthouse = Path.Combine(@Application.temporaryCachePath, "..", "new_protocols");
         folderPathPersistent = Path.Combine(@Application.temporaryCachePath, "..", "saved_protocols");
         if (!Directory.Exists(folderPathLighthouse))
@@ -43,12 +46,17 @@ public class ProcedureGenerator : MonoBehaviour
         {
             Directory.CreateDirectory(folderPathPersistent);
         }
+        if(!Directory.Exists(folderPathTemp))
+        {
+            Directory.CreateDirectory(folderPathTemp);
+        }
     }
 
     public void GenerateProcedure()
     {
         if(SessionState.ProcedureName != null)
         {
+            tempFilePath = Path.Combine(folderPathTemp, SessionState.ProcedureName + ".csv");
             filePath = Path.Combine(folderPathLighthouse, SessionState.ProcedureName + ".csv");
         }
         else
@@ -56,7 +64,7 @@ public class ProcedureGenerator : MonoBehaviour
             return;
         }
 
-        StreamWriter sw = new StreamWriter(filePath);
+        StreamWriter sw = new StreamWriter(tempFilePath);
 
         foreach(LabMaterial material in SessionState.Materials)
         {
@@ -101,7 +109,11 @@ public class ProcedureGenerator : MonoBehaviour
 
         sw.Close();
 
-        Debug.Log("CSV file written to: " + filePath);
+        Debug.Log("CSV file written to: " + tempFilePath);
+
+        File.Move(tempFilePath, filePath);
+
+        Debug.Log("CSV file moved to: " + filePath);
 
         string persistantPath = Path.Combine(folderPathPersistent, SessionState.ProcedureName + ".csv");
 

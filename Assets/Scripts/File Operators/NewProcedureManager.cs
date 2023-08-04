@@ -44,7 +44,6 @@ public class NewProcedureManager : MonoBehaviour
         {
             SessionState.ProcedureName = procedureName;
             this.gameObject.SetActive(false);
-            SessionState.FormActive = false;
         }
     }
 

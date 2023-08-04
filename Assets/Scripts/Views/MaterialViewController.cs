@@ -65,6 +65,7 @@ public class MaterialViewController : MonoBehaviour
     {
         materialsSelectedStream.OnNext(materialID);
         this.transform.parent.gameObject.SetActive(false);
+        SessionState.FormActive = false;
     }
 
     void AddNewMaterial()
