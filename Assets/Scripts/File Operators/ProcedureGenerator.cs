@@ -108,15 +108,17 @@ public class ProcedureGenerator : MonoBehaviour
         }
 
         sw.Close();
-
         Debug.Log("CSV file written to: " + tempFilePath);
 
+        if (File.Exists(filePath))
+        {
+            Debug.Log("File already exists, overwriting " + filePath);
+            File.Delete(filePath);
+        }
         File.Move(tempFilePath, filePath);
-
         Debug.Log("CSV file moved to: " + filePath);
 
         string persistantPath = Path.Combine(folderPathPersistent, SessionState.ProcedureName + ".csv");
-
         if (File.Exists(persistantPath))
         {
             Debug.Log("File already exists, overwriting " + persistantPath);
