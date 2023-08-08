@@ -56,8 +56,16 @@ public class ProcedureGenerator : MonoBehaviour
     {
         if(SessionState.ProcedureName != null)
         {
-            tempFilePath = Path.Combine(folderPathTemp, SessionState.ProcedureName + ".csv");
-            filePath = Path.Combine(folderPathLighthouse, SessionState.ProcedureName + ".csv");
+            if(SessionState.ProcedureName.Contains("piplight_"))
+            {
+                tempFilePath = Path.Combine(folderPathTemp, SessionState.ProcedureName + ".csv");
+                filePath = Path.Combine(folderPathLighthouse, SessionState.ProcedureName + ".csv");
+            }
+            else
+            {
+                tempFilePath = Path.Combine(folderPathTemp, "piplight_" + SessionState.ProcedureName + ".csv");
+                filePath = Path.Combine(folderPathLighthouse, "piplight_" + SessionState.ProcedureName + ".csv");
+            }
         }
         else
         {
@@ -118,7 +126,15 @@ public class ProcedureGenerator : MonoBehaviour
         File.Move(tempFilePath, filePath);
         Debug.Log("CSV file moved to: " + filePath);
 
-        string persistantPath = Path.Combine(folderPathPersistent, SessionState.ProcedureName + ".csv");
+        string persistantPath;
+        if(SessionState.ProcedureName.Contains("piplight_"))
+        {
+            persistantPath = Path.Combine(folderPathPersistent, SessionState.ProcedureName + ".csv");
+        }
+        else
+        {
+            persistantPath = Path.Combine(folderPathPersistent, "piplight_" + SessionState.ProcedureName + ".csv");
+        }
         if (File.Exists(persistantPath))
         {
             Debug.Log("File already exists, overwriting " + persistantPath);

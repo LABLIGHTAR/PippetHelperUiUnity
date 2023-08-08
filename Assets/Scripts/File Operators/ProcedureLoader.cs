@@ -41,9 +41,10 @@ public class ProcedureLoader : MonoBehaviour
 
         foreach (string fileName in fileNames)
         {
+            string procedureTitle = Path.GetFileNameWithoutExtension(fileName).Remove(0, 9);
             var newListItem = Instantiate(protocolListItemPrefab, protocolList);
             var newListItemVC = newListItem.GetComponent<ProtocolListItemViewController>();
-            newListItemVC.InitItem(Path.GetFileNameWithoutExtension(fileName), fileName);
+            newListItemVC.InitItem(procedureTitle, fileName);
             newListItemVC.editButton.onClick.AddListener(delegate { StartCoroutine(LoadProcedure(fileName)); });
         }
     }

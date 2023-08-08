@@ -54,7 +54,7 @@ public class NewProcedureManager : MonoBehaviour
             inputError.text = "Protcol name empty*";
             return false;
         }
-        if (procedureName.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
+        if (procedureName.IndexOfAny(Path.GetInvalidFileNameChars()) > 0 || procedureName.Contains("_"))
         {
             inputError.text = "Invalid character in protocol name*";
             return false;
